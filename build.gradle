@@ -1,0 +1,16 @@
+/* Build file. */
+
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+repositories {
+    jcenter()
+}
+    
+dependencies {
+    testCompile 'junit:junit:4.12'
+    testCompile 'org.hamcrest:hamcrest-library:1.3'
+}
+
+
+
