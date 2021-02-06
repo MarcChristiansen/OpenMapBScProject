@@ -7,4 +7,5 @@ public interface Node {
     public double getLat();
     public double getLon();
     public List<Path> getPaths();
+
 }
