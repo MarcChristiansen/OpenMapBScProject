@@ -8,7 +8,6 @@ package openmap.framework;
  * @since 06-02-2021
  */
 public interface Path {
-    void setDestination(Node node);
     Node getDestination();
     double getWeight();
 }

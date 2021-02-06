@@ -13,12 +13,6 @@ public class StandardPathImpl implements Path {
         this.weight = weight;
     }
 
-
-    @Override
-    public void setDestination(Node destination) {
-        this.destination = destination;
-    }
-
     @Override
     public Node getDestination() {
         return destination;

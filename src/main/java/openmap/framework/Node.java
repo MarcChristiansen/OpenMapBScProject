@@ -34,4 +34,10 @@ public interface Node {
      */
     public List<Path> getPaths();
 
+    /**
+     * Add a path out to the path list
+     * @param path
+     */
+    public void addPath(Path path);
+
 }

@@ -1,6 +1,7 @@
 package openmap.standard;
 
 import openmap.framework.Node;
+import openmap.framework.OsmWay;
 import openmap.framework.OsmXmlParser;
 
 import javax.xml.namespace.QName;
@@ -10,6 +11,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.*;
 import java.io.*;
 import java.util.InvalidPropertiesFormatException;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Implementation of the OSM xml parser
@@ -17,13 +20,12 @@ import java.util.InvalidPropertiesFormatException;
 public class OsmXmlParserImpl implements OsmXmlParser {
 
     @Override
-    public void parse(String fileIn) {
+    public Map<Long, Node> parseNodes(String fileIn, Map<Long, Integer> nodeWayCounter) {
         try {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
         XMLEventReader reader = null;
 
             reader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileIn));
-
 
         while (reader.hasNext()) {
             XMLEvent nextEvent = reader.nextEvent();
@@ -58,5 +60,11 @@ public class OsmXmlParserImpl implements OsmXmlParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
+    }
+
+    @Override
+    public List<OsmWay> parseWays(String fileIn) {
+        return null;
     }
 }
