@@ -8,6 +8,15 @@ package openmap.framework;
  * @since 06-02-2021
  */
 public interface Path {
-    Node getDestination();
+    /**
+     * Return
+     * @return
+     */
+    Node getDestination(); //TODO should this be an id for a dest node
+
+    /**
+     * returns the weight of this path
+     * @return the weight of this path
+     */
     double getWeight();
 }

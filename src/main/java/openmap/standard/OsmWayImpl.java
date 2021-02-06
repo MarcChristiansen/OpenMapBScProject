@@ -3,15 +3,16 @@ package openmap.standard;
 import openmap.framework.OsmWay;
 
 import java.util.List;
+import java.util.Map;
 
 public class OsmWayImpl implements OsmWay {
 
     List<Long> ids;
-    String type;
+    Map<String, String> TagsMap;
 
-    public OsmWayImpl(List<Long> ids, String type){
+    public OsmWayImpl(List<Long> ids, Map<String, String> TagsMap){
         this.ids = ids;
-        this.type = type;
+        this.TagsMap = TagsMap;
     }
 
     @Override
@@ -20,7 +21,7 @@ public class OsmWayImpl implements OsmWay {
     }
 
     @Override
-    public String getType() {
-        return type;
+    public Map<String, String> getTags() {
+        return TagsMap;
     }
 }

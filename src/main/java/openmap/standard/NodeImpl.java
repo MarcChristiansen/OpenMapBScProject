@@ -36,4 +36,9 @@ public class NodeImpl implements Node {
     public List<Path> getPaths() {
         return null;
     }
+
+    @Override
+    public void addPath(Path path) {
+
+    }
 }
