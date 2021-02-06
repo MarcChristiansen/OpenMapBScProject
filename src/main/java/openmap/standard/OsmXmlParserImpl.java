@@ -71,7 +71,7 @@ public class OsmXmlParserImpl implements OsmXmlParser {
 
     @Override
     public List<OsmWay> parseWays(String fileIn) {
-        List<OsmWay> WayList = new ArrayList<OsmWay>();
+        List<OsmWay> wayList = new ArrayList<OsmWay>();
         try {
             XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
             XMLEventReader reader = null;
@@ -119,7 +119,7 @@ public class OsmXmlParserImpl implements OsmXmlParser {
                     if(endelement.getName().getLocalPart().equals("way")){
                         //create new OSM way and add to list, if the way is a highway
                         if(currentTags.getOrDefault("highway", null) != null){
-                            WayList.add(new OsmWayImpl(nodeRefList, currentTags));
+                            wayList.add(new OsmWayImpl(new ArrayList<Long>(nodeRefList), new HashMap<String, String>(currentTags)));
                         }
                     }
                 }
@@ -128,6 +128,6 @@ public class OsmXmlParserImpl implements OsmXmlParser {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+        return wayList;
     }
 }

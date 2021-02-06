@@ -9,6 +9,9 @@ import java.util.Map;
 
 public class GraphBuilderImpl implements graphBuilder {
 
+    /**
+     * O(n*m)
+     */
     @Override
     public Map<Long, Integer> CountNodes(List<OsmWay> WayList) {
         Map<Long, Integer> nodeWayCounter = new HashMap<Long, Integer>();
@@ -17,6 +20,6 @@ public class GraphBuilderImpl implements graphBuilder {
                 nodeWayCounter.put(id, nodeWayCounter.getOrDefault(id, 0)+1);
             });
         });
-        return null;
+        return nodeWayCounter;
     }
 }
