@@ -40,6 +40,8 @@ public class GraphBuilderImpl implements graphBuilder {
 
                 if (nodeWays > 1 || i == 0 || i == tempList.size()-1){
                     if(previousNodeId != -1){
+                        pathLength += 1; //Todo make method
+
                         Node currNode = wayNodeMap.get(currentNodeId);
                         Node preNode = wayNodeMap.get(currentNodeId);
 
