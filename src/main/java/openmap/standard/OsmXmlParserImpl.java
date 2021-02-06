@@ -17,8 +17,14 @@ import java.util.*;
  */
 public class OsmXmlParserImpl implements OsmXmlParser {
 
+    String fileIn;
+
+    public OsmXmlParserImpl(String fileIn){
+        this.fileIn = fileIn;
+    }
+
     @Override
-    public Map<Long, Node> parseNodes(String fileIn, Map<Long, Integer> nodeWayCounter) {
+    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
         Map<Long, Node> NodeMap = new HashMap<Long, Node>();
         try {
         XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
@@ -70,7 +76,7 @@ public class OsmXmlParserImpl implements OsmXmlParser {
     }
 
     @Override
-    public List<OsmWay> parseWays(String fileIn) {
+    public List<OsmWay> parseWays() {
         List<OsmWay> wayList = new ArrayList<OsmWay>();
         try {
             XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();

@@ -13,13 +13,15 @@ import java.util.Map;
 public class compileXml {
     public static void main(String[] args) {
         String path = "C:\\testmap.osm";
-        path = "D:\\denmark-latest.osm\\denmark-latest.osm";
+        path = "C:\\testmap.osm";
 
-        OsmXmlParser parser = new OsmXmlParserImpl();
-        graphBuilder graphBuilder = new GraphBuilderImpl();
+        OsmXmlParser parser = new OsmXmlParserImpl("C:\\testmap.osm");
+        graphBuilder graphBuilder = new GraphBuilderImpl(parser);
 
+        /*
         List<OsmWay> WayList = parser.parseWays(path);
-        Map<Long, Integer> nodeWayCounter = graphBuilder.CountNodes(WayList);
+        Map<Long, Integer> nodeWayCounter = graphBuilder.countNodes(WayList);
         Map<Long, Node> NodeMap = parser.parseNodes(path, nodeWayCounter);
+        */
     }
 }

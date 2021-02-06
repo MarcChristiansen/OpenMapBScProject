@@ -15,16 +15,14 @@ public interface OsmXmlParser {
 
     /**
      * Parses all ways that are in some way a path
-     * @param fileIn The file path to use
      * @return A list of all ways parsed in a OSM representation
      */
-    public List<OsmWay> parseWays(String fileIn);
+    public List<OsmWay> parseWays();
 
     /**
      * Parses all nodes with a value on their id >1
-     * @param fileIn The file path to use
-     * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in
+     * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in //Todo try and refactor this away
      * @return A map that maps from ids in nodes to the actual node.
      */
-    public Map<Long, Node> parseNodes(String fileIn, Map<Long, Integer> nodeWayCounter);
+    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter);
 }

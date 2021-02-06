@@ -4,5 +4,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface graphBuilder {
-    public Map<Long, Integer> CountNodes(List<OsmWay> WayList);
+
+    public Map<Long, Node> createGraph();
 }
