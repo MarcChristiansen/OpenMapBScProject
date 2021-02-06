@@ -11,7 +11,9 @@ import javax.xml.stream.events.*;
 import java.io.*;
 import java.util.InvalidPropertiesFormatException;
 
-
+/**
+ * Implementation of the OSM xml parser
+ */
 public class OsmXmlParserImpl implements OsmXmlParser {
 
     @Override
