@@ -43,7 +43,7 @@ public class GraphBuilderImpl implements graphBuilder {
                         pathLength += 1; //Todo make method
 
                         Node currNode = wayNodeMap.get(currentNodeId);
-                        Node preNode = wayNodeMap.get(currentNodeId);
+                        Node preNode = wayNodeMap.get(previousNodeId);
 
                         //Add paths to both nodes between intersections or ends.
                         currNode.addPath(new StandardPathImpl(preNode, pathLength));

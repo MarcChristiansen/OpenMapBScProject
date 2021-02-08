@@ -3,7 +3,9 @@ package openmap.standard;
 import openmap.framework.Node;
 import openmap.framework.Path;
 
-public class StandardPathImpl implements Path {
+import java.io.Serializable;
+
+public class StandardPathImpl implements Path, Serializable {
 
     Node destination;
     double weight;
@@ -21,5 +23,13 @@ public class StandardPathImpl implements Path {
     @Override
     public double getWeight() {
         return weight;
+    }
+
+    @Override
+    public String toString() {
+        return "StandardPathImpl{" +
+                "destination=" + destination.getId() +
+                ", weight=" + weight +
+                '}';
     }
 }

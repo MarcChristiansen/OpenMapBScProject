@@ -26,51 +26,55 @@ public class OsmXmlParserImpl implements OsmXmlParser {
     @Override
     public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
         Map<Long, Node> NodeMap = new HashMap<Long, Node>();
+
+        XMLEventReader reader = getReader();
+
         try {
-        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        XMLEventReader reader = null;
+            while (reader.hasNext()) {
+                XMLEvent nextEvent = reader.nextEvent();
+                if (nextEvent.isStartElement()) {
+                    StartElement startElement = nextEvent.asStartElement();
+                    switch (startElement.getName().getLocalPart()) {
+                        case "node":
+                            //Load in necessary attributes
+                            Attribute id = startElement.getAttributeByName(new QName("id"));
+                            Attribute lat = startElement.getAttributeByName(new QName("lat"));
+                            Attribute lon = startElement.getAttributeByName(new QName("lon"));
+                            if(id == null || lat == null || lon == null)
+                            {
+                                throw new XMLStreamException();
+                            }
 
-            reader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileIn));
-
-        while (reader.hasNext()) {
-            XMLEvent nextEvent = reader.nextEvent();
-            if (nextEvent.isStartElement()) {
-                StartElement startElement = nextEvent.asStartElement();
-                switch (startElement.getName().getLocalPart()) {
-                    case "node":
-                        //Load in neccesary attributes
-                        Attribute id = startElement.getAttributeByName(new QName("id"));
-                        Attribute lat = startElement.getAttributeByName(new QName("lat"));
-                        Attribute lon = startElement.getAttributeByName(new QName("lon"));
-                        if(id == null || lat == null || lon == null)
-                        {
-                            throw new XMLStreamException();
-                        }
-
-                        //Check if node is in the nodeWayCounter
-                        long idLong = Long.parseLong(id.getValue());
-                        if(nodeWayCounter.getOrDefault(idLong, 0)>0){
-                            Node node = new NodeImpl(idLong,
-                                    Double.parseDouble(lat.getValue()),
-                                    Double.parseDouble(lon.getValue()));
-                            //add to nodemap
-                            NodeMap.put(idLong, node);
-                        }
-                        break;
-                    case "way":
-                        break;
-                    case "nd":
-                        break;
-                    case "relation":
-                        break;
-                    case "status":
-                        break;
+                            //Check if node is in the nodeWayCounter
+                            long idLong = Long.parseLong(id.getValue());
+                            if(nodeWayCounter.getOrDefault(idLong, 0)>0){
+                                Node node = new NodeImpl(idLong,
+                                        Double.parseDouble(lat.getValue()),
+                                        Double.parseDouble(lon.getValue()));
+                                //add to nodemap
+                                NodeMap.put(idLong, node);
+                            }
+                            break;
+                        case "way":
+                            break;
+                        case "nd":
+                            break;
+                        case "relation":
+                            break;
+                        case "status":
+                            break;
+                    }
                 }
             }
-        }
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
         }
         return NodeMap;
     }
@@ -78,14 +82,15 @@ public class OsmXmlParserImpl implements OsmXmlParser {
     @Override
     public List<OsmWay> parseWays() {
         List<OsmWay> wayList = new ArrayList<OsmWay>();
-        try {
-            XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-            XMLEventReader reader = null;
 
-            reader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileIn));
-            List<Long> nodeRefList = new ArrayList<Long>();
+        XMLEventReader reader = getReader();
+
+
+        List<Long> nodeRefList = new ArrayList<Long>();
             Map<String, String> currentTags = new HashMap<String, String>();
 
+
+        try {
             while (reader.hasNext()) {
                 XMLEvent nextEvent = reader.nextEvent();
                 if (nextEvent.isStartElement()) {
@@ -133,7 +138,28 @@ public class OsmXmlParserImpl implements OsmXmlParser {
 
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
         }
+
         return wayList;
+    }
+
+    private XMLEventReader getReader() {
+        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
+        XMLEventReader reader = null;
+
+        try {
+            reader = xmlInputFactory.createXMLEventReader(new FileInputStream(fileIn));
+        } catch (XMLStreamException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return reader;
     }
 }

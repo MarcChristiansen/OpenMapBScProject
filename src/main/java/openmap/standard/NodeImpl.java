@@ -3,18 +3,23 @@ package openmap.standard;
 import openmap.framework.Node;
 import openmap.framework.Path;
 
+import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class NodeImpl implements Node {
+public class NodeImpl implements Node, Serializable {
 
     private long id;
     private double lat;
     private double lon;
+    private List<Path> pathList;
 
     public NodeImpl(long id, double lat, double lon){
         this.id = id;
         this.lat = lat;
         this.lon = lon;
+        pathList = new ArrayList<>();
+
     }
 
     @Override
@@ -34,11 +39,12 @@ public class NodeImpl implements Node {
 
     @Override
     public List<Path> getPaths() {
-        return null;
+        return pathList; //Todo maybe make read-only?
     }
 
     @Override
     public void addPath(Path path) {
-
+        pathList.add(path);
     }
+
 }
