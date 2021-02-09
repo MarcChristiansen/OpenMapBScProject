@@ -6,6 +6,7 @@ import openmap.framework.Path;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class NodeImpl implements Node, Serializable {
 
@@ -45,6 +46,18 @@ public class NodeImpl implements Node, Serializable {
     @Override
     public void addPath(Path path) {
         pathList.add(path);
+    }
+
+    public void convertPathForSerialization(){
+        pathList.forEach(path -> {
+            path.prepareForSerialization();
+        });
+    }
+
+    public void convertPathDeserialization(Map<Long, Node> nodeMap){
+        pathList.forEach(path -> {
+            path.doDeserialization(nodeMap);
+        });
     }
 
 }

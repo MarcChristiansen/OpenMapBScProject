@@ -4,6 +4,7 @@ import openmap.framework.Node;
 import openmap.framework.OsmXmlParser;
 import openmap.framework.graphBuilder;
 import openmap.standard.GraphBuilderImpl;
+import openmap.standard.NodeImpl;
 import openmap.standard.OsmXmlParserImpl;
 
 import java.io.*;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 public class compileXml {
     public static void main(String[] args) {
-        String path = "D:\\denmark-latest.osm\\denmark-latest.osm";
+        String path = "C:\\denmark-latest.osm";
         //path = "C:\\testmapInter.osm";
 
         OsmXmlParser parser = new OsmXmlParserImpl(path);
@@ -33,6 +34,9 @@ public class compileXml {
 
         //Serialization from https://beginnersbook.com/2013/12/how-to-serialize-hashmap-in-java/
         //We just had to check of Serialization would work.
+
+        for (Map.Entry<Long, Node> entry : graph.entrySet()) {  ((NodeImpl)entry.getValue()).convertPathForSerialization(); }
+
         try
         {
             FileOutputStream fos =
@@ -68,12 +72,16 @@ public class compileXml {
             return;
         }
 
+        System.out.println("Loaded... processing");
+        for (Map.Entry<Long, Node> entry : map.entrySet()) {  ((NodeImpl)entry.getValue()).convertPathDeserialization(map); }
+
         for (Map.Entry<Long, Node> entry : map.entrySet())
         {
             System.out.println("key: " + entry.getKey());
             Node n1 = entry.getValue().getPaths().get(0).getDestination();
             Node n2 = map.get(entry.getValue().getPaths().get(0).getDestination().getId());
-            System.out.println(n1 == n2); //Since this returns true it means references match and we can actually use this. (It does so yay)
+            System.out.println((n1 == n2) +  " " + n1); //Since this returns true it means references match and we can actually use this. (It does so yay)
+            System.out.println("-> " + Arrays.toString(entry.getValue().getPaths().toArray()));
         }
 
     }
