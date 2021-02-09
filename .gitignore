@@ -12,3 +12,4 @@ gradlew.bat
 *.bak
 *.idea
 *.iml
+*.ser
