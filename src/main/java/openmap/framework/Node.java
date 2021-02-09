@@ -1,6 +1,7 @@
 package openmap.framework;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Interface for nodes in a graph representing a road network.
@@ -39,5 +40,16 @@ public interface Node {
      * @param path
      */
     public void addPath(Path path);
+
+    /**
+     * Ensure all paths are ready to be serialized
+     */
+    public void convertPathForSerialization();
+
+    /**
+     * Deserialize paths to ensure they point to the correct nodes
+     * @param nodeMap The map of all nodes. Used to get references to nodes from their ids.
+     */
+    public void convertPathDeserialization(Map<Long, Node> nodeMap);
 
 }

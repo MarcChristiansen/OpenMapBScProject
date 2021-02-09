@@ -13,4 +13,9 @@ public interface Graph {
     public Map<Long, Node> getNodeMap();
 
     public Bounds getBounds();
+
+    public void prepareForSerialization();
+
+    public void doDeserialization();
+
 }
