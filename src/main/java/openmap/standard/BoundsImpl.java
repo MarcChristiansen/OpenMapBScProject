@@ -1,6 +1,8 @@
 package openmap.standard;
 
-public class BoundsImpl {
+import java.io.Serializable;
+
+public class BoundsImpl implements Serializable {
     double minLat, minLon, maxLat, maxLon;
 
     public BoundsImpl(double minLat, double minLon, double maxLat, double maxLon) {
