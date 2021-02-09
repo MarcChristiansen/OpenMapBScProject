@@ -8,8 +8,8 @@ import java.util.Map;
  * Used to parse the OSM xml into the format used by the graph.
  *
  * @author Kristoffer Villadsen and Marc Christiansen
- * @version 1.0
- * @since 06-02-2021
+ * @version 1.1
+ * @since 09-02-2021
  */
 public interface OsmXmlParser {
 
@@ -25,4 +25,10 @@ public interface OsmXmlParser {
      * @return A map that maps from ids in nodes to the actual node.
      */
     public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter);
+
+    /**
+     * Parse the bounds of the given OSM file into a bounds object
+     * @return a bounds object holding the bounds of the graph.
+     */
+    public Bounds parseBounds();
 }

@@ -5,5 +5,5 @@ import java.util.Map;
 
 public interface graphBuilder {
 
-    public Map<Long, Node> createGraph();
+    public Graph createGraph();
 }

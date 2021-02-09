@@ -1,9 +1,6 @@
 package openmap.standard;
 
-import openmap.framework.Node;
-import openmap.framework.OsmWay;
-import openmap.framework.OsmXmlParser;
-import openmap.framework.graphBuilder;
+import openmap.framework.*;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,10 +15,11 @@ public class GraphBuilderImpl implements graphBuilder {
     }
 
     @Override
-    public Map<Long, Node> createGraph() {
+    public Graph createGraph() {
         List<OsmWay> wayList = parser.parseWays();
         Map<Long, Integer> nodeWayCounter = countNodes(wayList);
         Map<Long, Node> wayNodeMap = parser.parseNodes(nodeWayCounter);
+        Bounds bounds = parser.parseBounds();
 
         //Create the Map that will only contain intersections and endings. Empty at first
         Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
@@ -68,7 +66,7 @@ public class GraphBuilderImpl implements graphBuilder {
             }
         });
 
-        return finalNodeMap;
+        return new GraphImpl(finalNodeMap, bounds);
     }
 
     /**

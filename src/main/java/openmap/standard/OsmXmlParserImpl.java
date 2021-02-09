@@ -1,5 +1,6 @@
 package openmap.standard;
 
+import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.OsmWay;
 import openmap.framework.OsmXmlParser;
@@ -77,6 +78,60 @@ public class OsmXmlParserImpl implements OsmXmlParser {
             }
         }
         return NodeMap;
+    }
+
+    @Override
+    public Bounds parseBounds() {
+        Bounds bounds = null;
+
+        XMLEventReader reader = getReader();
+
+
+        //List<Long> nodeRefList = new ArrayList<Long>();
+        //Map<String, String> currentTags = new HashMap<String, String>();
+
+
+        try {
+            while (reader.hasNext()) {
+                XMLEvent nextEvent = reader.nextEvent();
+                if (nextEvent.isStartElement()) {
+                    StartElement startElement = nextEvent.asStartElement();
+                    switch (startElement.getName().getLocalPart()) {
+                        case "bounds":
+                            Attribute minLat = startElement.getAttributeByName(new QName("minlat"));
+                            Attribute minLon = startElement.getAttributeByName(new QName("minlon"));
+                            Attribute maxLat = startElement.getAttributeByName(new QName("maxlat"));
+                            Attribute maxLon = startElement.getAttributeByName(new QName("maxlon"));
+                            if(minLat == null || minLon == null || maxLat == null || maxLon == null)
+                            {
+                                throw new XMLStreamException();
+                            }
+
+                            //Check if node is in the nodeWayCounter
+                            bounds = new BoundsImpl(
+                                    Double.parseDouble(minLat.getValue()),
+                                    Double.parseDouble(minLon.getValue()),
+                                    Double.parseDouble(maxLat.getValue()),
+                                    Double.parseDouble(maxLon.getValue())
+                            );
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                reader.close();
+            } catch (XMLStreamException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return bounds;
     }
 
     @Override
