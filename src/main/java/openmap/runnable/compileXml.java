@@ -1,5 +1,6 @@
 package openmap.runnable;
 
+import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.OsmXmlParser;
 import openmap.framework.graphBuilder;
@@ -20,7 +21,7 @@ public class compileXml {
         OsmXmlParser parser = new OsmXmlParserImpl(path);
         graphBuilder graphBuilder = new GraphBuilderImpl(parser);
 
-        Map<Long, Node> graph = graphBuilder.createGraph();
+        Graph graph = graphBuilder.createGraph();
 
         for (Map.Entry<Long, Node> entry : graph.entrySet())
         {
