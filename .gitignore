@@ -13,3 +13,7 @@ gradlew.bat
 *.idea
 *.iml
 *.ser
+*.osm
+
+#We might want small osm files for testing to be on git
+!test/java/resources

@@ -8,16 +8,18 @@ import openmap.standard.GraphBuilderImpl;
 import openmap.standard.GraphImpl;
 import openmap.standard.NodeImpl;
 import openmap.standard.OsmXmlParserImpl;
+import openmap.utility.XMLUtility;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-public class compileXml {
+public class compileXmlTest {
     public static void main(String[] args) {
         String path = "C:\\denmark-latest.osm";
-        path = "C:\\testmapInter.osm";
+        path = "C:\\motorwayTest.osm";
+        //path = "C:\\testmapInter.osm";
 
         OsmXmlParser parser = new OsmXmlParserImpl(path);
         graphBuilder graphBuilder = new GraphBuilderImpl(parser);
@@ -31,21 +33,13 @@ public class compileXml {
             System.out.println("-> " + Arrays.toString(entry.getValue().getPaths().toArray()));
         }
 
-
         //Serialization from https://beginnersbook.com/2013/12/how-to-serialize-hashmap-in-java/
         //We just had to check of Serialization would work.
 
-        graph.prepareForSerialization();
 
         try
         {
-            FileOutputStream fos =
-                    new FileOutputStream("hashmap.ser");
-            ObjectOutputStream oos = new ObjectOutputStream(fos);
-            oos.writeObject(graph);
-            oos.close();
-            fos.close();
-            System.out.println("Serialized HashMap data is saved in hashmap.ser");
+            XMLUtility.createSerializedGraph(graph, "hashmap.ser");
 
         }catch(Exception ioe)
         {
@@ -56,11 +50,7 @@ public class compileXml {
         Graph map = null;
         try
         {
-            FileInputStream fis = new FileInputStream("hashmap.ser");
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            map = (GraphImpl) ois.readObject();
-            ois.close();
-            fis.close();
+            map = XMLUtility.loadGraph("hashmap.ser");
         }catch(IOException ioe)
         {
             ioe.printStackTrace();
@@ -72,16 +62,9 @@ public class compileXml {
             return;
         }
 
-        System.out.println("Loaded... processing");
-        map.doDeserialization();
-
-
         for (Map.Entry<Long, Node> entry : map.getNodeMap().entrySet())
         {
             System.out.println("key: " + entry.getKey());
-            Node n1 = entry.getValue().getPaths().get(0).getDestination();
-            Node n2 = map.getNodeMap().get(entry.getValue().getPaths().get(0).getDestination().getId());
-            System.out.println((n1 == n2) +  " " + n1); //Since this returns true it means references match and we can actually use this.
             System.out.println("-> " + Arrays.toString(entry.getValue().getPaths().toArray()));
         }
 

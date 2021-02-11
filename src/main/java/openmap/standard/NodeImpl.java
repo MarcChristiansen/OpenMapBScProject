@@ -2,6 +2,8 @@ package openmap.standard;
 
 import openmap.framework.Node;
 import openmap.framework.Path;
+import openmap.utility.CoordinateUtility;
+import org.locationtech.jts.geom.Coordinate;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -11,14 +13,17 @@ import java.util.Map;
 public class NodeImpl implements Node, Serializable {
 
     private long id;
-    private double lat;
-    private double lon;
+
+    Coordinate coordinate;
     private List<Path> pathList;
 
     public NodeImpl(long id, double lat, double lon){
         this.id = id;
-        this.lat = lat;
-        this.lon = lon;
+
+        coordinate = new Coordinate(lat, lon);
+
+        coordinate = CoordinateUtility.CoordinateConversion.latLonToUtm32N(coordinate);
+
         pathList = new ArrayList<>();
 
     }
@@ -29,14 +34,16 @@ public class NodeImpl implements Node, Serializable {
     }
 
     @Override
-    public double getLat() {
-        return lat;
-    }
+    public double getLat() { return CoordinateUtility.CoordinateConversion.utm32NToLatLon(coordinate).x; }
 
     @Override
-    public double getLon() {
-        return lon;
-    }
+    public double getLon() { return CoordinateUtility.CoordinateConversion.utm32NToLatLon(coordinate).y; }
+
+    @Override
+    public double getX() { return coordinate.x; }
+
+    @Override
+    public double getY() { return coordinate.y; }
 
     @Override
     public List<Path> getPaths() {

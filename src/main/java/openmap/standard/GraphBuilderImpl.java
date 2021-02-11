@@ -24,8 +24,8 @@ public class GraphBuilderImpl implements graphBuilder {
         //Create the Map that will only contain intersections and endings. Empty at first
         Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
 
-        wayList.forEach(Way -> {
-            List<Long> tempList = Way.getNodeIdList();
+        wayList.forEach(way -> {
+            List<Long> tempList = way.getNodeIdList();
 
             double pathLength = 0;
 
@@ -36,16 +36,40 @@ public class GraphBuilderImpl implements graphBuilder {
                 //Since we load all nodes in path we do not need default.
                 int nodeWays = nodeWayCounter.get(currentNodeId);
 
+                if(i != 0){
+                    pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
+                }
+
                 if (nodeWays > 1 || i == 0 || i == tempList.size()-1){
                     if(previousNodeId != -1){
-                        pathLength += 1; //Todo make method
 
                         Node currNode = wayNodeMap.get(currentNodeId);
                         Node preNode = wayNodeMap.get(previousNodeId);
 
+                        String oneway = way.getTags().getOrDefault("oneway", "false");
+                        String highway = way.getTags().getOrDefault("highway", "false");
+                        String junction = way.getTags().getOrDefault("junction", "false");
+
+                        boolean isOneway = oneway.equals("yes") || //Check if way is oneway or if it is implicit given a highway or roundabout
+                                oneway.equals("true") ||
+                                oneway.equals("1") ||
+                                highway.equals("motorway") ||
+                                junction.equals("roundabout");
+
+                        boolean isReverseOneway = oneway.equals("-1") ||
+                                oneway.equals("reverse");
+
                         //Add paths to both nodes between intersections or ends.
-                        currNode.addPath(new StandardPathImpl(preNode, pathLength));
-                        preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                        if(isOneway){
+                            preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                        }
+                        else if(isReverseOneway){
+                            currNode.addPath(new StandardPathImpl(preNode, pathLength));
+                        }
+                        else {
+                            currNode.addPath(new StandardPathImpl(preNode, pathLength));
+                            preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                        }
 
                         finalNodeMap.put(currentNodeId, currNode);
                         finalNodeMap.put(previousNodeId, preNode);
@@ -67,6 +91,10 @@ public class GraphBuilderImpl implements graphBuilder {
         });
 
         return new GraphImpl(finalNodeMap, bounds);
+    }
+
+    private double getDistanceBetweenNodes(Node n1, Node n2){
+        return Math.sqrt(Math.pow(n1.getX()-n2.getX(), 2) + Math.pow(n1.getY()-n2.getY(), 2));
     }
 
     /**

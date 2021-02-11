@@ -30,6 +30,18 @@ public interface Node {
     public double getLon();
 
     /**
+     * Returns the X projection for this node
+     * @return X projection of the node
+     */
+    public double getX();
+
+    /**
+     * Returns the Y projection for this node
+     * @return Y projection of the node
+     */
+    public double getY();
+
+    /**
      * Returns a list of the paths starting from this node
      * @return list of the paths starting from this node
      */

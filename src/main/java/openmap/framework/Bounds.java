@@ -9,8 +9,12 @@ package openmap.framework;
 public interface Bounds {
     public double getMinLat();
     public double getMaxLat();
-
     public double getMinLon();
     public double getMaxLon();
+
+    public double getMinX();
+    public double getMaxX();
+    public double getMinY();
+    public double getMaxY();
 
 }
