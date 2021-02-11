@@ -83,9 +83,6 @@ public class GraphBuilderImpl implements graphBuilder {
                         previousNodeId = currentNodeId;
                     }
                 }
-                else {
-                    pathLength += 1; //Todo make method
-                }
 
             }
         });
