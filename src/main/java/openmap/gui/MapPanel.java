@@ -36,8 +36,12 @@ class MapPanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.black));
 
         //Set initial graphics location
-        panX = -(graph.getBounds().getMaxX()-graph.getBounds().getMinX());
+        panX = 0;
         panY = -(graph.getBounds().getMaxY()-graph.getBounds().getMinY());
+
+        zoomFactor = (double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY());
+        if(zoomFactor > 1) { zoomFactor = 1; }
+
 
         MouseAdapter ma = new MouseAdapter() {
             private Point origPoint;
@@ -113,7 +117,7 @@ class MapPanel extends JPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(250,200);
+        return new Dimension(1600, 900);
     }
 
     @Override
@@ -122,10 +126,6 @@ class MapPanel extends JPanel {
         super.paintComponent(gg);
         Graphics2D g = (Graphics2D) gg;
         AffineTransform matrix = g.getTransform(); // Backup
-
-
-
-
 
         //Zoom related stuff and Panning stuff
         AffineTransform at = new AffineTransform();
@@ -185,7 +185,7 @@ class MapPanel extends JPanel {
             }*/
         }
 
-        System.out.println("(panX: " + panX + ", " + "panY" + panY + ")");
+        System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor);
 
         g.setTransform(matrix); // Restore
 

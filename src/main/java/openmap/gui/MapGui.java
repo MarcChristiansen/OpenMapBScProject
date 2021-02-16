@@ -34,7 +34,7 @@ class MapGui{
 
         //Make the center component big, since that's the map
         JPanel myPanel = new MapPanel(graph);
-        myPanel.setPreferredSize(new Dimension(200, 100));
+        myPanel.setPreferredSize(new Dimension(800, 400));
         pane.add(myPanel, BorderLayout.CENTER);
 
         button = new JButton("Button 3 (LINE_START)");
@@ -51,6 +51,7 @@ class MapGui{
 
         //Create and set up the window.
         JFrame frame = new JFrame("Map");
+        frame.setPreferredSize(new Dimension(1920, 1080));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Set up the content pane.
