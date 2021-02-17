@@ -1,5 +1,6 @@
 package openmap.gui;
 
+import openmap.framework.Bounds;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.Path;
@@ -17,14 +18,21 @@ import java.util.Map;
 class MapPanel extends JPanel {
 
     private final int nodeRadius = 5; //Node radius at default zoom or below
-    private double panSpeed = 1;
+    private final double panSpeed = 1;
     private double zoomFactor = 1;
     private Graph graph;
     private double panX;
     private double panY;
 
-    public int getScaledNodeRadius() {
+    //Drawing optimization when zooming out
+    private final double nodeRatioFactor = 0.1; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
+    private final double maxNodesToSkip = 1000; //Controls the max amount of nodes we want to skip when drawing. //TODO make this dynamic in a way that makes sense
 
+    /***
+     * Scale the node drawing size depending on the zoom factor
+     * @return A scaled node drawing size
+     */
+    public int getScaledNodeRadius() {
         if(zoomFactor >= 1) {
             return nodeRadius;
         }
@@ -36,8 +44,9 @@ class MapPanel extends JPanel {
         setBorder(BorderFactory.createLineBorder(Color.black));
 
         //Set initial graphics location
-        panX = 0;
-        panY = -(graph.getBounds().getMaxY()-graph.getBounds().getMinY());
+        panX = graph.getBounds().getMinX();
+        panY = graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY());
+        //
 
         zoomFactor = (double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY());
         if(zoomFactor > 1) { zoomFactor = 1; }
@@ -55,7 +64,7 @@ class MapPanel extends JPanel {
             public void mouseDragged(MouseEvent e) {
                 if (origPoint != null) {
                     int deltaX = origPoint.x - e.getX();
-                    int deltaY = origPoint.y - e.getY();
+                    int deltaY = -origPoint.y + e.getY();
 
                     panX += deltaX*panSpeed/getZoomFactor();
                     panY += deltaY*panSpeed/getZoomFactor();
@@ -131,61 +140,65 @@ class MapPanel extends JPanel {
         AffineTransform at = new AffineTransform();
         at.scale(zoomFactor, zoomFactor);
 
-        at.translate(-panX, -panY);
+        at.translate(-panX, panY);
 
         g.transform(at);
         g.scale(1,-1);
-        g.translate(0,getHeight());
+        g.translate(0,0);
 
 
         //Rotation stuff
 
         g.setColor(Color.RED);
 
-        int tempCounter = 0;
-
-        drawCircle(g,10 , 10, getScaledNodeRadius());
+        int nodeSkipCounter = 0;
 
         for (Map.Entry<Long, Node> entry : graph.getNodeMap().entrySet())
         {
-            tempCounter += 1;
-
-            if(tempCounter == 1000){
-
             Node node = entry.getValue();
 
-            g.setColor(Color.RED);
-            int x = (int) ((node.getX() - graph.getBounds().getMinX()));
-            int y = (int) ((node.getY() - graph.getBounds().getMinY()));
-            //System.out.println(graph.getBounds().getMinX());
-            //System.out.println(graph.getBounds().getMinY());
-            //System.out.println("(x: " + x + ", y: " + y + ")" + "(lat: " + node.getLat() + ", lon: " + node.getLon() + ")");
-            drawCircle(g,x , y, getScaledNodeRadius());
+            nodeSkipCounter += 1;
 
-            /*g.drawLine((int)(0),
-                    (int)(0),
-                    (int)(x),
-                    (int)(y));*/
+            double drawingFactor = nodeRatioFactor/zoomFactor;
 
-            //System.out.println(x + " " + y);
+            boolean isVisible = panX <= node.getX() && node.getX() <= (panX+(getWidth()/zoomFactor)) &&
+                                panY >= node.getY() && node.getY() >= (panY-(getHeight()/zoomFactor));
 
-            g.setColor(Color.BLACK);
-            tempCounter = 0;
+            boolean shouldDrawNode = isVisible &&
+                                     (drawingFactor <= 1 ||
+                                     nodeSkipCounter >= drawingFactor * 20 || //TODO REMOVE MAGIC CONSTANT 20
+                                     nodeSkipCounter >= maxNodesToSkip) ;
+
+            if(shouldDrawNode){
+
+
+                g.setColor(Color.RED);
+                int x = (int) ((node.getX()));
+                int y = (int) ((node.getY()));
+
+                drawCircle(g,x , y, getScaledNodeRadius());
+                //System.out.println(graph.getBounds().getMinX());
+                //System.out.println(graph.getBounds().getMinY());
+                //System.out.println("(x: " + x + ", y: " + y + ")" + "(lat: " + node.getLat() + ", lon: " + node.getLon() + ")");
+                //System.out.println(x + " " + y);
+
+                nodeSkipCounter = 0;
+
+                //Road drawing
+                if(zoomFactor >= nodeRatioFactor){
+                    g.setColor(Color.BLACK);
+                    for (Path p : node.getPaths()) {
+                        g.drawLine((int)(node.getX()),
+                                (int)(node.getY()),
+                                (int)(p.getDestination().getX()),
+                                (int)(p.getDestination().getY()));
+                    }
+                }
             }
 
-
-
-
-            /*
-            for (Path p : node.getPaths()) {
-                g.drawLine((int)(node.getX() - graph.getBounds().getMinX()),
-                            (int)(node.getY() - graph.getBounds().getMinY()),
-                            (int)(p.getDestination().getX() - graph.getBounds().getMinX()),
-                            (int)(p.getDestination().getY() - graph.getBounds().getMinY()));
-            }*/
         }
 
-        System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor);
+        System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
 
         g.setTransform(matrix); // Restore
 
