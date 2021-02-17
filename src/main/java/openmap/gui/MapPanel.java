@@ -14,6 +14,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.util.Map;
+import java.util.List;
 
 class MapPanel extends JPanel {
 
@@ -27,6 +28,8 @@ class MapPanel extends JPanel {
     //Drawing optimization when zooming out
     private final double nodeRatioFactor = 0.1; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
     private final double maxNodesToSkip = 1000; //Controls the max amount of nodes we want to skip when drawing. //TODO make this dynamic in a way that makes sense
+
+    private List<Long> highlightedNodeList;
 
     /***
      * Scale the node drawing size depending on the zoom factor
@@ -95,7 +98,11 @@ class MapPanel extends JPanel {
 
     }
 
-    public double getZoomFactor() {
+    public void setHighlightedPath(List<Long> nodeList){
+        highlightedNodeList = nodeList;
+    }
+
+    private double getZoomFactor() {
         return zoomFactor;
     }
 
@@ -124,6 +131,7 @@ class MapPanel extends JPanel {
 
     }
 
+
     @Override
     public Dimension getPreferredSize() {
         return new Dimension(1600, 900);
@@ -143,8 +151,8 @@ class MapPanel extends JPanel {
         at.translate(-panX, panY);
 
         g.transform(at);
-        g.scale(1,-1);
-        g.translate(0,0);
+        g.scale(1, -1);
+        g.translate(0, 0);
 
 
         //Rotation stuff
@@ -153,49 +161,61 @@ class MapPanel extends JPanel {
 
         int nodeSkipCounter = 0;
 
-        for (Map.Entry<Long, Node> entry : graph.getNodeMap().entrySet())
-        {
+        for (Map.Entry<Long, Node> entry : graph.getNodeMap().entrySet()) {
             Node node = entry.getValue();
 
             nodeSkipCounter += 1;
 
-            double drawingFactor = nodeRatioFactor/zoomFactor;
-
-            boolean isVisible = panX <= node.getX() && node.getX() <= (panX+(getWidth()/zoomFactor)) &&
-                                panY >= node.getY() && node.getY() >= (panY-(getHeight()/zoomFactor));
+            double drawingFactor = nodeRatioFactor / zoomFactor;
+            boolean isVisible = panX <= node.getX() && node.getX() <= (panX + (getWidth() / zoomFactor)) &&
+                    panY >= node.getY() && node.getY() >= (panY - (getHeight() / zoomFactor));
 
             boolean shouldDrawNode = isVisible &&
-                                     (drawingFactor <= 1 ||
-                                     nodeSkipCounter >= drawingFactor * 20 || //TODO REMOVE MAGIC CONSTANT 20
-                                     nodeSkipCounter >= maxNodesToSkip) ;
+                    (drawingFactor <= 1 ||
+                            nodeSkipCounter >= drawingFactor * 20 || //TODO REMOVE MAGIC CONSTANT 20
+                            nodeSkipCounter >= maxNodesToSkip);
 
-            if(shouldDrawNode){
+            if (shouldDrawNode) {
 
 
                 g.setColor(Color.RED);
                 int x = (int) ((node.getX()));
                 int y = (int) ((node.getY()));
 
-                drawCircle(g,x , y, getScaledNodeRadius());
-                //System.out.println(graph.getBounds().getMinX());
-                //System.out.println(graph.getBounds().getMinY());
-                //System.out.println("(x: " + x + ", y: " + y + ")" + "(lat: " + node.getLat() + ", lon: " + node.getLon() + ")");
-                //System.out.println(x + " " + y);
-
+                drawCircle(g, x, y, getScaledNodeRadius());
                 nodeSkipCounter = 0;
 
                 //Road drawing
-                if(zoomFactor >= nodeRatioFactor){
+                if (zoomFactor >= nodeRatioFactor) {
                     g.setColor(Color.BLACK);
                     for (Path p : node.getPaths()) {
-                        g.drawLine((int)(node.getX()),
-                                (int)(node.getY()),
-                                (int)(p.getDestination().getX()),
-                                (int)(p.getDestination().getY()));
+                        g.drawLine((int) (node.getX()), (int) (node.getY()),
+                                (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
                     }
                 }
             }
 
+        }
+
+        //Draw highlighted path
+
+
+        if (highlightedNodeList != null){
+                Node lastNode = null;
+            for (Long nl : highlightedNodeList) {
+                Node currentNode = graph.getNodeMap().get(nl);
+                g.setColor(Color.CYAN);
+                drawCircle(g, (int) currentNode.getX(), (int) currentNode.getY(), getScaledNodeRadius());
+
+                g.setColor(Color.BLUE);
+                if (lastNode != null) {
+                    g.drawLine((int) (currentNode.getX()),
+                            (int) (currentNode.getY()),
+                            (int) (lastNode.getX()),
+                            (int) (lastNode.getY()));
+                }
+                lastNode = currentNode;
+            }
         }
 
         System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
