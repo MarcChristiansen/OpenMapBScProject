@@ -1,5 +1,6 @@
 package openmap.standard;
 
+import openmap.JsonParsing.JsonGraphConstants;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.utility.CoordinateUtility;
@@ -13,11 +14,6 @@ import java.util.List;
 import java.util.Map;
 
 public class NodeImpl implements Node, Serializable {
-
-    private static final String  jX = "x";
-    private static final String  jY = "y";
-    private static final String  jId = "id";
-    private static final String  jPaths = "p";
 
     private long id;
 
@@ -43,11 +39,11 @@ public class NodeImpl implements Node, Serializable {
     }
 
     public NodeImpl(JSONObject obj){
-        this.id = (Long)obj.get(jId);
-        this.coordinate = new Coordinate((Double)obj.get(jX), (Double)obj.get(jY));
+        this.id = (Long)obj.get(JsonGraphConstants.NodeId);
+        this.coordinate = new Coordinate((Double)obj.get(JsonGraphConstants.NodeX), (Double)obj.get(JsonGraphConstants.NodeY));
         this.pathList = new ArrayList<>();
 
-        JSONArray pArray = (JSONArray)obj.get(jPaths);
+        JSONArray pArray = (JSONArray)obj.get(JsonGraphConstants.NodePath);
 
         this.pathList = new ArrayList<>();
 
@@ -100,16 +96,16 @@ public class NodeImpl implements Node, Serializable {
     @Override
     public JSONObject getJSONObject() {
         JSONObject obj = new JSONObject();
-        obj.put(jId, id);
-        obj.put(jX, coordinate.x);
-        obj.put(jY, coordinate.y);
+        obj.put(JsonGraphConstants.NodeId, id);
+        obj.put(JsonGraphConstants.NodeX, coordinate.x);
+        obj.put(JsonGraphConstants.NodeY, coordinate.y);
 
         JSONArray jArray = new JSONArray();
         for (Path p : pathList) {
             jArray.add(p.getJSONObject());
         }
 
-        obj.put(jPaths, jArray);
+        obj.put(JsonGraphConstants.NodePath, jArray);
 
         return obj;
     }

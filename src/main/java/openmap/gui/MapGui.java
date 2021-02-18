@@ -1,13 +1,10 @@
 package openmap.gui;
 
 import openmap.framework.Graph;
-import openmap.utility.XMLUtility;
+import openmap.JsonParsing.DiskUtility;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 class MapGui{
     public static void main(String args[]){
@@ -27,7 +24,7 @@ class MapGui{
 
         Graph graph = null;
         try {
-            graph = XMLUtility.loadJsonGraph("mapUnOp.json");
+            graph = DiskUtility.loadJsonGraph("mapUnOp.json");
         }
         catch (Exception e){
             e.printStackTrace();

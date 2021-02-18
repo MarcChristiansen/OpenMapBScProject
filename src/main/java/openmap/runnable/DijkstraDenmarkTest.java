@@ -4,7 +4,7 @@ import openmap.framework.*;
 import openmap.standard.DijkstraImpl;
 import openmap.standard.GraphBuilderImpl;
 import openmap.standard.OsmXmlParserImpl;
-import openmap.utility.XMLUtility;
+import openmap.JsonParsing.DiskUtility;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -36,7 +36,7 @@ public class DijkstraDenmarkTest {
 
         try
         {
-            XMLUtility.createSerializedGraph(graph, "hashmap.ser");
+            DiskUtility.createSerializedGraph(graph, "hashmap.ser");
 
         }catch(Exception ioe)
         {
@@ -47,7 +47,7 @@ public class DijkstraDenmarkTest {
         Graph map = null;
         try
         {
-            map = XMLUtility.loadGraph("hashmap.ser");
+            map = DiskUtility.loadGraph("hashmap.ser");
         }catch(IOException ioe)
         {
             ioe.printStackTrace();
