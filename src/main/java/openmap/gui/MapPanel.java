@@ -205,10 +205,11 @@ class MapPanel extends JPanel {
                 Node lastNode = null;
             for (Long nl : highlightedNodeList) {
                 Node currentNode = graph.getNodeMap().get(nl);
-                g.setColor(Color.CYAN);
-                drawCircle(g, (int) currentNode.getX(), (int) currentNode.getY(), getScaledNodeRadius());
+                //g.setColor(Color.CYAN);
+                //drawCircle(g, (int) currentNode.getX(), (int) currentNode.getY(), getScaledNodeRadius());
 
-                g.setColor(Color.BLUE);
+                g.setColor(Color.RED);
+                g.setStroke(new BasicStroke(6f));
                 if (lastNode != null) {
                     g.drawLine((int) (currentNode.getX()),
                             (int) (currentNode.getY()),

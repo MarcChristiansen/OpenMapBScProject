@@ -1,6 +1,8 @@
 package openmap.gui;
 
 import openmap.framework.Graph;
+import openmap.framework.pathFinder;
+import openmap.standard.DijkstraImpl;
 import openmap.utility.XMLUtility;
 
 import javax.swing.*;
@@ -8,6 +10,7 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 class MapGui{
     public static void main(String args[]){
@@ -27,7 +30,7 @@ class MapGui{
 
         Graph graph = null;
         try {
-            graph = XMLUtility.loadJsonGraph("mapUnOp.json");
+            graph = XMLUtility.loadJsonGraph("map.json");
         }
         catch (Exception e){
             e.printStackTrace();
@@ -50,6 +53,12 @@ class MapGui{
 
         button = new JButton("5 (LINE_END)");
         pane.add(button, BorderLayout.LINE_END);
+
+        //Draw a path using dijkstra
+        pathFinder pf = new DijkstraImpl(graph);
+
+        List<Long> shortPath = pf.getShortestPath(5981056648L, 4689225871L);
+        ((MapPanel)myPanel).setHighlightedPath(shortPath);
     }
 
     private static void createAndShowGUI() {
