@@ -127,6 +127,7 @@ class MapPanel extends JPanel {
         int diameter = radius * 2;
 
         //Center correctly
+        //g.fillRect(x,y, radius, radius); //TODO REMOVE
         g.fillOval(x - radius, y - radius, diameter, diameter);
 
     }
@@ -157,7 +158,7 @@ class MapPanel extends JPanel {
 
         //Rotation stuff
 
-        g.setColor(Color.RED);
+        g.setColor(Color.GREEN);
 
         int nodeSkipCounter = 0;
 

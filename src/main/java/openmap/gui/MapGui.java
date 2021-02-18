@@ -27,7 +27,7 @@ class MapGui{
 
         Graph graph = null;
         try {
-            graph = XMLUtility.loadGraph("hashmaptest.ser");
+            graph = XMLUtility.loadGraph("hashmap.ser");
         }
         catch (Exception e){
             e.printStackTrace();

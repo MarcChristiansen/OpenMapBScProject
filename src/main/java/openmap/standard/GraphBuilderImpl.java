@@ -9,9 +9,25 @@ import java.util.Map;
 public class GraphBuilderImpl implements graphBuilder {
 
     OsmXmlParser parser;
+    boolean shouldRefitBorders = true;
 
     public GraphBuilderImpl(OsmXmlParser osmParser) {
         this.parser = osmParser;
+    }
+
+    private void ensureBounds(Bounds bounds, Node node){
+        if(node.getX() >= bounds.getMaxX()){
+            bounds.setMaxX(node.getX());
+        }
+        if(node.getX() <= bounds.getMinX()){
+            bounds.setMinX(node.getX());
+        }
+        if(node.getY() >= bounds.getMaxY()){
+            bounds.setMaxY(node.getY());
+        }
+        if(node.getY() <= bounds.getMinY()){
+            bounds.setMinY(node.getY());
+        }
     }
 
     @Override
@@ -20,6 +36,7 @@ public class GraphBuilderImpl implements graphBuilder {
         Map<Long, Integer> nodeWayCounter = countNodes(wayList);
         Map<Long, Node> wayNodeMap = parser.parseNodes(nodeWayCounter);
         Bounds bounds = parser.parseBounds();
+
 
         //Create the Map that will only contain intersections and endings. Empty at first
         Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
@@ -41,7 +58,10 @@ public class GraphBuilderImpl implements graphBuilder {
                 }
 
                 if (nodeWays > 1 || i == 0 || i == tempList.size()-1){
+                    if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
+
                     if(previousNodeId != -1){
+
 
                         Node currNode = wayNodeMap.get(currentNodeId);
                         Node preNode = wayNodeMap.get(previousNodeId);
@@ -106,6 +126,23 @@ public class GraphBuilderImpl implements graphBuilder {
         });
         return nodeWayCounter;
     }
+
+    /**
+     * Check if borders are refit, default = true
+     * @return True or false depending on setting
+     */
+    public boolean ShouldRefitBorders() {
+        return shouldRefitBorders;
+    }
+
+    /**
+     * Set if borders should be extended to ensure all nodes are in the given bounds
+     * @param shouldRefitBorders Boolean true or false
+     */
+    public void setShouldRefitBorders(boolean shouldRefitBorders) {
+        this.shouldRefitBorders = shouldRefitBorders;
+    }
+
 
 
 }

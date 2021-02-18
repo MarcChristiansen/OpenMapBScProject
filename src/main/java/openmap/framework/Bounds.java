@@ -17,4 +17,9 @@ public interface Bounds {
     public double getMinY();
     public double getMaxY();
 
+    public void setMinX(double v);
+    public void setMaxX(double v);
+    public void setMinY(double v);
+    public void setMaxY(double v);
+
 }

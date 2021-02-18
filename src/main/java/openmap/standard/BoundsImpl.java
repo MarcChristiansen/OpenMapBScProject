@@ -53,4 +53,26 @@ public class BoundsImpl implements Bounds, Serializable {
     public double getMaxY() {
         return maxCoordinate.y;
     }
+
+    @Override
+    public void setMinX(double v) {
+        minCoordinate.x = v;
+    }
+
+    @Override
+    public void setMaxX(double v) {
+        maxCoordinate.x = v;
+    }
+
+    @Override
+    public void setMinY(double v) {
+        minCoordinate.y = v;
+    }
+
+    @Override
+    public void setMaxY(double v) {
+        maxCoordinate.y = v;
+    }
+
+
 }
