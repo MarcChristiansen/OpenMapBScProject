@@ -14,8 +14,8 @@ public class CoordinateUtility {
         public static Coordinate latLonToUtm32N(Coordinate coordinate) {
             Coordinate resCord = new Coordinate(0,0);
             try {
-                //EPSG:4326 is lon/lat, EPSG:32632 is x, y
-                MathTransform transform = CRS.findMathTransform(CRS.decode("EPSG:4326"), CRS.decode("EPSG:32632"), false);
+                //EPSG:4326 is lat/lon //TODO CONFIRM THIS <-,  is x, y
+                MathTransform transform = CRS.findMathTransform(CRS.decode("EPSG:4326"), CRS.decode("EPSG:25832"), false);
 
                 JTS.transform(coordinate, resCord, transform);
             } catch (Exception e) {
@@ -27,8 +27,8 @@ public class CoordinateUtility {
         public static Coordinate utm32NToLatLon(Coordinate coordinate) {
             Coordinate resCord = new Coordinate(0,0);
             try {
-                //EPSG:4326 is lon/lat, EPSG:32632 is x, y
-                MathTransform transform = CRS.findMathTransform(CRS.decode("EPSG:32632"), CRS.decode("EPSG:4326"), false);
+                //EPSG:4326 is lat/lon, EPSG:32632 is x, y
+                MathTransform transform = CRS.findMathTransform(CRS.decode("EPSG:25832"), CRS.decode("EPSG:4326"), false);
 
                 JTS.transform(coordinate, resCord, transform);
             } catch (Exception e) {

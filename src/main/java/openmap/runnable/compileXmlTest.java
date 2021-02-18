@@ -18,8 +18,8 @@ import java.util.Map;
 public class compileXmlTest {
     public static void main(String[] args) {
         String path = "C:\\denmark-latest.osm";
-        path = "C:\\motorwayTest.osm";
-        //path = "C:\\testmapInter.osm";
+        //path = "C:\\motorwayTest.osm";
+        path = "C:\\testmapInter.osm";
 
         OsmXmlParser parser = new OsmXmlParserImpl(path);
         graphBuilder graphBuilder = new GraphBuilderImpl(parser);
