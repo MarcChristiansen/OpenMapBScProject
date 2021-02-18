@@ -65,8 +65,7 @@ public class XMLUtility {
     public static void createJsonGraph(Graph graph, String outPath) throws IOException{
 
         try (FileWriter file = new FileWriter(outPath)) {
-
-            file.write(graph.getJSONObject().toJSONString());
+            graph.getJSONObject().writeJSONString(file);
             file.flush();
 
         } catch (IOException e) {
@@ -80,7 +79,7 @@ public class XMLUtility {
      * @param path The path to the serialized graph
      * @return The graph found
      * @throws IOException File might not exist or other io related stuff
-     * @throws ClassNotFoundException If serialized file is weird.
+     * @throws ParseException Something went wrong when parsing
      */
     public static Graph loadJsonGraph(String path) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
@@ -89,8 +88,8 @@ public class XMLUtility {
         //Read JSON file
         Object obj = jsonParser.parse(reader);
 
+
         //Iterate over employee array
         return new GraphImpl((JSONObject) obj);
-
     }
 }

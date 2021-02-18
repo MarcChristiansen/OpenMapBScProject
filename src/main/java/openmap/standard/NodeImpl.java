@@ -17,7 +17,7 @@ public class NodeImpl implements Node, Serializable {
     private static final String  jX = "x";
     private static final String  jY = "y";
     private static final String  jId = "id";
-    private static final String  jPaths = "paths";
+    private static final String  jPaths = "p";
 
     private long id;
 

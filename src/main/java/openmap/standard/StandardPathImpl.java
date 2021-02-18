@@ -9,8 +9,8 @@ import java.util.Map;
 
 public class StandardPathImpl implements Path, Serializable {
 
-    private static final String  jDestId = "destId";
-    private static final String  jWeight = "weight";
+    private static final String  jDestId = "d";
+    private static final String  jWeight = "w";
 
     Node destination;
     Long nodeId;

@@ -10,6 +10,8 @@ public class GraphBuilderImpl implements graphBuilder {
 
     OsmXmlParser parser;
     boolean shouldRefitBorders = true;
+    boolean shouldOptimizeGraph = true;
+
 
     public GraphBuilderImpl(OsmXmlParser osmParser) {
         this.parser = osmParser;
@@ -57,7 +59,7 @@ public class GraphBuilderImpl implements graphBuilder {
                     pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
                 }
 
-                if (nodeWays > 1 || i == 0 || i == tempList.size()-1){
+                if (nodeWays > 1 || i == 0 || i == tempList.size()-1 || !shouldOptimizeGraph){
                     if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
 
                     if(previousNodeId != -1){
@@ -141,6 +143,22 @@ public class GraphBuilderImpl implements graphBuilder {
      */
     public void setShouldRefitBorders(boolean shouldRefitBorders) {
         this.shouldRefitBorders = shouldRefitBorders;
+    }
+
+    /**
+     * Tells if the graph should be optimized
+     * @param shouldOptimizeGraph True or false boolean value
+     */
+    public void setShouldOptimizeGraph(boolean shouldOptimizeGraph) {
+        this.shouldOptimizeGraph = shouldOptimizeGraph;
+    }
+
+    /**
+     * Check flag
+     * @return Flag that tells if graph will be optimized.
+     */
+    public boolean ShouldOptimizeGraph() {
+        return shouldOptimizeGraph;
     }
 
 

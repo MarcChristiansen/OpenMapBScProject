@@ -27,7 +27,7 @@ class MapGui{
 
         Graph graph = null;
         try {
-            graph = XMLUtility.loadJsonGraph("map.json");
+            graph = XMLUtility.loadJsonGraph("mapunop.json");
         }
         catch (Exception e){
             e.printStackTrace();

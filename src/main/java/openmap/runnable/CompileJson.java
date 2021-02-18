@@ -32,6 +32,7 @@ public class CompileJson {
         OsmXmlParser parser = new OsmXmlParserImpl(path);
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
 
+        //((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
         Graph graph = graphBuilder.createGraph();
 
 
