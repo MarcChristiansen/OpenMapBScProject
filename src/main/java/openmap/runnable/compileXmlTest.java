@@ -26,6 +26,10 @@ public class compileXmlTest {
 
         Graph graph = graphBuilder.createGraph();
 
+
+        graph = new GraphImpl(graph.getJSONObject());
+
+
         for (Map.Entry<Long, Node> entry : graph.getNodeMap().entrySet())
         {
             System.out.println("key: " + entry.getKey());

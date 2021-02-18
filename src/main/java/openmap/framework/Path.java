@@ -1,5 +1,7 @@
 package openmap.framework;
 
+import org.json.simple.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -39,4 +41,10 @@ public interface Path {
      * @param nodeMap a map that maps node ids to nodes
      */
     void doDeserialization(Map<Long, Node> nodeMap);
+
+    /**
+     * Return a json object representing this object
+     * @return A json object copy of the object
+     */
+    public JSONObject getJSONObject();
 }

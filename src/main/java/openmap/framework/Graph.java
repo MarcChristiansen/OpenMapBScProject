@@ -1,5 +1,7 @@
 package openmap.framework;
 
+import org.json.simple.JSONObject;
+
 import java.util.Map;
 
 /**
@@ -17,5 +19,7 @@ public interface Graph {
     public void prepareForSerialization();
 
     public void doDeserialization();
+
+    public JSONObject getJSONObject();
 
 }

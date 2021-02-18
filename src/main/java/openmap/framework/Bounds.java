@@ -1,5 +1,7 @@
 package openmap.framework;
 
+import org.json.simple.JSONObject;
+
 /**
  * Interface that represents the bounds of a graph.
  * @author Kristoffer Villadsen and Marc Christiansen
@@ -21,5 +23,7 @@ public interface Bounds {
     public void setMaxX(double v);
     public void setMinY(double v);
     public void setMaxY(double v);
+
+    public JSONObject getJSONObject();
 
 }

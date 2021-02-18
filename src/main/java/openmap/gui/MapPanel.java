@@ -26,7 +26,7 @@ class MapPanel extends JPanel {
     private double panY;
 
     //Drawing optimization when zooming out
-    private final double nodeRatioFactor = 0.1; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
+    private final double nodeRatioFactor = 0.0001; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
     private final double maxNodesToSkip = 1000; //Controls the max amount of nodes we want to skip when drawing. //TODO make this dynamic in a way that makes sense
 
     private List<Long> highlightedNodeList;
@@ -183,7 +183,7 @@ class MapPanel extends JPanel {
                 int x = (int) ((node.getX()));
                 int y = (int) ((node.getY()));
 
-                drawCircle(g, x, y, getScaledNodeRadius());
+                //drawCircle(g, x, y, getScaledNodeRadius());
                 nodeSkipCounter = 0;
 
                 //Road drawing

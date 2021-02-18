@@ -3,6 +3,8 @@ package openmap.standard;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.utility.CoordinateUtility;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 
 import java.io.Serializable;
@@ -11,6 +13,11 @@ import java.util.List;
 import java.util.Map;
 
 public class NodeImpl implements Node, Serializable {
+
+    private static final String  jX = "x";
+    private static final String  jY = "y";
+    private static final String  jId = "id";
+    private static final String  jPaths = "paths";
 
     private long id;
 
@@ -26,6 +33,20 @@ public class NodeImpl implements Node, Serializable {
 
         pathList = new ArrayList<>();
 
+    }
+
+    public NodeImpl(JSONObject obj){
+        this.id = (Long)obj.get(jId);
+        this.coordinate = new Coordinate((Double)obj.get(jX), (Double)obj.get(jY));
+        this.pathList = new ArrayList<>();
+
+        JSONArray pArray = (JSONArray)obj.get(jPaths);
+
+        this.pathList = new ArrayList<>();
+
+        for (Object pathObj : pArray) {
+            pathList.add(new StandardPathImpl((JSONObject) pathObj));
+        }
     }
 
     @Override
@@ -67,6 +88,23 @@ public class NodeImpl implements Node, Serializable {
         pathList.forEach(path -> {
             path.doDeserialization(nodeMap);
         });
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject obj = new JSONObject();
+        obj.put(jId, id);
+        obj.put(jX, coordinate.x);
+        obj.put(jY, coordinate.y);
+
+        JSONArray jArray = new JSONArray();
+        for (Path p : pathList) {
+            jArray.add(p.getJSONObject());
+        }
+
+        obj.put(jPaths, jArray);
+
+        return obj;
     }
 
 }

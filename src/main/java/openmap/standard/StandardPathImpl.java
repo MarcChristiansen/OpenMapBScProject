@@ -2,11 +2,15 @@ package openmap.standard;
 
 import openmap.framework.Node;
 import openmap.framework.Path;
+import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 import java.util.Map;
 
 public class StandardPathImpl implements Path, Serializable {
+
+    private static final String  jDestId = "destId";
+    private static final String  jWeight = "weight";
 
     Node destination;
     Long nodeId;
@@ -16,6 +20,11 @@ public class StandardPathImpl implements Path, Serializable {
         this.destination = destination;
         this.nodeId = destination.getId();
         this.weight = weight;
+    }
+
+    public StandardPathImpl(JSONObject obj){
+        this.nodeId = (Long)obj.get(jDestId);
+        this.weight = (double)obj.get(jWeight);
     }
 
     @Override
@@ -41,6 +50,16 @@ public class StandardPathImpl implements Path, Serializable {
     @Override
     public void doDeserialization(Map<Long, Node> nodeMap) {
         destination = nodeMap.get(nodeId);
+    }
+
+    @Override
+    public JSONObject getJSONObject() {
+        JSONObject obj = new JSONObject();
+
+        obj.put(jDestId, nodeId);
+        obj.put(jWeight, weight);
+
+        return obj;
     }
 
     @Override
