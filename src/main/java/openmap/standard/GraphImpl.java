@@ -26,6 +26,16 @@ public class GraphImpl implements Graph, Serializable {
         this.bounds = bounds;
     }
 
+    public GraphImpl(List<Node> nodeList, Bounds bounds){
+        this.bounds = bounds;
+
+        nodeMap = new HashMap<Long, Node>(nodeList.size());
+        for (Node n : nodeList) {
+            nodeMap.put(n.getId(), n);
+        }
+        doDeserialization();
+    }
+
     public GraphImpl(JSONObject obj){
         this.bounds = new BoundsImpl((JSONObject)obj.get(jBounds));
 

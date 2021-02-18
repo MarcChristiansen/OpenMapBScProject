@@ -1,11 +1,7 @@
 package openmap.utility;
 
 import openmap.framework.Graph;
-import openmap.framework.OsmXmlParser;
-import openmap.standard.GraphBuilderImpl;
 import openmap.standard.GraphImpl;
-import openmap.standard.OsmXmlParserImpl;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -84,12 +80,17 @@ public class XMLUtility {
     public static Graph loadJsonGraph(String path) throws IOException, ParseException {
         JSONParser jsonParser = new JSONParser();
 
-        FileReader reader = new FileReader(path);
+        FileReader reader2 = new FileReader(path);
         //Read JSON file
+        GraphContentHandler graphHandler = new GraphContentHandler();
+
+        jsonParser.parse(reader2, graphHandler);
+        return new GraphImpl(graphHandler.getNodeList(), graphHandler.getBounds());
+        //reader2.close();
+
+        /*FileReader reader = new FileReader(path);
         Object obj = jsonParser.parse(reader);
 
-
-        //Iterate over employee array
-        return new GraphImpl((JSONObject) obj);
+        return new GraphImpl((JSONObject) obj);*/
     }
 }

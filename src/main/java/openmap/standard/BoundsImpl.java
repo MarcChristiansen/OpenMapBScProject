@@ -23,6 +23,11 @@ public class BoundsImpl implements Bounds, Serializable {
         maxCoordinate = CoordinateUtility.CoordinateConversion.latLonToUtm32N(maxCoordinate);
     }
 
+    public BoundsImpl(){
+        minCoordinate = new Coordinate(0, 0);
+        maxCoordinate = new Coordinate(0, 0);
+    }
+
     public BoundsImpl(JSONObject obj){
         minCoordinate = new Coordinate((Double)obj.get(jMinX), (Double)obj.get(jMinY));
         maxCoordinate = new Coordinate((Double)obj.get(jMaxX), (Double)obj.get(jMaxY));

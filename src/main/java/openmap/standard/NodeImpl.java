@@ -32,7 +32,14 @@ public class NodeImpl implements Node, Serializable {
         coordinate = CoordinateUtility.CoordinateConversion.latLonToUtm32N(coordinate);
 
         pathList = new ArrayList<>();
+    }
 
+    public NodeImpl(long id, double x, double y, List<Path> pathList){
+        this.id = id;
+
+        coordinate = new Coordinate(x, y);
+
+        this.pathList = pathList;
     }
 
     public NodeImpl(JSONObject obj){

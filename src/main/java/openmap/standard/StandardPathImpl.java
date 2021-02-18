@@ -22,6 +22,11 @@ public class StandardPathImpl implements Path, Serializable {
         this.weight = weight;
     }
 
+    public StandardPathImpl(long destinationId, double weight){
+        this.nodeId = destinationId;
+        this.weight = weight;
+    }
+
     public StandardPathImpl(JSONObject obj){
         this.nodeId = (Long)obj.get(jDestId);
         this.weight = (double)obj.get(jWeight);
