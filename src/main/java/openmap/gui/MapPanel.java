@@ -1,19 +1,15 @@
 package openmap.gui;
 
-import openmap.framework.Bounds;
 import openmap.framework.Graph;
 import openmap.framework.Node;
-import openmap.framework.Path;
+import openmap.gui.framework.TileMap;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.Map;
 import java.util.List;
 
 class MapPanel extends JPanel {
@@ -25,11 +21,14 @@ class MapPanel extends JPanel {
     private double panX;
     private double panY;
 
+    //Tile map related stuff
+    private TileMap tileMap;
+
     //Drawing optimization when zooming out
     private final double nodeRatioFactor = 0.0001; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
     private final double maxNodesToSkip = 1000; //Controls the max amount of nodes we want to skip when drawing. //TODO make this dynamic in a way that makes sense
 
-    private List<Long> highlightedNodeList;
+
 
     /***
      * Scale the node drawing size depending on the zoom factor
@@ -43,15 +42,21 @@ class MapPanel extends JPanel {
     }
 
     public MapPanel(Graph graph) {
+
+
         this.graph = graph;
-        setBorder(BorderFactory.createLineBorder(Color.black));
+        //setBorder(BorderFactory.createLineBorder(Color.black));
+        this.tileMap = new TileMapImpl(graph, 10000, 6);
 
         //Set initial graphics location
         panX = graph.getBounds().getMinX();
         panY = graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY());
-        //
 
-        zoomFactor = (double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY());
+        //Tile map creation
+
+
+        zoomFactor = Math.min((double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY()),
+                (double)(getPreferredSize().width)/(graph.getBounds().getMaxX() - graph.getBounds().getMinX()));
         if(zoomFactor > 1) { zoomFactor = 1; }
 
 
@@ -99,7 +104,7 @@ class MapPanel extends JPanel {
     }
 
     public void setHighlightedPath(List<Long> nodeList){
-        highlightedNodeList = nodeList;
+        tileMap.setHighlightedPath(nodeList);
     }
 
     private double getZoomFactor() {
@@ -140,12 +145,18 @@ class MapPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics gg) {
-        this.setBorder(null);
         super.paintComponent(gg);
+
+
+
+        //this.setBorder(null);
+
         Graphics2D g = (Graphics2D) gg;
+        gg.setColor ( Color.white );
+        gg.fillRect ( 0, 0, getWidth(), getHeight() );
         AffineTransform matrix = g.getTransform(); // Backup
 
-        //Zoom related stuff and Panning stuff
+        /*//Zoom related stuff and Panning stuff
         AffineTransform at = new AffineTransform();
         at.scale(zoomFactor, zoomFactor);
 
@@ -155,8 +166,23 @@ class MapPanel extends JPanel {
         g.scale(1, -1);
         g.translate(0, 0);
 
+        BufferedImage img = new BufferedImage((int)(getWidth()), (int)(getHeight()), BufferedImage.TYPE_INT_RGB );
+        Graphics2D gb =  img.createGraphics();
+
+        gb.setColor(Color.RED);
+        gb.drawLine(-10,-10,0,0);
+
+        gg.drawImage(img, (int)(graph.getBounds().getMinX()), (int)(graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY())), null);
+
+         */
+
+
+
+        tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, g);
+
 
         //Rotation stuff
+        /*
 
         g.setColor(Color.GREEN);
 
@@ -198,10 +224,12 @@ class MapPanel extends JPanel {
 
         }
 
+         */
+
         //Draw highlighted path
 
 
-        if (highlightedNodeList != null){
+        /*if (highlightedNodeList != null){
                 Node lastNode = null;
             for (Long nl : highlightedNodeList) {
                 Node currentNode = graph.getNodeMap().get(nl);
@@ -217,7 +245,7 @@ class MapPanel extends JPanel {
                 }
                 lastNode = currentNode;
             }
-        }
+        }*/
 
         System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
 

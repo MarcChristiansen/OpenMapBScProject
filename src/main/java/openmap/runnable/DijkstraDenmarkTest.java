@@ -60,7 +60,7 @@ public class DijkstraDenmarkTest {
         }
 
         System.out.println("beginning Dijkstra");
-        pathFinder pf = new DijkstraImpl(map);
+        PathFinder pf = new DijkstraImpl(map);
 
         List<Long> shortPath = pf.getShortestPath(5981056648L, 4689225871L);
 

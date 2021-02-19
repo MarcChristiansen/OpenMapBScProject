@@ -2,6 +2,8 @@ package openmap.gui;
 
 import openmap.framework.Graph;
 import openmap.JsonParsing.DiskUtility;
+import openmap.framework.PathFinder;
+import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -34,9 +36,12 @@ class MapGui{
         //Make the center component big, since that's the map
         JPanel myPanel = new MapPanel(graph);
         myPanel.setPreferredSize(new Dimension(800, 400));
+        PathFinder djikstra = new DijkstraImpl(graph);
+        ((MapPanel)myPanel).setHighlightedPath(djikstra.getShortestPath(1511529408L, 1511479070L));
 
         //Quick test with klemensker //TODO REMOVE
         //((MapPanel)(myPanel)).setHighlightedPath(new ArrayList<Long>(Arrays.asList(1511529408L,795851719L, 1156449172L, 1511479070L)));
+
         pane.add(myPanel, BorderLayout.CENTER);
 
         button = new JButton("Button 3 (LINE_START)");

@@ -3,11 +3,11 @@ package openmap.standard;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
-import openmap.framework.pathFinder;
+import openmap.framework.PathFinder;
 
 import java.util.*;
 
-public class DijkstraImpl implements pathFinder {
+public class DijkstraImpl implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
