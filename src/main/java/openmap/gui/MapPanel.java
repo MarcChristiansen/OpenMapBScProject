@@ -2,15 +2,19 @@ package openmap.gui;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
+import openmap.framework.PathFinder;
 import openmap.gui.framework.TileMap;
+import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.util.List;
+import java.util.Map;
 
 class MapPanel extends JPanel {
 
@@ -24,9 +28,11 @@ class MapPanel extends JPanel {
     //Tile map related stuff
     private TileMap tileMap;
 
-    //Drawing optimization when zooming out
-    private final double nodeRatioFactor = 0.0001; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
-    private final double maxNodesToSkip = 1000; //Controls the max amount of nodes we want to skip when drawing. //TODO make this dynamic in a way that makes sense
+    //Temp pathfinding stuff
+    Node pathNode1;
+    Node pathNode2;
+    boolean pathNodesChanged = true;
+    PathFinder pathFinder;
 
 
 
@@ -41,12 +47,32 @@ class MapPanel extends JPanel {
         return (int)(nodeRadius/zoomFactor);
     }
 
+    //Find the closest node in the graph to a given point.
+    public Node getClosestNode(double x, double y){
+        Node best = null;
+        double dist = 99999999;
+
+        for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {
+
+            double nDist = Math.pow(entry.getValue().getX() - x,2 ) + Math.pow(entry.getValue().getY() - y,2);
+            if(best == null || nDist < dist){
+                best = entry.getValue();
+                dist = nDist;
+            }
+        }
+
+        return best;
+    }
+
     public MapPanel(Graph graph) {
 
 
         this.graph = graph;
         //setBorder(BorderFactory.createLineBorder(Color.black));
         this.tileMap = new TileMapImpl(graph, 10000, 6);
+
+        //TODO REMOVE and make modular
+        pathFinder = new DijkstraImpl(this.graph);
 
         //Set initial graphics location
         panX = graph.getBounds().getMinX();
@@ -65,12 +91,41 @@ class MapPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                origPoint = new Point(e.getPoint());
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    origPoint = new Point(e.getPoint());
+                } else
+                if(e.getButton() == 5 || e.getButton() == 4){ //5 is first side button, no constant exists
+
+                    if(e.getButton() == 5) {
+                        pathNode1 = getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
+                    }else{
+                        pathNode2 = getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);
+                    }
+
+                    if(pathNode1 != null && pathNode2 !=null){
+                        List<Long> pathIdList = pathFinder.getShortestPath(pathNode1.getId(), pathNode2.getId());
+                        if(pathIdList != null) {
+                            setHighlightedPath(pathIdList);
+                            repaint();
+                        } else{
+                            System.out.println("Path does not exist");
+                        }
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    origPoint = null;
+                }
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (origPoint != null) {
+                if (origPoint != null ) {
                     int deltaX = origPoint.x - e.getX();
                     int deltaY = -origPoint.y + e.getY();
 

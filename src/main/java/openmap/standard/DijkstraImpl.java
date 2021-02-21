@@ -41,8 +41,8 @@ public class DijkstraImpl implements PathFinder {
             result.add(currId);
             currId = predecessor.get(currId);
             if(currId == null){
-                //return an arraylist with only a -1 to signify that there is no path from source to destination
-                return new ArrayList<Long>(-1);
+                //return null if impossible
+                return null;
             }
         }
         result.add(source);

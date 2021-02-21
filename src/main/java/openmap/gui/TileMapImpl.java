@@ -215,6 +215,7 @@ public class TileMapImpl implements TileMap {
 
     @Override
     public void setHighlightedPath(List<Long> nodeList) {
+        this.highlightAlreadyDrawn = false;
         this.highlightedNodeList = nodeList;
     }
 }
