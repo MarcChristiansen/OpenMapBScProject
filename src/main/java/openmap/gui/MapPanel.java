@@ -302,7 +302,7 @@ class MapPanel extends JPanel {
             }
         }*/
 
-        System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
+        //System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
 
         g.setTransform(matrix); // Restore
 

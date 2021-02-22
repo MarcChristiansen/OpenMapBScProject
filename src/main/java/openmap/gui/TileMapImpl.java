@@ -85,10 +85,8 @@ public class TileMapImpl implements TileMap {
 
         //Use buffer image if the current zoom level allows it.
         if(zoomFactor < initZoomLvl){
-            System.out.println(zoomFactor + " " + initZoomLvl);
             double tempPanX = (panX-graph.getBounds().getMinX())*zoomFactor;
             double tempPanY = (panY-(graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY())))*zoomFactor;
-            System.out.println("tempPan) " + tempPanX + " " + tempPanY);
             g.translate(-tempPanX, tempPanY);
             g.scale(zoomFactor/initZoomLvl, zoomFactor/initZoomLvl);
             g.drawImage(bufferImg, 0, 0, null);
