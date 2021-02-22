@@ -3,7 +3,7 @@ package openmap.standard;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.OsmXmlParser;
-import openmap.framework.pathFinder;
+import openmap.framework.PathFinder;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class testDijkstra {
 
     @Test
     public void testDijkstraShouldreturnList32541(){
-        pathFinder pf = new DijkstraImpl(graph);
+        PathFinder pf = new DijkstraImpl(graph);
 
         List<Long> idList = pf.getShortestPath((long)1, (long)3);
         assert(idList.get(0) == (long)1);

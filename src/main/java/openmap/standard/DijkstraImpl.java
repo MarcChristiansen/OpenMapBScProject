@@ -3,11 +3,11 @@ package openmap.standard;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
-import openmap.framework.pathFinder;
+import openmap.framework.PathFinder;
 
 import java.util.*;
 
-public class DijkstraImpl implements pathFinder {
+public class DijkstraImpl implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
@@ -41,8 +41,8 @@ public class DijkstraImpl implements pathFinder {
             result.add(currId);
             currId = predecessor.get(currId);
             if(currId == null){
-                //return an arraylist with only a -1 to signify that there is no path from source to destination
-                return new ArrayList<Long>(-1);
+                //return null if impossible
+                return null;
             }
         }
         result.add(source);

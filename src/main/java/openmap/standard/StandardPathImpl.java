@@ -1,5 +1,6 @@
 package openmap.standard;
 
+import openmap.JsonParsing.JsonGraphConstants;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import org.json.simple.JSONObject;
@@ -9,8 +10,6 @@ import java.util.Map;
 
 public class StandardPathImpl implements Path, Serializable {
 
-    private static final String  jDestId = "d";
-    private static final String  jWeight = "w";
 
     Node destination;
     Long nodeId;
@@ -28,8 +27,8 @@ public class StandardPathImpl implements Path, Serializable {
     }
 
     public StandardPathImpl(JSONObject obj){
-        this.nodeId = (Long)obj.get(jDestId);
-        this.weight = (double)obj.get(jWeight);
+        this.nodeId = (Long)obj.get(JsonGraphConstants.PathDestId);
+        this.weight = (double)obj.get(JsonGraphConstants.PathWeight);
     }
 
     @Override
@@ -61,8 +60,8 @@ public class StandardPathImpl implements Path, Serializable {
     public JSONObject getJSONObject() {
         JSONObject obj = new JSONObject();
 
-        obj.put(jDestId, nodeId);
-        obj.put(jWeight, weight);
+        obj.put(JsonGraphConstants.PathDestId, nodeId);
+        obj.put(JsonGraphConstants.PathWeight, weight);
 
         return obj;
     }

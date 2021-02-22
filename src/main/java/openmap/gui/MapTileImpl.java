@@ -3,18 +3,15 @@ package openmap.gui;
 import openmap.framework.Node;
 import openmap.gui.framework.MapTile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MapTileImpl implements MapTile {
 
-    int x;
-    int y;
     List<Node> nodeList;
 
-    public MapTileImpl(int x, int y, List<Node> nodeList) {
-        this.x = x;
-        this.y = y;
-        this.nodeList = nodeList;
+    public MapTileImpl() {
+        this.nodeList = new ArrayList<>();
     }
 
 
@@ -24,12 +21,7 @@ public class MapTileImpl implements MapTile {
     }
 
     @Override
-    public int getX() {
-        return x;
-    }
-
-    @Override
-    public int getY() {
-        return y;
+    public void addNode(Node n) {
+        nodeList.add(n);
     }
 }

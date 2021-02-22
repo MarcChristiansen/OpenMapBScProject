@@ -1,5 +1,6 @@
 package openmap.standard;
 
+import openmap.JsonParsing.JsonGraphConstants;
 import openmap.framework.Bounds;
 import openmap.framework.Graph;
 import openmap.framework.Node;
@@ -13,8 +14,6 @@ import java.util.Map;
 
 public class GraphImpl implements Graph, Serializable {
 
-    private static final String  jBounds = "Bounds";
-    private static final String  jNodes = "Nodes";
 
     private Map<Long, Node> nodeMap;
 
@@ -37,9 +36,9 @@ public class GraphImpl implements Graph, Serializable {
     }
 
     public GraphImpl(JSONObject obj){
-        this.bounds = new BoundsImpl((JSONObject)obj.get(jBounds));
+        this.bounds = new BoundsImpl((JSONObject)obj.get(JsonGraphConstants.GraphBounds));
 
-        JSONArray jNodeArray = (JSONArray) obj.get(jNodes);
+        JSONArray jNodeArray = (JSONArray) obj.get(JsonGraphConstants.GraphNodes);
         nodeMap = new HashMap<Long, Node>(jNodeArray.size());
         for (Object nodeObj : jNodeArray) {
             Node n = new NodeImpl((JSONObject) nodeObj);
@@ -75,7 +74,7 @@ public class GraphImpl implements Graph, Serializable {
     @Override
     public JSONObject getJSONObject() {
         JSONObject obj = new JSONObject();
-        obj.put(jBounds, bounds.getJSONObject());
+        obj.put(JsonGraphConstants.GraphBounds, bounds.getJSONObject());
 
         JSONArray jNodeArray = new JSONArray();
 
@@ -85,7 +84,7 @@ public class GraphImpl implements Graph, Serializable {
             jNodeArray.add(mapEntry.getValue().getJSONObject());
         }
 
-        obj.put(jNodes, jNodeArray);
+        obj.put(JsonGraphConstants.GraphNodes, jNodeArray);
 
         return obj;
     }

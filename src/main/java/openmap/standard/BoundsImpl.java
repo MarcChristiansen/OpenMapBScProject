@@ -1,5 +1,6 @@
 package openmap.standard;
 
+import openmap.JsonParsing.JsonGraphConstants;
 import openmap.framework.Bounds;
 import openmap.utility.CoordinateUtility;
 import org.json.simple.JSONObject;
@@ -8,11 +9,6 @@ import org.locationtech.jts.geom.Coordinate;
 import java.io.Serializable;
 
 public class BoundsImpl implements Bounds, Serializable {
-
-    private static final String  jMinX = "jMinX";
-    private static final String  jMinY = "jMinY";
-    private static final String  jMaxX = "jMaxX";
-    private static final String  jMaxY = "jMaxY";
 
     Coordinate minCoordinate, maxCoordinate;
 
@@ -29,8 +25,8 @@ public class BoundsImpl implements Bounds, Serializable {
     }
 
     public BoundsImpl(JSONObject obj){
-        minCoordinate = new Coordinate((Double)obj.get(jMinX), (Double)obj.get(jMinY));
-        maxCoordinate = new Coordinate((Double)obj.get(jMaxX), (Double)obj.get(jMaxY));
+        minCoordinate = new Coordinate((Double)obj.get(JsonGraphConstants.BoundsMinX), (Double)obj.get(JsonGraphConstants.BoundsMinY));
+        maxCoordinate = new Coordinate((Double)obj.get(JsonGraphConstants.BoundsMaxX), (Double)obj.get(JsonGraphConstants.BoundsMaxY));
     }
 
     public double getMinLat() {
@@ -92,10 +88,10 @@ public class BoundsImpl implements Bounds, Serializable {
     @Override
     public JSONObject getJSONObject() {
         JSONObject obj = new JSONObject();
-        obj.put(jMinX, minCoordinate.x);
-        obj.put(jMinY, minCoordinate.y);
-        obj.put(jMaxX, maxCoordinate.x);
-        obj.put(jMaxY, maxCoordinate.y);
+        obj.put(JsonGraphConstants.BoundsMinX, minCoordinate.x);
+        obj.put(JsonGraphConstants.BoundsMinY, minCoordinate.y);
+        obj.put(JsonGraphConstants.BoundsMaxX, maxCoordinate.x);
+        obj.put(JsonGraphConstants.BoundsMaxY, maxCoordinate.y);
 
         return obj;
     }

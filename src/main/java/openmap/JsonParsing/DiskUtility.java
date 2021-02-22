@@ -1,15 +1,15 @@
-package openmap.utility;
+package openmap.JsonParsing;
 
+import openmap.JsonParsing.GraphContentHandler;
 import openmap.framework.Graph;
 import openmap.standard.GraphImpl;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
 
 
-public class XMLUtility {
+public class DiskUtility {
 
     /***
      * Serialize a graph to a given file

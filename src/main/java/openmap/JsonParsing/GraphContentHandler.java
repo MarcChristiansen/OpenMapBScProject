@@ -1,4 +1,4 @@
-package openmap.utility;
+package openmap.JsonParsing;
 
 
 import java.io.IOException;
@@ -10,13 +10,8 @@ import openmap.framework.Path;
 import openmap.standard.BoundsImpl;
 import openmap.standard.NodeImpl;
 import openmap.standard.StandardPathImpl;
-import org.eclipse.emf.common.util.BasicEList;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ContentHandler;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.w3c.dom.NodeList;
 
 public class GraphContentHandler implements ContentHandler {
     Bounds bounds;
@@ -36,26 +31,6 @@ public class GraphContentHandler implements ContentHandler {
         pathList = new ArrayList<>();
     }
 
-    //Graph
-    private static final String  jBounds = "Bounds";
-    private static final String  jNodes = "Nodes";
-
-    //Paths
-    private static final String  jDestId = "d";
-    private static final String  jWeight = "w";
-
-    //Nodes
-    private static final String  jX = "x";
-    private static final String  jY = "y";
-    private static final String  jId = "id";
-    private static final String  jPaths = "p";
-
-    //Bounds
-    private static final String  jMinX = "jMinX";
-    private static final String  jMinY = "jMinY";
-    private static final String  jMaxX = "jMaxX";
-    private static final String  jMaxY = "jMaxY";
-
     @Override
     public boolean endArray() throws ParseException, IOException {
         return true;
@@ -69,21 +44,21 @@ public class GraphContentHandler implements ContentHandler {
         if(objectStack.isEmpty()) { return true; }
         switch(objectStack.peek()){
 
-            case jBounds:
+            case JsonGraphConstants.GraphBounds:
                 bounds = new BoundsImpl();
-                bounds.setMinX((Double)objectMap.get(jMinX));
-                bounds.setMinY((Double)objectMap.get(jMinY));
-                bounds.setMaxX((Double)objectMap.get(jMaxX));
-                bounds.setMaxY((Double)objectMap.get(jMaxY));
+                bounds.setMinX((Double)objectMap.get(JsonGraphConstants.BoundsMinX));
+                bounds.setMinY((Double)objectMap.get(JsonGraphConstants.BoundsMinY));
+                bounds.setMaxX((Double)objectMap.get(JsonGraphConstants.BoundsMaxX));
+                bounds.setMaxY((Double)objectMap.get(JsonGraphConstants.BoundsMaxY));
                 break;
 
-            case jNodes :
-                nodeList.add(new NodeImpl((Long)objectMap.get(jId), (double)objectMap.get(jX), (double)objectMap.get(jY), pathList));
+            case JsonGraphConstants.GraphNodes:
+                nodeList.add(new NodeImpl((Long)objectMap.get(JsonGraphConstants.NodeId), (double)objectMap.get(JsonGraphConstants.NodeX), (double)objectMap.get(JsonGraphConstants.NodeY), pathList));
                 pathList = new ArrayList<>();
                 break;
 
-            case jPaths:
-                pathList.add(new StandardPathImpl((long)objectMap.get(jDestId), (double)objectMap.get(jWeight)));
+            case JsonGraphConstants.NodePath:
+                pathList.add(new StandardPathImpl((long)objectMap.get(JsonGraphConstants.PathDestId), (double)objectMap.get(JsonGraphConstants.PathWeight)));
                 break;
         }
         return true;

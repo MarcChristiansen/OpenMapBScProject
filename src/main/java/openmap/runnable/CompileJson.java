@@ -9,8 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static openmap.utility.XMLUtility.createJsonGraph;
-import static openmap.utility.XMLUtility.createSerializedGraph;
+import static openmap.JsonParsing.DiskUtility.createJsonGraph;
 
 public class CompileJson {
     public static void main(String[] args) throws IOException {

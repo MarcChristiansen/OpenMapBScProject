@@ -1,20 +1,20 @@
 package openmap.gui;
 
-import openmap.framework.Bounds;
 import openmap.framework.Graph;
 import openmap.framework.Node;
-import openmap.framework.Path;
+import openmap.framework.PathFinder;
+import openmap.gui.framework.TileMap;
+import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Point2D;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
 
 class MapPanel extends JPanel {
 
@@ -25,11 +25,16 @@ class MapPanel extends JPanel {
     private double panX;
     private double panY;
 
-    //Drawing optimization when zooming out
-    private final double nodeRatioFactor = 0.0001; //Controls when to begin removing nodes/roads depending on zoom. A higher value means sooner removal, lower means later removal
-    private final double maxNodesToSkip = 1000; //Controls the max amount of nodes we want to skip when drawing. //TODO make this dynamic in a way that makes sense
+    //Tile map related stuff
+    private TileMap tileMap;
 
-    private List<Long> highlightedNodeList;
+    //Temp pathfinding stuff
+    Node pathNode1;
+    Node pathNode2;
+    boolean pathNodesChanged = true;
+    PathFinder pathFinder;
+
+
 
     /***
      * Scale the node drawing size depending on the zoom factor
@@ -42,16 +47,42 @@ class MapPanel extends JPanel {
         return (int)(nodeRadius/zoomFactor);
     }
 
+    //Find the closest node in the graph to a given point.
+    public Node getClosestNode(double x, double y){
+        Node best = null;
+        double dist = 99999999;
+
+        for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {
+
+            double nDist = Math.pow(entry.getValue().getX() - x,2 ) + Math.pow(entry.getValue().getY() - y,2);
+            if(best == null || nDist < dist){
+                best = entry.getValue();
+                dist = nDist;
+            }
+        }
+
+        return best;
+    }
+
     public MapPanel(Graph graph) {
+
+
         this.graph = graph;
-        setBorder(BorderFactory.createLineBorder(Color.black));
+        //setBorder(BorderFactory.createLineBorder(Color.black));
+        this.tileMap = new TileMapImpl(graph, 10000, 6);
+
+        //TODO REMOVE and make modular
+        pathFinder = new DijkstraImpl(this.graph);
 
         //Set initial graphics location
         panX = graph.getBounds().getMinX();
         panY = graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY());
-        //
 
-        zoomFactor = (double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY());
+        //Tile map creation
+
+
+        zoomFactor = Math.min((double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY()),
+                (double)(getPreferredSize().width)/(graph.getBounds().getMaxX() - graph.getBounds().getMinX()));
         if(zoomFactor > 1) { zoomFactor = 1; }
 
 
@@ -60,12 +91,41 @@ class MapPanel extends JPanel {
 
             @Override
             public void mousePressed(MouseEvent e) {
-                origPoint = new Point(e.getPoint());
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    origPoint = new Point(e.getPoint());
+                } else
+                if(e.getButton() == 5 || e.getButton() == 4){ //5 is first side button, no constant exists
+
+                    if(e.getButton() == 5) {
+                        pathNode1 = getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
+                    }else{
+                        pathNode2 = getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);
+                    }
+
+                    if(pathNode1 != null && pathNode2 !=null){
+                        List<Long> pathIdList = pathFinder.getShortestPath(pathNode1.getId(), pathNode2.getId());
+                        if(pathIdList != null) {
+                            setHighlightedPath(pathIdList);
+                            repaint();
+                        } else{
+                            System.out.println("Path does not exist");
+                        }
+
+                    }
+
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if(e.getButton() == MouseEvent.BUTTON1) {
+                    origPoint = null;
+                }
             }
 
             @Override
             public void mouseDragged(MouseEvent e) {
-                if (origPoint != null) {
+                if (origPoint != null ) {
                     int deltaX = origPoint.x - e.getX();
                     int deltaY = -origPoint.y + e.getY();
 
@@ -99,7 +159,7 @@ class MapPanel extends JPanel {
     }
 
     public void setHighlightedPath(List<Long> nodeList){
-        highlightedNodeList = nodeList;
+        tileMap.setHighlightedPath(nodeList);
     }
 
     private double getZoomFactor() {
@@ -140,12 +200,18 @@ class MapPanel extends JPanel {
 
     @Override
     protected void paintComponent(Graphics gg) {
-        this.setBorder(null);
         super.paintComponent(gg);
+
+
+
+        //this.setBorder(null);
+
         Graphics2D g = (Graphics2D) gg;
+        gg.setColor ( Color.white );
+        gg.fillRect ( 0, 0, getWidth(), getHeight() );
         AffineTransform matrix = g.getTransform(); // Backup
 
-        //Zoom related stuff and Panning stuff
+        /*//Zoom related stuff and Panning stuff
         AffineTransform at = new AffineTransform();
         at.scale(zoomFactor, zoomFactor);
 
@@ -155,8 +221,23 @@ class MapPanel extends JPanel {
         g.scale(1, -1);
         g.translate(0, 0);
 
+        BufferedImage img = new BufferedImage((int)(getWidth()), (int)(getHeight()), BufferedImage.TYPE_INT_RGB );
+        Graphics2D gb =  img.createGraphics();
+
+        gb.setColor(Color.RED);
+        gb.drawLine(-10,-10,0,0);
+
+        gg.drawImage(img, (int)(graph.getBounds().getMinX()), (int)(graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY())), null);
+
+         */
+
+
+
+        tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, g);
+
 
         //Rotation stuff
+        /*
 
         g.setColor(Color.GREEN);
 
@@ -198,10 +279,12 @@ class MapPanel extends JPanel {
 
         }
 
+         */
+
         //Draw highlighted path
 
 
-        if (highlightedNodeList != null){
+        /*if (highlightedNodeList != null){
                 Node lastNode = null;
             for (Long nl : highlightedNodeList) {
                 Node currentNode = graph.getNodeMap().get(nl);
@@ -218,7 +301,7 @@ class MapPanel extends JPanel {
                 }
                 lastNode = currentNode;
             }
-        }
+        }*/
 
         System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
 

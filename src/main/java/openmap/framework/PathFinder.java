@@ -10,7 +10,7 @@ import java.util.List;
  * @version 1.0
  * @since 017-02-2021
  */
-public interface pathFinder {
+public interface PathFinder {
     /**
      * Return the shortest path from source to destination, in the form of a list of the node ids, of every node in the path.
      * In case there is no possible path between source and destination, return a list with only one value that being -1

@@ -6,13 +6,11 @@ import openmap.framework.OsmXmlParser;
 import openmap.framework.graphBuilder;
 import openmap.standard.GraphBuilderImpl;
 import openmap.standard.GraphImpl;
-import openmap.standard.NodeImpl;
 import openmap.standard.OsmXmlParserImpl;
-import openmap.utility.XMLUtility;
+import openmap.JsonParsing.DiskUtility;
 
 import java.io.*;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Map;
 
 public class compileXmlTest {
@@ -43,7 +41,7 @@ public class compileXmlTest {
 
         try
         {
-            XMLUtility.createSerializedGraph(graph, "hashmap.ser");
+            DiskUtility.createSerializedGraph(graph, "hashmap.ser");
 
         }catch(Exception ioe)
         {
@@ -54,7 +52,7 @@ public class compileXmlTest {
         Graph map = null;
         try
         {
-            map = XMLUtility.loadGraph("hashmap.ser");
+            map = DiskUtility.loadGraph("hashmap.ser");
         }catch(IOException ioe)
         {
             ioe.printStackTrace();
