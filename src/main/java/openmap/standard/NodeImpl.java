@@ -2,6 +2,7 @@ package openmap.standard;
 
 import openmap.JsonParsing.JsonGraphConstants;
 import openmap.framework.Node;
+import openmap.framework.NodeWrapper;
 import openmap.framework.Path;
 import openmap.utility.CoordinateUtility;
 import org.json.simple.JSONArray;
@@ -13,9 +14,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class NodeImpl implements Node, Serializable {
+public class NodeImpl implements Node, Serializable, Comparable<Node> {
 
     private long id;
+    private Long predecessorId;
+    private double distance;
 
     Coordinate coordinate;
     private List<Path> pathList;
@@ -42,6 +45,8 @@ public class NodeImpl implements Node, Serializable {
         this.id = (Long)obj.get(JsonGraphConstants.NodeId);
         this.coordinate = new Coordinate((Double)obj.get(JsonGraphConstants.NodeX), (Double)obj.get(JsonGraphConstants.NodeY));
         this.pathList = new ArrayList<>();
+        this.distance = Double.MAX_VALUE;
+        this.predecessorId = null;
 
         JSONArray pArray = (JSONArray)obj.get(JsonGraphConstants.NodePath);
 
@@ -68,6 +73,26 @@ public class NodeImpl implements Node, Serializable {
 
     @Override
     public double getY() { return coordinate.y; }
+
+    @Override
+    public double getDistance() {
+        return distance;
+    }
+
+    @Override
+    public void setDistance(double distance) {
+        this.distance = distance;
+    }
+
+    @Override
+    public Long getPredecessor() {
+        return predecessorId;
+    }
+
+    @Override
+    public void setPredecessor(Long predecessorId) {
+        this.predecessorId = predecessorId;
+    }
 
     @Override
     public List<Path> getPaths() {
@@ -108,6 +133,17 @@ public class NodeImpl implements Node, Serializable {
         obj.put(JsonGraphConstants.NodePath, jArray);
 
         return obj;
+    }
+
+    @Override
+    public int compareTo(Node o) {
+        if(this.getDistance() < o.getDistance()){
+            return -1;
+        }
+        if(this.getDistance() > o.getDistance()){
+            return 1;
+        }
+        return 0;
     }
 
 }

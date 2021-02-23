@@ -5,23 +5,22 @@ import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
-public class DijkstraImpl implements PathFinder {
+public class DijkstraNodeWrapperImpl implements PathFinder {
 
     private Graph graph;
-    private PriorityQueue<Node> priorityQueue;
-    //private Map<Long, Long> predecessor;
-    //private Map<Long, Double> distance;
+    private PriorityQueue<NodeWrapper> priorityQueue;
+    private Map<Long, Long> predecessor;
+    private Map<Long, Double> distance;
     private Set<Node> visited;
     private Long source = null;
 
-    public DijkstraImpl(Graph graph){
+    public DijkstraNodeWrapperImpl(Graph graph){
         this.graph = graph;
-        priorityQueue = new PriorityQueue<Node>();
-        //predecessor = new HashMap<Long, Long>();
-        //distance = new HashMap<Long, Double>();
+        priorityQueue = new PriorityQueue<NodeWrapper>();
+        predecessor = new HashMap<Long, Long>();
+        distance = new HashMap<Long, Double>();
         visited = new HashSet<Node>();
 
     }
@@ -30,17 +29,17 @@ public class DijkstraImpl implements PathFinder {
     public List<Long> getShortestPath(Long source, Long destination) {
         //if it is another source, or first run. Recalculate shortest path with dijkstra.
         if(this.source == null || this.source != source){
-            clearDistanceAndPredecessor();
+            predecessor.clear();
+            distance.clear();
             visited.clear();
             priorityQueue.clear();
             runDijkstra(source, destination);
         }
-        Map<Long, Node> nodeMap = graph.getNodeMap();
         List<Long> result = new ArrayList<Long>();
         Long currId = destination;
         while(!currId.equals(source)){
             result.add(currId);
-            currId = nodeMap.get(currId).getPredecessor();
+            currId = predecessor.get(currId);
             if(currId == null){
                 //return null if impossible
                 return null;
@@ -57,38 +56,37 @@ public class DijkstraImpl implements PathFinder {
         long start = System.currentTimeMillis();
 
         //add source to priority queue with distance 0
-        Node firstNode = graph.getNodeMap().get(source);
-        firstNode.setDistance(0);
-        priorityQueue.add(firstNode);
+        priorityQueue.add(new NodeWrapperImpl(graph.getNodeMap().getOrDefault(source, null), 0.0));
+        distance.put(source, 0.0);
 
         int nodeCount = graph.getNodeMap().size();
 
         boolean finished = false;
 
         while (!finished){
-            Node currNode = priorityQueue.poll();
+            NodeWrapper currNode = priorityQueue.poll();
 
-            if(currNode == null || currNode.getId() == destination){
+            if(currNode == null || currNode.getNode().getId() == destination){
                 finished = true;
             }
-            else if(!visited.contains(currNode)){
+            else if(!visited.contains(currNode.getNode())){
                 visitcount++;
                 //Add node to visited
-                visited.add(currNode);
+                visited.add(currNode.getNode());
 
                 //Go through all paths
-                currNode.getPaths().forEach(path -> {
-                    double newDistance = currNode.getDistance() + path.getWeight();
+                currNode.getNode().getPaths().forEach(path -> {
+                    double newDistance = currNode.getDist() + path.getWeight();
 
                     //check if new distance is lower
-                    if(newDistance < path.getDestination().getDistance()) {
-                        path.getDestination().setDistance(newDistance);
+                    if(newDistance < distance.getOrDefault(path.getDestinationId(), Double.MAX_VALUE)) {
+                        distance.put(path.getDestinationId(), newDistance);
                         //add predecessor for the node
-                        path.getDestination().setPredecessor(currNode.getId());
+                        predecessor.put(path.getDestinationId(), currNode.getNode().getId());
                     }
 
                     //add to priority queue
-                    priorityQueue.add(path.getDestination());
+                    priorityQueue.add(new NodeWrapperImpl(path.getDestination(), distance.getOrDefault(path.getDestinationId(), Double.MAX_VALUE)));
                 });
             }
         }
@@ -97,13 +95,6 @@ public class DijkstraImpl implements PathFinder {
         System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
 
-    private void clearDistanceAndPredecessor(){
-        Map<Long, Node> nodeMap = graph.getNodeMap();
-        nodeMap.values().forEach(node -> {
-           node.setDistance(Double.MAX_VALUE);
-           node.setPredecessor(null);
-        });
-    }
 
 }
 

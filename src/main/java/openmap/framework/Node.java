@@ -43,6 +43,14 @@ public interface Node {
      */
     public double getY();
 
+    public double getDistance();
+
+    public void setDistance(double distance);
+
+    public Long getPredecessor();
+
+    public void setPredecessor(Long predecessorId);
+
     /**
      * Returns a list of the paths starting from this node
      * @return list of the paths starting from this node
