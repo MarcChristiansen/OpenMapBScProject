@@ -25,7 +25,6 @@ public class TileMapImpl implements TileMap {
     private List<Long> highlightedNodeList;
 
     //Buffered render related stuff
-    private boolean highlightAlreadyDrawn;
     private int preRenderSize;
     BufferedImage bufferImg;
     double initPanX;
@@ -66,7 +65,7 @@ public class TileMapImpl implements TileMap {
     @Override
     public void drawMapView(double panX, double panY, int width, int height, double zoomFactor, Graphics2D g) {
         //if we do not have a buffer, or our window changed, create a buffer image that we can reuse.
-        if(bufferImg == null || width != oldWidth || height != oldHeight || !highlightAlreadyDrawn){
+        if(bufferImg == null || width != oldWidth || height != oldHeight){
             oldWidth = width;
             oldHeight = height;
             initPanX = graph.getBounds().getMinX();
@@ -79,17 +78,21 @@ public class TileMapImpl implements TileMap {
             bg.setPaint ( Color.white );
             bg.fillRect ( 0, 0, width*preRenderSize, height*preRenderSize );
             drawRelevantTiles(initPanX, initPanY, width*preRenderSize, height*preRenderSize, initZoomLvl, bg);
-            highlightAlreadyDrawn = true; //Set as if map
             bg.dispose();
         }
 
         //Use buffer image if the current zoom level allows it.
         if(zoomFactor < initZoomLvl){
+            AffineTransform oldTransform = g.getTransform();
             double tempPanX = (panX-graph.getBounds().getMinX())*zoomFactor;
             double tempPanY = (panY-(graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY())))*zoomFactor;
             g.translate(-tempPanX, tempPanY);
             g.scale(zoomFactor/initZoomLvl, zoomFactor/initZoomLvl);
             g.drawImage(bufferImg, 0, 0, null);
+            g.setTransform(oldTransform);
+
+
+            drawHighlightedPath(zoomFactor, g, panX, panY);
 
             return;
         }
@@ -99,19 +102,17 @@ public class TileMapImpl implements TileMap {
 
         gg.setPaint ( Color.white );
         gg.fillRect ( 0, 0, width, height );
-
         drawRelevantTiles(panX, panY, width, height, zoomFactor, gg);
+        drawHighlightedPath(zoomFactor, gg, panX, panY);
         g.drawImage(img, 0, 0, null);
 
 
     }
 
     private void drawRelevantTiles(double panX, double panY, int width, int height, double zoomFactor, Graphics2D g) {
+        AffineTransform oldTransform = g.getTransform();
 
-        AffineTransform at = new AffineTransform();
-        at.scale(zoomFactor, zoomFactor);
-        at.translate(-panX, panY);
-        at.scale(1,-1);
+        AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
         g.transform(at);
 
         int initArrX = (int)Math.floor((panX-graph.getBounds().getMinX())/tileSquareSize);
@@ -165,54 +166,53 @@ public class TileMapImpl implements TileMap {
             }
         }
 
-        if (highlightedNodeList != null){
-            Node lastNode = null;
-            for (Long nl : highlightedNodeList) {
-                Node currentNode = graph.getNodeMap().get(nl);
+        g.setTransform(oldTransform);
 
-                g.setColor(Color.RED);
-                if (lastNode != null) {
-                    g.setStroke(new BasicStroke((int)Math.max(5/zoomFactor, 5)));
-                    g.drawLine((int) (currentNode.getX()),
-                            (int) (currentNode.getY()),
-                            (int) (lastNode.getX()),
-                            (int) (lastNode.getY()));
-                }
-                lastNode = currentNode;
+
+
+    }
+
+    private AffineTransform getMapDrawingAffineTransform(double panX, double panY, double zoomFactor) {
+        AffineTransform at = new AffineTransform();
+        at.scale(zoomFactor, zoomFactor);
+        at.translate(-panX, panY);
+        at.scale(1,-1);
+        return at;
+    }
+
+    private void drawHighlightedPath(double zoomFactor, Graphics2D g, double panX, double panY) {
+        if (highlightedNodeList == null) { return; }
+
+        AffineTransform oldTransform = g.getTransform();
+        Stroke oldStroke = g.getStroke();
+        AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
+        g.transform(at);
+        g.setStroke(new BasicStroke((int)Math.max(5/zoomFactor, 5)));
+
+
+        Node lastNode = null;
+        for (Long nl : highlightedNodeList) {
+            Node currentNode = graph.getNodeMap().get(nl);
+
+            g.setColor(Color.RED);
+            if (lastNode != null) {
+
+                g.drawLine((int) (currentNode.getX()),
+                        (int) (currentNode.getY()),
+                        (int) (lastNode.getX()),
+                        (int) (lastNode.getY()));
             }
+            lastNode = currentNode;
         }
 
-        /*
-        for (Map.Entry<Long, Node> entry : graph.getNodeMap().entrySet()) {
-            Node node = entry.getValue();
-
-
-            double drawingFactor = nodeRatioFactor / zoomFactor;
-            boolean isVisible = panX <= node.getX() && node.getX() <= (panX + (width / zoomFactor)) &&
-                    panY >= node.getY() && node.getY() >= (panY - (height / zoomFactor));
-
-            boolean shouldDrawNode = isVisible; // &&
-                    //(drawingFactor <= 1 ||
-                            //nodeSkipCounter >= drawingFactor * 20 || //TODO REMOVE MAGIC CONSTANT 20
-                           // nodeSkipCounter >= maxNodesToSkip);
-
-            if (shouldDrawNode) {
-                //Road drawing
-                if (zoomFactor >= nodeRatioFactor) {
-                    g.setColor(Color.BLACK);
-                    for (Path p : node.getPaths()) {
-                        g.drawLine((int) (node.getX()), (int) (node.getY()),
-                                (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
-                    }
-                }
-            }
-
-        }*/
+        g.setStroke(oldStroke);
+        g.setTransform(oldTransform);
     }
 
     @Override
     public void setHighlightedPath(List<Long> nodeList) {
-        this.highlightAlreadyDrawn = false;
         this.highlightedNodeList = nodeList;
     }
+
+
 }

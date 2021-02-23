@@ -4,6 +4,7 @@ import openmap.framework.Graph;
 import openmap.JsonParsing.DiskUtility;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
+import openmap.standard.DijkstraNodeWrapperImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -38,7 +39,7 @@ class MapGui{
         System.out.println(graph.getNodeMap().size());
 
         myPanel.setPreferredSize(new Dimension(800, 400));
-        PathFinder djikstra = new DijkstraImpl(graph);
+        PathFinder djikstra = new DijkstraNodeWrapperImpl(graph);
         ((MapPanel)myPanel).setHighlightedPath(djikstra.getShortestPath(1511529408L, 1511479070L));
 
         //Quick test with klemensker //TODO REMOVE
