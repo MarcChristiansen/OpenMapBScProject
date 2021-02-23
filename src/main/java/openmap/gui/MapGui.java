@@ -35,6 +35,8 @@ class MapGui{
 
         //Make the center component big, since that's the map
         JPanel myPanel = new MapPanel(graph);
+        System.out.println(graph.getNodeMap().size());
+
         myPanel.setPreferredSize(new Dimension(800, 400));
         PathFinder djikstra = new DijkstraImpl(graph);
         ((MapPanel)myPanel).setHighlightedPath(djikstra.getShortestPath(1511529408L, 1511479070L));

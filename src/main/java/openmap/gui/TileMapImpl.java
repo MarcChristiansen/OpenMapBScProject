@@ -111,9 +111,8 @@ public class TileMapImpl implements TileMap {
         AffineTransform at = new AffineTransform();
         at.scale(zoomFactor, zoomFactor);
         at.translate(-panX, panY);
+        at.scale(1,-1);
         g.transform(at);
-        g.scale(1, -1);
-        g.translate(0, 0);
 
         int initArrX = (int)Math.floor((panX-graph.getBounds().getMinX())/tileSquareSize);
         int initArrY = ((int)Math.floor((panY-graph.getBounds().getMinY())/tileSquareSize));
@@ -123,14 +122,14 @@ public class TileMapImpl implements TileMap {
 
         //Ensure array bounds
         if(initArrX < 0) { initArrX = 0; }
-        if(initArrY < 0) { System.out.println("Y outside of image, i think"); return;}
-        if(initArrX > tileMapArray.length) { System.out.println("X outside of image, i think"); return; }
+        if(initArrY < 0) { System.out.println("Y outside of image"); return;}
+        if(initArrX > tileMapArray.length) { System.out.println("X outside of image"); return; }
         if(initArrY >= tileMapArray[0].length) { initArrY = tileMapArray[0].length-1; }
 
-        if(maxArrX < 0) {System.out.println("X outside of image, i think (max)"); return;}
+        if(maxArrX < 0) {System.out.println("X outside of image (max)"); return;}
         if(maxArrY < 0) { maxArrY = 0; }
         if(maxArrX > tileMapArray.length) { maxArrX = tileMapArray.length;}
-        if(maxArrY > tileMapArray[0].length) {System.out.println("Y outside of image, i think (max)"); return;}
+        if(maxArrY > tileMapArray[0].length) {System.out.println("Y outside of image (max)"); return;}
 
         //System.out.println(initArrX);
         //System.out.println(initArrY);
