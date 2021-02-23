@@ -33,7 +33,7 @@ public class DijkstraImpl implements PathFinder {
             distance.clear();
             visited.clear();
             priorityQueue.clear();
-            runDijkstra(source);
+            runDijkstra(source, destination);
         }
         List<Long> result = new ArrayList<Long>();
         Long currId = destination;
@@ -50,19 +50,21 @@ public class DijkstraImpl implements PathFinder {
         return result;
     }
 
-    private void runDijkstra(Long source){
+    private void runDijkstra(Long source, Long destination){
         //add source to priority queue with distance 0
         priorityQueue.add(new NodeWrapperImpl(graph.getNodeMap().getOrDefault(source, null), 0.0));
         distance.put(source, 0.0);
 
         int nodeCount = graph.getNodeMap().size();
+        int visitcount = 0;
 
         boolean finished = false;
 
         while (!finished){
+            visitcount++;
             NodeWrapper currNode = priorityQueue.poll();
 
-            if(currNode == null){
+            if(currNode == null || currNode.getNode().getId() == destination){
                 finished = true;
             }
             else if(!visited.contains(currNode.getNode())){
@@ -85,6 +87,7 @@ public class DijkstraImpl implements PathFinder {
                 });
             }
         }
+        System.out.println("Dijkstra visited " + visitcount + " nodes");
     }
 
 
