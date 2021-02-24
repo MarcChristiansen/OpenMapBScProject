@@ -9,6 +9,8 @@ import java.util.Map;
 public class GraphBuilderImpl implements graphBuilder {
 
     OsmXmlParser parser;
+
+    //Builder flags with defaults
     boolean shouldRefitBorders = true;
     boolean shouldOptimizeGraph = true;
     boolean bikePaths = false;
