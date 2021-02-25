@@ -2,36 +2,34 @@ package openmap.standard;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
-import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
-public class DijkstraImpl implements PathFinder {
+public class DijkstraWrongImpl implements PathFinder {
 
     private Graph graph;
-    private PriorityQueue<NodeWrapper> priorityQueue;
+    private PriorityQueue<Node> priorityQueue;
     //private Map<Long, Long> predecessor;
     //private Map<Long, Double> distance;
-    //private Set<Node> visited;
+    private Set<Node> visited;
     private Long source = null;
 
-    public DijkstraImpl(Graph graph){
+    public DijkstraWrongImpl(Graph graph){
         this.graph = graph;
-        priorityQueue = new PriorityQueue<NodeWrapper>();
+        priorityQueue = new PriorityQueue<Node>();
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
-        //visited = new HashSet<Node>();
+        visited = new HashSet<Node>();
 
     }
 
     @Override
     public List<Long> getShortestPath(Long source, Long destination) {
         //if it is another source, or first run. Recalculate shortest path with dijkstra.
-        if(true){ //could be optimized to only run if source and destination have changed since last run
+        if(this.source == null || this.source != source){
             clearDistanceAndPredecessor();
-            //visited.clear();
+            visited.clear();
             priorityQueue.clear();
             runDijkstra(source, destination);
         }
@@ -59,32 +57,36 @@ public class DijkstraImpl implements PathFinder {
         //add source to priority queue with distance 0
         Node firstNode = graph.getNodeMap().get(source);
         firstNode.setDistance(0);
-        firstNode.setPredecessor(firstNode.getId());
-        priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
+        priorityQueue.add(firstNode);
 
-        while (true){
-            NodeWrapper currNode = priorityQueue.poll();
-            if(currNode == null || currNode.getNode().getId() == destination){
-                break; //we obey whatever Gerth commands
+        int nodeCount = graph.getNodeMap().size();
+
+        boolean finished = false;
+
+        while (!finished){
+            Node currNode = priorityQueue.poll();
+
+            if(currNode == null || currNode.getId() == destination){
+                finished = true;
             }
-
-            boolean visited = currNode.getNode().getPredecessor() != null;
-            if(!visited){
+            else if(!visited.contains(currNode)){
                 visitcount++;
+                //Add node to visited
+                visited.add(currNode);
 
                 //Go through all paths
-                currNode.getNode().getPaths().forEach(path -> {
-                    double newDistance = currNode.getNode().getDistance() + path.getWeight();
+                currNode.getPaths().forEach(path -> {
+                    double newDistance = currNode.getDistance() + path.getWeight();
 
                     //check if new distance is lower
                     if(newDistance < path.getDestination().getDistance()) {
                         path.getDestination().setDistance(newDistance);
                         //add predecessor for the node
-                        path.getDestination().setPredecessor(currNode.getNode().getId());
+                        path.getDestination().setPredecessor(currNode.getId());
                     }
 
                     //add to priority queue
-                    priorityQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
+                    priorityQueue.add(path.getDestination());
                 });
             }
         }

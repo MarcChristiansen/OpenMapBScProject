@@ -95,29 +95,7 @@ public class GraphBuilderImpl implements graphBuilder {
                         pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
                     }
 
-                    //Multiply with speed limit to get time in seconds
-                    int maxSpeed;
-                    String maxSpeedTag = way.getTags().getOrDefault("maxspeed", "false");
-
-                    if(!maxSpeedTag.equals("false")){
-                        //maxSpeed = Integer.parseInt(maxSpeedTag);
-                    }
-                    else {
-                        switch(highway) {
-                            case "motorway":
-                                maxSpeed = 130;
-                                break;
-                            case "primary":
-                            case "secondary":
-                            case "tertiary":
-                            case "trunk":
-                                maxSpeed = 80;
-                                break;
-                            default:
-                                maxSpeed = 50;
-                                break;
-                        }
-                    }
+                    int maxSpeed = FindMaxSpeed(way);
 
 
                     if (nodeWays > 1 || i == 0 || i == tempList.size()-1 || !shouldOptimizeGraph){
@@ -172,6 +150,38 @@ public class GraphBuilderImpl implements graphBuilder {
         });
 
         return new GraphImpl(finalNodeMap, bounds);
+    }
+
+    /**
+     * Method for finding the maxspeed on a given way
+     * @param way
+     * @return
+     */
+    private int FindMaxSpeed(OsmWay way) {
+        //Multiply with speed limit to get time in seconds
+        int maxSpeed = 50;
+        String highway = way.getTags().getOrDefault("highway", "false");
+        String maxSpeedTag = way.getTags().getOrDefault("maxspeed", "false");
+
+        try{
+            System.out.println(maxSpeedTag);
+            maxSpeed = Integer.parseInt(maxSpeedTag);
+        } catch (NumberFormatException e) {
+            switch(highway) {
+                case "motorway":
+                    maxSpeed = 130;
+                    break;
+                case "primary":
+                case "secondary":
+                case "tertiary":
+                case "trunk":
+                    maxSpeed = 80;
+                    break;
+                default:
+                    break;
+            }
+        }
+        return maxSpeed;
     }
 
     private double getDistanceBetweenNodes(Node n1, Node n2){
