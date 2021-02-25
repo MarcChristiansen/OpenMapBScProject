@@ -4,6 +4,7 @@ import openmap.framework.Graph;
 import openmap.framework.OsmXmlParser;
 import openmap.standard.GraphBuilderImpl;
 import openmap.standard.OsmXmlParserImpl;
+import openmap.utility.ConsoleUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -21,10 +22,9 @@ public class CompileJson {
             outPath = args[1];
         }
         else{
-
-            path = readLine(
+            path = ConsoleUtils.readLine(
                     "Enter osm path : ");
-            outPath = readLine(
+            outPath = ConsoleUtils.readLine(
                     "Enter json path : ");
         }
 
@@ -34,15 +34,9 @@ public class CompileJson {
         //((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
         Graph graph = graphBuilder.createGraph();
 
-
         createJsonGraph(graph, outPath);
         System.out.println("Serialized graph data is saved in " + outPath);
 
     }
 
-    private static String readLine(String format, Object... args) throws IOException {
-        System.out.print(String.format(format, args));
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        return reader.readLine();
-    }
 }
