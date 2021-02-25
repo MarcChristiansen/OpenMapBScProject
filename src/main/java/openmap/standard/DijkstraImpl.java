@@ -59,7 +59,7 @@ public class DijkstraImpl implements PathFinder {
         //add source to priority queue with distance 0
         Node firstNode = graph.getNodeMap().get(source);
         firstNode.setDistance(0);
-        firstNode.setPredecessor(firstNode.getId());
+        firstNode.setPredecessor(source);
         priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
 
         while (true){
@@ -68,10 +68,11 @@ public class DijkstraImpl implements PathFinder {
                 break; //we obey whatever Gerth commands
             }
 
-            boolean visited = currNode.getNode().getPredecessor() != null;
-            if(!visited){
+            if(!currNode.getNode().getVisited()){
                 visitcount++;
 
+                //give first node predecessor
+                currNode.getNode().setVisited(true);
                 //Go through all paths
                 currNode.getNode().getPaths().forEach(path -> {
                     double newDistance = currNode.getNode().getDistance() + path.getWeight();
@@ -98,6 +99,7 @@ public class DijkstraImpl implements PathFinder {
         nodeMap.values().forEach(node -> {
            node.setDistance(Double.MAX_VALUE);
            node.setPredecessor(null);
+           node.setVisited(false);
         });
     }
 

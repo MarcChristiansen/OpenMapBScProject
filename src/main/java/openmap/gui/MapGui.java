@@ -52,7 +52,7 @@ class MapGui{
         //((MapPanel)myPanel).setHighlightedPath(djikstra.getShortestPath(1511529408L, 1511479070L));
 
         //TODO implement this properly with actual working buttons and lists
-        PathFinder djikstra = new DijkstraNodeWrapperImpl(graph);
+        PathFinder djikstra = new DijkstraImpl(graph);
 
         JButton button = new JButton("Button 1 (PAGE_START)");
         pane.add(button, BorderLayout.PAGE_START);

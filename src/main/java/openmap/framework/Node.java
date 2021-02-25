@@ -51,6 +51,10 @@ public interface Node {
 
     public void setPredecessor(Long predecessorId);
 
+    public boolean getVisited();
+
+    public void setVisited(boolean b);
+
     /**
      * Returns a list of the paths starting from this node
      * @return list of the paths starting from this node
@@ -79,5 +83,6 @@ public interface Node {
      * @return A json object copy of the object
      */
     public JSONObject getJSONObject();
+
 
 }

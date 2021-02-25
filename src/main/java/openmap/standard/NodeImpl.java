@@ -19,6 +19,7 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
     private long id;
     private Long predecessorId;
     private double distance;
+    private boolean visited;
 
     Coordinate coordinate;
     private List<Path> pathList;
@@ -92,6 +93,16 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
     @Override
     public void setPredecessor(Long predecessorId) {
         this.predecessorId = predecessorId;
+    }
+
+    @Override
+    public boolean getVisited() {
+        return visited;
+    }
+
+    @Override
+    public void setVisited(boolean b) {
+        visited = b;
     }
 
     @Override
