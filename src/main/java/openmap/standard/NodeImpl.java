@@ -24,6 +24,12 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
     Coordinate coordinate;
     private List<Path> pathList;
 
+    /**
+     * Create a new node from an id and latitude and longitude (This uses UTM32N
+     * @param id The id of the node
+     * @param lat The latitude of the node
+     * @param lon The longitude of the node
+     */
     public NodeImpl(long id, double lat, double lon){
         this.id = id;
 
