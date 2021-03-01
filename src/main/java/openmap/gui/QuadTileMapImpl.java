@@ -18,22 +18,21 @@ public class QuadTileMapImpl implements TileMap {
     public QuadTileMapImpl(Graph graph, byte maxLayer, int height, int width){
         this.graph = graph;
 
-        double initZoomLvl = Math.min((double)(height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY()),
-                (double)(width)/(graph.getBounds().getMaxX() - graph.getBounds().getMinX()));
 
-        this.rootTile = new QuadTile(maxLayer, graph.getBounds(), initZoomLvl);
+        this.rootTile = new QuadTile(maxLayer, graph.getBounds());
 
         //add all nodes to our root quadtile and let them propegate.
         for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {
             rootTile.addNode(entry.getValue());
         }
+        rootTile.preRenderCacheImages();
 
         //TODO figure out if we want to prerender everything.
     }
 
     @Override
     public void drawMapView(double x, double y, int gWindowWidth, int gWindowHeight, double zoomFactor, Graphics2D g) {
-
+        rootTile.drawMapView(x,y, gWindowWidth, gWindowHeight, zoomFactor, g);
     }
 
     @Override

@@ -3,6 +3,7 @@ package openmap.gui;
 import openmap.framework.Bounds;
 import openmap.framework.Graph;
 import openmap.framework.Node;
+import openmap.framework.Path;
 import openmap.gui.framework.MapTile;
 import openmap.standard.BoundsImpl;
 
@@ -33,15 +34,23 @@ public class QuadTile implements MapTile {
     byte maxLayer;
     Bounds bounds;
     QuadTile parent;
+    int width, height;
+
+    int drawX, drawY;
 
     /**
      * Top level QuadTile constructor
      * @param maxLayer The max amount of layers to create
      * @param bounds The bounds of the map
-     * @param bounds The initial zoomFactor
      */
-    public QuadTile(byte maxLayer, Bounds bounds, double zoomFactor){
-        setupFields((byte)1, maxLayer, bounds, null, zoomFactor);
+    public QuadTile(byte maxLayer, Bounds bounds){
+        int height = 1080;
+
+        setupFields((byte)1, maxLayer, bounds, null, zoomFactor, 0, height, 0,0);
+
+        this.zoomFactor = (double)(height)/(getBounds().getMaxY() - getBounds().getMinY());
+        this.width = (int)(zoomFactor*(getBounds().getMaxX() - getBounds().getMinX()));
+
     }
 
     /**
@@ -52,17 +61,23 @@ public class QuadTile implements MapTile {
      * @param parent The parent of the child
      * @param zoomFactor The zoomfactor to render
      */
-    private QuadTile(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor){
-        setupFields(layer, maxLayer, bounds, parent, zoomFactor);
+    private QuadTile(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor, int width, int height, int drawX, int drawY){
+        setupFields(layer, maxLayer, bounds, parent, zoomFactor, width, height, drawX, drawY);
     }
 
-    private void setupFields(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor) {
+    private void setupFields(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor,  int width, int height, int drawX, int drawY) {
         nodeList = new ArrayList<>();
         this.layer = layer;
         this.maxLayer = maxLayer;
         this.bounds = bounds;
         this.zoomFactor = zoomFactor;
         this.parent = parent;
+        this.width = width;
+        this.height =height;
+        this.drawX = drawX;
+        this.drawY = drawY;
+
+
     }
 
     /**
@@ -80,7 +95,7 @@ public class QuadTile implements MapTile {
 
     public Image getCacheImage() {
         if(cacheImage == null){
-            //TODO Create image based on overlappingNodes and nodeList
+            createCacheImage(width, height); //TODO TEMP FIND A WAY TO ENSURE DYNAMIC IMAGE (height/width)
         }
         return cacheImage;
     }
@@ -101,25 +116,19 @@ public class QuadTile implements MapTile {
 
         boolean nodeInTile1or3 = n.getX() > (bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2);
         boolean nodeInTile0or1 = n.getY() > (bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2);
-        System.out.println(n.getY());
-        System.out.println((bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2));
 
         if(nodeInTile1or3){ //check if we are in tile (2, 4) or (1,3)
             if(nodeInTile0or1) {
-                System.out.println("hej1");
                 tileNum = 1;
             }
             else{
                 tileNum = 3;
-                System.out.println("hej3");
             }
         }else {
             if(nodeInTile0or1){
-                System.out.println("hej0");
                 tileNum = 0;
             }
             else{
-                System.out.println("hej2");
                 tileNum = 2;
             }
         }
@@ -132,6 +141,8 @@ public class QuadTile implements MapTile {
 
     private void createChild(int tileNum) {
         Bounds childBounds = new BoundsImpl();
+        int newDrawX = this.drawX*2;
+        int newDrawY = this.drawY*2;
         //Setup x bound
         if(tileNum == 0 || tileNum == 2) {
             childBounds.setMinX(bounds.getMinX());
@@ -140,19 +151,22 @@ public class QuadTile implements MapTile {
         else{
             childBounds.setMinX(bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2);
             childBounds.setMaxX(bounds.getMaxX());
+            newDrawX = newDrawX + width;
         }
 
         //Setup y bound
         if(tileNum == 2 || tileNum == 3) {
             childBounds.setMinY(bounds.getMinY());
             childBounds.setMaxY(bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2);
+            newDrawY = newDrawY + height;
         }
         else{
             childBounds.setMinY(bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2);
             childBounds.setMaxY(bounds.getMaxY());
+
         }
 
-        children[tileNum] = new QuadTile((byte)(layer+1), maxLayer, childBounds, this.parent, zoomFactor/4);
+        children[tileNum] = new QuadTile((byte)(layer+1), maxLayer, childBounds, this.parent, this.zoomFactor*2, width, height, newDrawX, newDrawY);
     }
 
     public void addOverlappingNode(Node n){
@@ -175,37 +189,88 @@ public class QuadTile implements MapTile {
         return nodeList;
     }
 
-    public double getZoomFactor() {
-        return zoomFactor;
+    public void preRenderCacheImages(){
+        createCacheImage(width, height);
+
+        for (QuadTile qt: children) { //No need to check layer as all children are null at max layer...
+            if(qt != null){
+                qt.preRenderCacheImages();
+            }
+        }
     }
 
-    private Image createCacheImage(int width, int height){
+    private void createCacheImage(int width, int height){
         BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB );
         Graphics2D g =  img.createGraphics();
-        g.setPaint ( Color.white );
+        g.setPaint ( Color.RED );
         g.fillRect ( 0, 0, width, height );
 
         AffineTransform oldTransform = g.getTransform();
-        AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
+        System.out.println("layer: " + layer + " zoom " + zoomFactor);
+        AffineTransform at = getMapDrawingAffineTransform(bounds.getMinX(), bounds.getMinY()+(bounds.getMaxY()-bounds.getMinY()), zoomFactor);
         g.transform(at);
 
 
+        //Road drawing
+        for (Node node : nodeList) {
+            g.setColor(Color.BLACK);
+            for (Path p : node.getPaths()) {
+                g.drawLine((int) (node.getX()), (int) (node.getY()),
+                        (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
+            }
+        }
+
 
         g.dispose();
-        return img;
+        cacheImage = img;
     }
 
-    public Image getMapView(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactor){
-        if(zoomFactor >= this.zoomFactor){
-            return getCacheImage(); //Only relevant for the rootTile
+    public void drawMapView(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactorInput, Graphics2D g){
+
+
+        if(layer == 1){ //Setup transform if roottile
+            double drawZoomFactor = this.zoomFactor;
+            int tempLayer = 1;
+            while(tempLayer < maxLayer && zoomFactorInput >= drawZoomFactor){
+                System.out.println("hej1");
+                drawZoomFactor *= 2;
+                tempLayer += 1;
+            }
+
+            AffineTransform at = new AffineTransform();
+            double tempPanX = (panX-getBounds().getMinX())*zoomFactorInput;
+            double tempPanY = (panY-(getBounds().getMinY()+(getBounds().getMaxY()-getBounds().getMinY())))*zoomFactorInput;
+            at.translate(-tempPanX, tempPanY);
+            at.scale(zoomFactorInput/drawZoomFactor, zoomFactorInput/drawZoomFactor);
+            System.out.println((panX-bounds.getMinX()) + " " + (panY-bounds.getMinY()));
+            g.setTransform(at);
         }
 
-        if(zoomFactor >= this.zoomFactor/4){
-            //Todo let this combine it's children
+
+        if(zoomFactorInput <= this.zoomFactor) {
+            g.drawImage(getCacheImage(), drawX, drawY, null); //Only relevant for the rootTile
+        }else{
+            if(children[0] != null){
+                children[0].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+            }
+            if(children[1] != null){
+                children[1].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+            }
+            if(children[2] != null){
+                children[2].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+            }
+            if(children[3] != null){
+                children[3].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+            }
         }
-        else{
-            //Todo Find relevant child(ren) and draw their representations
-        }
+
     }
 
+    public int getHeight() {
+        return height;
+    }
+
+    public int getWidth() {
+        return width;
+    }
 }

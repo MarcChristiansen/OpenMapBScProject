@@ -69,7 +69,7 @@ class MapPanel extends JPanel {
 
         this.graph = graph;
         //setBorder(BorderFactory.createLineBorder(Color.black));
-        this.tileMap = new TileMapImpl(graph, 10000, 6);
+        this.tileMap = new QuadTileMapImpl(graph, (byte)6, 1920, 1080);
 
         //TODO REMOVE and make modular
         pathFinder = new DijkstraImpl(this.graph);

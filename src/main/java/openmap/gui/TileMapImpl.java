@@ -33,6 +33,10 @@ public class TileMapImpl implements TileMap {
     int oldWidth;
     int oldHeight;
 
+    //Usefull stuff for drawing
+    int drawLocationX;
+    int getDrawLocationY;
+
 
     public TileMapImpl(Graph graph, int tileSquareSize, int preRenderSize){
         this.tileSquareSize = tileSquareSize;

@@ -18,7 +18,7 @@ public class testQuadTiles {
         b.setMinY(0);
         b.setMaxX(1000);
         b.setMaxY(1000);
-        rootQt = new QuadTile((byte)4, b, 0);
+        rootQt = new QuadTile((byte)4, b);
     }
 
     @Test
