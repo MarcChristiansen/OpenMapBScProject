@@ -200,9 +200,9 @@ public class QuadTile implements MapTile {
     }
 
     private void createCacheImage(int width, int height){
-        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB );
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY);
         Graphics2D g =  img.createGraphics();
-        g.setPaint ( Color.RED );
+        g.setPaint ( Color.WHITE );
         g.fillRect ( 0, 0, width, height );
 
         AffineTransform oldTransform = g.getTransform();
@@ -222,10 +222,12 @@ public class QuadTile implements MapTile {
 
 
         g.dispose();
+        img.flush();
         cacheImage = img;
     }
 
     public void drawMapView(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactorInput, Graphics2D g){
+
 
 
         if(layer == 1){ //Setup transform if roottile
