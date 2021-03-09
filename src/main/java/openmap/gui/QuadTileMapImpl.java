@@ -28,7 +28,6 @@ public class QuadTileMapImpl implements TileMap {
         }
         rootTile.preRenderCacheImages();
 
-        //TODO figure out if we want to prerender everything.
     }
 
     @Override
