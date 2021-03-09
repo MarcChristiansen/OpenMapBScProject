@@ -6,6 +6,7 @@ import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.gui.framework.MapTile;
 import openmap.standard.BoundsImpl;
+import org.opengis.style.Graphic;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -113,7 +114,6 @@ public class QuadTile implements MapTile {
     private void addNodeToChildren(Node n){
         int tileNum;
 
-
         boolean nodeInTile1or3 = n.getX() > (bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2);
         boolean nodeInTile0or1 = n.getY() > (bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2);
 
@@ -212,6 +212,24 @@ public class QuadTile implements MapTile {
 
 
         //Road drawing
+        drawNodes(g);
+
+        g.dispose();
+        cacheImage = img;
+    }
+
+    private void drawDirect(double panX, double panY, double zoomFactor, Graphics2D g){
+        AffineTransform oldTransform = g.getTransform();
+        System.out.println("Directly drawing" + " zoom " + zoomFactor);
+        AffineTransform at = getMapDrawingAffineTransform((int)panX, (int)panY, zoomFactor);
+        g.setTransform(at);
+
+        drawNodes(g);
+
+        g.setTransform(oldTransform);
+    }
+
+    private void drawNodes(Graphics2D g) {
         for (Node node : nodeList) {
             g.setColor(Color.BLACK);
             for (Path p : node.getPaths()) {
@@ -219,25 +237,30 @@ public class QuadTile implements MapTile {
                         (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
             }
         }
-
-
-        g.dispose();
-        img.flush();
-        cacheImage = img;
     }
 
     public void drawMapView(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactorInput, Graphics2D g){
+        boolean rectangleIntersectXCheck = panX > bounds.getMaxX() || bounds.getMinX() > panX+(gWindowWidth/zoomFactorInput);
+        boolean rectangleIntersectYCheck = panY < bounds.getMinY() || bounds.getMaxY() < panY-(gWindowHeight/zoomFactorInput);
 
+        boolean isTileVisible = !(rectangleIntersectXCheck || rectangleIntersectYCheck);
+        if(!isTileVisible) {
+            return;
+        }
 
+        AffineTransform oldGTransform = null;
 
-        if(layer == 1){ //Setup transform if roottile
+        if(layer == 1){ //Setup transform if rootTile
+            oldGTransform = g.getTransform();
             double drawZoomFactor = this.zoomFactor;
             int tempLayer = 1;
             while(tempLayer < maxLayer && zoomFactorInput >= drawZoomFactor){
-                System.out.println("hej1");
                 drawZoomFactor *= 2;
                 tempLayer += 1;
             }
+
+            //Setup rendering hint for graphics interpolation
+            g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 
             AffineTransform at = new AffineTransform();
             double tempPanX = (panX-getBounds().getMinX())*zoomFactorInput;
@@ -252,18 +275,28 @@ public class QuadTile implements MapTile {
         if(zoomFactorInput <= this.zoomFactor) {
             g.drawImage(getCacheImage(), drawX, drawY, null); //Only relevant for the rootTile
         }else{
-            if(children[0] != null){
-                children[0].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+            if(maxLayer == this.layer) {
+                System.out.println("hej tiles bad");//We have reached the lowest level, we will begin directly drawing
+                drawDirect(panX, panY, zoomFactorInput, g);
             }
-            if(children[1] != null){
-                children[1].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+            else{
+                if(children[0] != null ){
+                    children[0].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                }
+                if(children[1] != null){
+                    children[1].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                }
+                if(children[2] != null){
+                    children[2].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                }
+                if(children[3] != null){
+                    children[3].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                }
             }
-            if(children[2] != null){
-                children[2].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
-            }
-            if(children[3] != null){
-                children[3].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
-            }
+        }
+
+        if(layer == 1){
+            g.setTransform(oldGTransform); //We ensure this is set only in layer 1
         }
 
     }
