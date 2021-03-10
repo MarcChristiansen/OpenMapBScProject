@@ -68,6 +68,7 @@ public class QuadTile implements MapTile {
 
     private void setupFields(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor,  int width, int height, int drawX, int drawY) {
         nodeList = new ArrayList<>();
+        overlappingNodeList = new ArrayList<>();
         this.layer = layer;
         this.maxLayer = maxLayer;
         this.bounds = bounds;
