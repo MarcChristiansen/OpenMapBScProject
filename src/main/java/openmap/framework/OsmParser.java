@@ -11,7 +11,7 @@ import java.util.Map;
  * @version 1.1
  * @since 09-02-2021
  */
-public interface OsmXmlParser {
+public interface OsmParser {
 
     /**
      * Parses all ways that are in some way a path

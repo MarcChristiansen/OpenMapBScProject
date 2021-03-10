@@ -18,7 +18,7 @@ public class DijkstraDenmarkTest {
         path = "F:\\AU\\Open map data\\denmark-latest.osm";
         //path = "C:\\testmapInter.osm";
 
-        OsmXmlParser parser = new OsmXmlParserImpl(path);
+        OsmParser parser = new OsmXmlParserImpl(path);
         graphBuilder graphBuilder = new GraphBuilderImpl(parser);
 
         Graph graph = graphBuilder.createGraph();
