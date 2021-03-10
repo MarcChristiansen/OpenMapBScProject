@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class GraphBuilderImpl implements graphBuilder {
 
-    OsmXmlParser parser;
+    OsmParser parser;
 
     //Builder flags with defaults
     boolean shouldRefitBorders = true;
@@ -17,7 +17,7 @@ public class GraphBuilderImpl implements graphBuilder {
     boolean footPaths = false;
 
 
-    public GraphBuilderImpl(OsmXmlParser osmParser) {
+    public GraphBuilderImpl(OsmParser osmParser) {
         this.parser = osmParser;
     }
 
@@ -164,7 +164,7 @@ public class GraphBuilderImpl implements graphBuilder {
         String maxSpeedTag = way.getTags().getOrDefault("maxspeed", "false");
 
         try{
-            System.out.println(maxSpeedTag);
+            //System.out.println(maxSpeedTag);
             maxSpeed = Integer.parseInt(maxSpeedTag);
         } catch (NumberFormatException e) {
             switch(highway) {

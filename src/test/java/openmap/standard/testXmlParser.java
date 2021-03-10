@@ -1,7 +1,6 @@
 package openmap.standard;
 
 import openmap.framework.*;
-import openmap.standard.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +13,7 @@ import java.util.Map;
 
 public class testXmlParser {
 
-    OsmXmlParser parser;
+    OsmParser parser;
 
     @Before
     public void setUp() {

@@ -13,6 +13,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,7 +71,7 @@ class MapPanel extends JPanel {
 
         this.graph = graph;
         //setBorder(BorderFactory.createLineBorder(Color.black));
-        this.tileMap = new QuadTileMapImpl(graph, (byte)6, 1920, 1080);
+        this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
         //TODO REMOVE and make modular
         pathFinder = new DijkstraImpl(this.graph);
@@ -202,11 +204,11 @@ class MapPanel extends JPanel {
     protected void paintComponent(Graphics gg) {
         super.paintComponent(gg);
 
-
-
         //this.setBorder(null);
 
         Graphics2D g = (Graphics2D) gg;
+
+        g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         gg.setColor ( Color.white );
         gg.fillRect ( 0, 0, getWidth(), getHeight() );
         AffineTransform matrix = g.getTransform(); // Backup

@@ -96,7 +96,7 @@ public class TileMapImpl implements TileMap {
             g.setTransform(oldTransform);
 
 
-            drawHighlightedPath(zoomFactor, g, panX, panY);
+            drawHighlightedPath(panX, panY, zoomFactor, g);
 
             return;
         }
@@ -107,7 +107,7 @@ public class TileMapImpl implements TileMap {
         gg.setPaint ( Color.white );
         gg.fillRect ( 0, 0, width, height );
         drawRelevantTiles(panX, panY, width, height, zoomFactor, gg);
-        drawHighlightedPath(zoomFactor, gg, panX, panY);
+        drawHighlightedPath(panX, panY, zoomFactor, gg);
         g.drawImage(img, 0, 0, null);
 
 
@@ -184,7 +184,7 @@ public class TileMapImpl implements TileMap {
         return at;
     }
 
-    private void drawHighlightedPath(double zoomFactor, Graphics2D g, double panX, double panY) {
+    private void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g) {
         if (highlightedNodeList == null) { return; }
 
         AffineTransform oldTransform = g.getTransform();

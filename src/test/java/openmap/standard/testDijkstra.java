@@ -2,7 +2,7 @@ package openmap.standard;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
-import openmap.framework.OsmXmlParser;
+import openmap.framework.OsmParser;
 import openmap.framework.PathFinder;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,7 +16,7 @@ import java.util.Map;
 
 public class testDijkstra {
 
-    OsmXmlParser parser;
+    OsmParser parser;
     Graph graph;
 
     @Before

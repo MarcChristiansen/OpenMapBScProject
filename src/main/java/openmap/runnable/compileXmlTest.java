@@ -2,7 +2,7 @@ package openmap.runnable;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
-import openmap.framework.OsmXmlParser;
+import openmap.framework.OsmParser;
 import openmap.framework.graphBuilder;
 import openmap.standard.GraphBuilderImpl;
 import openmap.standard.GraphImpl;
@@ -19,7 +19,7 @@ public class compileXmlTest {
         //path = "C:\\motorwayTest.osm";
         path = "C:\\testmapInter.osm";
 
-        OsmXmlParser parser = new OsmXmlParserImpl(path);
+        OsmParser parser = new OsmXmlParserImpl(path);
         graphBuilder graphBuilder = new GraphBuilderImpl(parser);
 
         Graph graph = graphBuilder.createGraph();

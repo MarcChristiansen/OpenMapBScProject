@@ -1,7 +1,7 @@
 package openmap.runnable;
 
 import openmap.framework.Graph;
-import openmap.framework.OsmXmlParser;
+import openmap.framework.OsmParser;
 import openmap.standard.GraphBuilderImpl;
 import openmap.standard.OsmXmlParserImpl;
 
@@ -31,8 +31,12 @@ public class CompileXML {
                     "Enter ser path : ");
         }
 
-        OsmXmlParser parser = new OsmXmlParserImpl(path);
+        OsmParser parser = new OsmXmlParserImpl(path);
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
+        ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(true);
+        ((GraphBuilderImpl)graphBuilder).setBikePaths(false);
+        ((GraphBuilderImpl)graphBuilder).setFootPaths(false);
+        ((GraphBuilderImpl)graphBuilder).setShouldRefitBorders(true);
 
         Graph graph = graphBuilder.createGraph();
 

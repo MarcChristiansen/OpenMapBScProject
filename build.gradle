@@ -18,6 +18,7 @@ dependencies {
     compile group: 'org.geotools', name: 'gt-api', version: '20.4'
     compile group: 'org.geotools', name: 'gt-epsg-hsql', version: '24.2'
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    compile group: 'org.openstreetmap.osmosis', name: 'osmosis-pbf', version: '0.48.3'
 
 }
 

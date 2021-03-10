@@ -3,7 +3,7 @@ package openmap.standard;
 import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.OsmWay;
-import openmap.framework.OsmXmlParser;
+import openmap.framework.OsmParser;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -16,7 +16,7 @@ import java.util.*;
 /**
  * Implementation of the OSM xml parser
  */
-public class OsmXmlParserImpl implements OsmXmlParser {
+public class OsmXmlParserImpl implements OsmParser {
 
     String fileIn;
 
