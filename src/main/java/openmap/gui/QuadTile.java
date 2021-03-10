@@ -101,16 +101,182 @@ public class QuadTile implements MapTile {
     }
 
     public void addNode(Node n){
+        //add nodes to quad tiles
+        addNodeToTile(n);
+
+        //loop through paths and add nodes to tiles if paths pass through
+        List<Path> pathList = n.getPaths();
+        pathList.forEach(path -> {
+            Node destNode = path.getDestination();
+            double a = (n.getY()-destNode.getY())/(n.getX()-destNode.getX());
+            double b = n.getY()-a*n.getX();
+            addPath(n, destNode, a, b);
+        });
+    }
+
+    public void addNodeToTile(Node n){
         nodeList.add(n);
         boolean isLastLayer = maxLayer == layer;
         if(isLastLayer) { return; }
 
         addNodeToChildren(n);
-
-        //TODO create overlapping lists
     }
 
     private void addNodeToChildren(Node n){
+        int tileNum = getNodeTileNum(n, bounds);
+
+        boolean isChildNull = children[tileNum] == null;
+
+        if(isChildNull) {createChild(tileNum); }
+        children[tileNum].addNodeToTile(n);
+    }
+
+    public void addPath(Node origin, Node destination, double a, double b){
+        //if origin or destination is within bounds don't add to nodelist
+        boolean originInBounds =  bounds.getMinX() <= origin.getX() && bounds.getMaxX() >= origin.getX() &&
+                bounds.getMinY() <= origin.getY() && bounds.getMaxY() >= origin.getY();
+        if(!originInBounds){ //If origin node is not in bounds for this tile, add to overlap list
+            overlappingNodeList.add(origin);
+        }
+        boolean isLastLayer = maxLayer == layer;
+        if(isLastLayer) { return; }
+
+        addPathToChildren(origin, destination, a, b);
+    }
+
+    private void addPathToChildren(Node origin, Node destination, double a, double b) {
+        int originTile;
+        boolean[] passThrough = new boolean[4];
+
+        //check if origin is in a tile
+        boolean originInBounds =  bounds.getMinX() <= origin.getX() && bounds.getMaxX() >= origin.getX() &&
+                bounds.getMinY() <= origin.getY() && bounds.getMaxY() >= origin.getY();
+
+
+        //find square borders around the path
+        double pathMinX;
+        double pathMaxX;
+        double pathMinY;
+        double pathMaxY;
+        //pathBounds
+        if(origin.getX() > destination.getX()){
+            pathMinX = destination.getX();
+            pathMaxX = origin.getX();
+        } else {
+            pathMinX = origin.getX();
+            pathMaxX = destination.getX();
+        }
+        if(origin.getY() > destination.getY()){
+            pathMinY = destination.getY();
+            pathMaxY = origin.getY();
+        } else {
+            pathMinY = origin.getY();
+            pathMaxY = destination.getY();
+        }
+
+        if(!!originInBounds){
+
+            //Check external bounds
+            //check left right
+            if(origin.getX() <= bounds.getMinX()){ //origin to the left of tile
+                double y = a*bounds.getMinX()+b;
+                boolean topTile = y >= bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2;
+                boolean yInBounds = y <= bounds.getMaxY() && y >= bounds.getMinY();
+                if(topTile && yInBounds){
+                    passThrough[0] = true;
+                }
+                else if(!topTile && yInBounds){
+                    passThrough[2] = true;
+                }
+            }
+            else if(origin.getX() >= bounds.getMaxX()) { //origin right of tile
+                double y = a*bounds.getMaxX()+b;
+                boolean topTile = y >= bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2;
+                boolean yInBounds = y <= bounds.getMaxY() && y >= bounds.getMinY();
+                if(topTile && yInBounds){
+                    passThrough[1] = true;
+                }
+                else if(!topTile && yInBounds){
+                    passThrough[3] = true;
+                }
+            }
+
+            //check up or down
+            if(origin.getY() <= bounds.getMinY()){ //origin below tile
+                double x = (bounds.getMinY()-b)/a;
+                boolean leftTile = x <= bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2;
+                boolean xInBounds = x <= bounds.getMaxX() && x >= bounds.getMinX();
+                if(leftTile && xInBounds) {
+                    passThrough[2] = true;
+                }
+                else if(!leftTile && xInBounds) {
+                    passThrough[3] = true;
+                }
+            }
+            else if(origin.getY() >= bounds.getMaxY()){ //origin above tile
+                double x = (bounds.getMaxY()-b)/a;
+                boolean leftTile = x <= bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2;
+                boolean xInBounds = x <= bounds.getMaxX() && x >= bounds.getMinX();
+                if(leftTile && xInBounds) {
+                    passThrough[0] = true;
+                }
+                else if(!leftTile && xInBounds) {
+                    passThrough[1] = true;
+                }
+            }
+        }
+        else {
+            originTile = getNodeTileNum(origin, bounds);
+            passThrough[originTile] = true;
+        }
+
+        //Check internal borders
+        double midX = (bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2);
+        if(midX <= pathMaxX && midX >= pathMinX) { //check that the path could pass through the middle vertically
+            double y = a*(bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2)+b;
+            boolean topTile = y >= bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2;
+            boolean yInBounds = y <= bounds.getMaxY() && y >= bounds.getMinY() && y <= pathMaxY && y >= pathMinY;
+            if(topTile && yInBounds){
+                passThrough[0] = true;
+                passThrough[1] = true;
+            }
+            else if(!topTile && yInBounds){
+                passThrough[2] = true;
+                passThrough[3] = true;
+            }
+        }
+        double midY = (bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2);
+        if(midY <= pathMaxY && midY >= pathMinY) { //check that the path could pass through the middle horizontally
+            double x = a*(bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2)+b;
+            boolean leftTile = x <= bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2;
+            boolean xInBounds = x <= bounds.getMaxX() && x >= bounds.getMinX() && x <= pathMaxX && x >= pathMinX;
+            if(leftTile && xInBounds) {
+                passThrough[0] = true;
+                passThrough[2] = true;
+            }
+            else if(!leftTile && xInBounds) {
+                passThrough[1] = true;
+                passThrough[3] = true;
+            }
+        }
+
+
+
+        //int tileNum = 1;
+
+        //int destTile = getNodeTileNum(destination, bounds);
+        for(int tileNum = 0; tileNum < 4; tileNum++){
+            if(passThrough[tileNum]){
+                boolean isChildNull = children[tileNum] == null;
+
+                if(isChildNull) {createChild(tileNum); }
+                children[tileNum].addPath(origin, destination, a, b);
+            }
+        }
+
+    }
+
+    private int getNodeTileNum(Node n, Bounds bounds){
         int tileNum;
 
 
@@ -133,10 +299,7 @@ public class QuadTile implements MapTile {
             }
         }
 
-        boolean isChildNull = children[tileNum] == null;
-
-        if(isChildNull) {createChild(tileNum); }
-        children[tileNum].addNode(n);
+        return tileNum;
     }
 
     private void createChild(int tileNum) {
