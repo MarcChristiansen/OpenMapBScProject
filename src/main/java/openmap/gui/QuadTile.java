@@ -400,6 +400,14 @@ public class QuadTile implements MapTile {
                         (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
             }
         }
+
+        for (Node node : overlappingNodeList) {
+            g.setColor(Color.BLACK);
+            for (Path p : node.getPaths()) {
+                g.drawLine((int) (node.getX()), (int) (node.getY()),
+                        (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
+            }
+        }
     }
 
     public void drawMapView(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactorInput, Graphics2D g){
