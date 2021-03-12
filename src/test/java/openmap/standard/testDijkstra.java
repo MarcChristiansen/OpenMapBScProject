@@ -4,6 +4,7 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.OsmParser;
 import openmap.framework.PathFinder;
+import openmap.parsing.OsmXmlParserImpl;
 import org.junit.Before;
 import org.junit.Test;
 

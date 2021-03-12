@@ -1,6 +1,5 @@
-package openmap.JsonParsing;
+package openmap.parsing.json;
 
-import openmap.JsonParsing.GraphContentHandler;
 import openmap.framework.Graph;
 import openmap.standard.GraphImpl;
 import org.json.simple.parser.JSONParser;

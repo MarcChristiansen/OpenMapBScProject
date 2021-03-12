@@ -1,6 +1,6 @@
 package openmap.standard;
 
-import openmap.JsonParsing.JsonGraphConstants;
+import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Bounds;
 import openmap.utility.CoordinateUtility;
 import org.json.simple.JSONObject;

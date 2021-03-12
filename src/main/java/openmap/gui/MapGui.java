@@ -1,10 +1,9 @@
 package openmap.gui;
 
 import openmap.framework.Graph;
-import openmap.JsonParsing.DiskUtility;
+import openmap.parsing.json.DiskUtility;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
-import openmap.standard.DijkstraNodeWrapperImpl;
 import openmap.utility.ConsoleUtils;
 
 import javax.swing.*;

@@ -6,8 +6,8 @@ import openmap.framework.OsmParser;
 import openmap.framework.graphBuilder;
 import openmap.standard.GraphBuilderImpl;
 import openmap.standard.GraphImpl;
-import openmap.standard.OsmXmlParserImpl;
-import openmap.JsonParsing.DiskUtility;
+import openmap.parsing.OsmXmlParserImpl;
+import openmap.parsing.json.DiskUtility;
 
 import java.io.*;
 import java.util.Arrays;

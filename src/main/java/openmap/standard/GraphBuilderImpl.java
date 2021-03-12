@@ -47,112 +47,81 @@ public class GraphBuilderImpl implements graphBuilder {
         System.out.println(nodeWayCounter.size());
         System.out.println(wayNodeMap.size());
 
-
+        if(!shouldOptimizeGraph) {
+            nodeWayCounter = null;
+        }
 
         //Create the Map that will only contain intersections and endings. Empty at first
         Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
 
-        wayList.forEach(way -> {
-            //check if current highway type is to be part of graph
-            String highway = way.getTags().getOrDefault("highway", "false");
-            boolean disabledPath = false;
-            switch(highway) {
-                case "steps":
-                case "corridor":
-                    //only for walking
-                    disabledPath = !footPaths;
-                    break;
-                case "bridleway":
-                    //for horses
-                    disabledPath = true;
-                    break;
-                case "footway":
-                    disabledPath = !footPaths;
-                    if(way.getTags().getOrDefault("bicycle", "false").equals("yes")){
-                        disabledPath = !bikePaths || !footPaths;
-                    }
-                    break;
-                case "path":
-                    //path for either bike or foot
-                    disabledPath = !bikePaths || !footPaths;
-                    break;
-                case "cycleway":
-                    //bike only paths
-                    disabledPath = !bikePaths;
-                    break;
-                default:
-                    break;
-            }
-            if(!disabledPath){
-                List<Long> tempList = way.getNodeIdList();
+        for (OsmWay way: wayList)  {
 
-                double pathLength = 0;
+            List<Long> tempList = way.getNodeIdList();
 
-                long previousNodeId = -1; //-1 means no node
+            double pathLength = 0;
 
-                for (int i = 0; i < tempList.size(); i++) {
-                    Long currentNodeId = tempList.get(i);
-                    //Since we load all nodes in path we do not need default.
-                    int nodeWays = nodeWayCounter.get(currentNodeId);
+            long previousNodeId = -1; //-1 means no node
 
-                    //Sum length of all paths between two nodes
-                    if(i != 0){
-                        pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
-                    }
+            for (int i = 0; i < tempList.size(); i++) {
+                Long currentNodeId = tempList.get(i);
+                //Since we load all nodes in path we do not need default.
 
-                    int maxSpeed = FindMaxSpeed(way);
-
-
-                    if (nodeWays > 1 || i == 0 || i == tempList.size()-1 || !shouldOptimizeGraph){
-                        if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
-
-                        if(previousNodeId != -1){
-
-
-                            Node currNode = wayNodeMap.get(currentNodeId);
-                            Node preNode = wayNodeMap.get(previousNodeId);
-
-                            String oneway = way.getTags().getOrDefault("oneway", "false");
-                            String junction = way.getTags().getOrDefault("junction", "false");
-
-                            boolean isOneway = oneway.equals("yes") || //Check if way is oneway or if it is implicit given a highway or roundabout
-                                    oneway.equals("true") ||
-                                    oneway.equals("1") ||
-                                    highway.equals("motorway") ||
-                                    junction.equals("roundabout");
-
-                            boolean isReverseOneway = oneway.equals("-1") ||
-                                    oneway.equals("reverse");
-
-                            //Add paths to both nodes between intersections or ends.
-                            if(isOneway){
-                                preNode.addPath(new StandardPathImpl(currNode, pathLength));
-                            }
-                            else if(isReverseOneway){
-                                currNode.addPath(new StandardPathImpl(preNode, pathLength));
-                            }
-                            else {
-                                currNode.addPath(new StandardPathImpl(preNode, pathLength));
-                                preNode.addPath(new StandardPathImpl(currNode, pathLength));
-                            }
-
-                            finalNodeMap.put(currentNodeId, currNode);
-                            finalNodeMap.put(previousNodeId, preNode);
-
-                            //We move our previous node id
-                            previousNodeId = currentNodeId;
-
-                            pathLength = 0;
-                        }
-                        else{
-                            previousNodeId = currentNodeId;
-                        }
-                    }
-
+                //Sum length of all paths between two nodes
+                if(i != 0){
+                    pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
                 }
-            }
 
-        });
+                int maxSpeed = FindMaxSpeed(way);
+
+                if (!shouldOptimizeGraph  || nodeWayCounter.get(currentNodeId) > 1 || i == 0 || i == tempList.size()-1){
+                    if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
+
+                    if(previousNodeId != -1){
+
+
+                        Node currNode = wayNodeMap.get(currentNodeId);
+                        Node preNode = wayNodeMap.get(previousNodeId);
+
+                        String oneway = way.getTags().getOrDefault("oneway", "false");
+                        String junction = way.getTags().getOrDefault("junction", "false");
+                        String highway = way.getTags().getOrDefault("highway", "false");
+
+                        boolean isOneway = oneway.equals("yes") || //Check if way is oneway or if it is implicit given a highway or roundabout
+                                oneway.equals("true") ||
+                                oneway.equals("1") ||
+                                highway.equals("motorway") ||
+                                junction.equals("roundabout");
+
+                        boolean isReverseOneway = oneway.equals("-1") ||
+                                oneway.equals("reverse");
+
+                        //Add paths to both nodes between intersections or ends.
+                        if(isOneway){
+                            preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                        }
+                        else if(isReverseOneway){
+                            currNode.addPath(new StandardPathImpl(preNode, pathLength));
+                        }
+                        else {
+                            currNode.addPath(new StandardPathImpl(preNode, pathLength));
+                            preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                        }
+
+                        finalNodeMap.put(currentNodeId, currNode);
+                        finalNodeMap.put(previousNodeId, preNode);
+
+                        //We move our previous node id
+                        previousNodeId = currentNodeId;
+
+                        pathLength = 0;
+                    }
+                    else{
+                        previousNodeId = currentNodeId;
+                    }
+                }
+
+            }
+        }
 
         return new GraphImpl(finalNodeMap, bounds);
     }

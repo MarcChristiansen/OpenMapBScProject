@@ -1,10 +1,13 @@
-package openmap.standard;
+package openmap.parsing;
 
 import crosby.binary.osmosis.OsmosisReader;
 import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.OsmWay;
 import openmap.framework.OsmParser;
+import openmap.standard.BoundsImpl;
+import openmap.standard.NodeImpl;
+import openmap.standard.OsmWayImpl;
 import org.openstreetmap.osmosis.core.container.v0_6.BoundContainer;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.container.v0_6.NodeContainer;
@@ -29,18 +32,18 @@ public class OsmiumPbfParserImpl implements OsmParser{
     List<OsmWay> osmWays;
     Bounds bounds;
     Map<Long, Node> nodeMap;
-
     String fileIn;
+    List<String> highWayFilter;
 
-    public OsmiumPbfParserImpl(String fileIn){
+    public OsmiumPbfParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
+        this.highWayFilter = highWayFilter;
     }
 
     @Override
     public List<OsmWay> parseWays() {
         if(osmWays == null){
-
-            OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser();
+            OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser(highWayFilter);
             runReaderWithSink(sink);
 
             this.bounds = sink.getBounds();
@@ -48,7 +51,6 @@ public class OsmiumPbfParserImpl implements OsmParser{
         }
         return this.osmWays;
     }
-
 
     @Override
     public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
@@ -89,22 +91,24 @@ public class OsmiumPbfParserImpl implements OsmParser{
     private class OsmiumPathAndBoundsParser implements Sink {
         List<OsmWay> osmWays;
         Bounds bounds;
+        List<String> highWayFilter;
 
-        public OsmiumPathAndBoundsParser(){
-
+        public OsmiumPathAndBoundsParser(List<String> highWayFilter){
+            this.highWayFilter = highWayFilter;
+            this.osmWays = new ArrayList<>();
         }
 
         @Override
         public void process(EntityContainer entityContainer) {
             if (entityContainer instanceof WayContainer) {
                 Way myWay = ((WayContainer) entityContainer).getEntity();
-                for (Tag myTag : myWay.getTags()) {
-                    if ("highway".equalsIgnoreCase(myTag.getKey())) {
+                for (Tag testTag : myWay.getTags()) {
+                    if ("highway".equalsIgnoreCase(testTag.getKey()) && highWayFilter.stream().anyMatch(testTag.getValue()::equalsIgnoreCase)) {
 
                         //To ensure compatibility we convert our tags to a map.
                         Map<String, String> tagMap = new HashMap<>();
-                        for(Tag myTag2 : myWay.getTags()) {
-                            tagMap.put(myTag2.getKey(), myTag2.getValue());
+                        for(Tag tag : myWay.getTags()) {
+                            tagMap.put(tag.getKey(), tag.getValue());
                         }
 
                         //We convert the given nodelist to a list of ids that we can actually use.
@@ -121,7 +125,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
         @Override
         public void initialize(Map<String, Object> metaData) {
-            this.osmWays = new ArrayList<>();
+
         }
 
         @Override
@@ -170,13 +174,10 @@ public class OsmiumPbfParserImpl implements OsmParser{
         }
 
         @Override
-        public void complete() {
-            System.out.println("complete2");
-        }
+        public void complete() { }
 
         @Override
         public void close() {
-            nodeMap = null;
         }
 
         public Map<Long, Node> getNodeMap() {

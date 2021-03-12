@@ -1,9 +1,12 @@
-package openmap.standard;
+package openmap.parsing;
 
 import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.OsmWay;
 import openmap.framework.OsmParser;
+import openmap.standard.BoundsImpl;
+import openmap.standard.NodeImpl;
+import openmap.standard.OsmWayImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;

@@ -3,8 +3,8 @@ package openmap.runnable;
 import openmap.framework.*;
 import openmap.standard.DijkstraImpl;
 import openmap.standard.GraphBuilderImpl;
-import openmap.standard.OsmXmlParserImpl;
-import openmap.JsonParsing.DiskUtility;
+import openmap.parsing.OsmXmlParserImpl;
+import openmap.parsing.json.DiskUtility;
 
 import java.io.IOException;
 import java.util.Arrays;

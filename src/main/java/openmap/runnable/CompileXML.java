@@ -3,13 +3,13 @@ package openmap.runnable;
 import openmap.framework.Graph;
 import openmap.framework.OsmParser;
 import openmap.standard.GraphBuilderImpl;
-import openmap.standard.OsmXmlParserImpl;
+import openmap.parsing.OsmXmlParserImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import static openmap.JsonParsing.DiskUtility.createSerializedGraph;
+import static openmap.parsing.json.DiskUtility.createSerializedGraph;
 
 /**
  * Simple class to help create xml files from snippets we use

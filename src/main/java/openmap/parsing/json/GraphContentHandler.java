@@ -1,4 +1,4 @@
-package openmap.JsonParsing;
+package openmap.parsing.json;
 
 
 import java.io.IOException;

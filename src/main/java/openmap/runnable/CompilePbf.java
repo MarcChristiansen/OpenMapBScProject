@@ -2,16 +2,16 @@ package openmap.runnable;
 
 import openmap.framework.Graph;
 import openmap.framework.OsmParser;
+import openmap.parsing.ParsingUtil;
 import openmap.standard.GraphBuilderImpl;
-import openmap.standard.OsmXmlParserImpl;
-import openmap.standard.OsmiumPbfParserImpl;
+import openmap.parsing.OsmiumPbfParserImpl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
-import static openmap.JsonParsing.DiskUtility.createJsonGraph;
-import static openmap.JsonParsing.DiskUtility.createSerializedGraph;
+import static openmap.parsing.json.DiskUtility.createJsonGraph;
 
 /**
  * Simple class to help create xml files from snippets we use
@@ -33,7 +33,9 @@ public class CompilePbf {
                     "Enter ser path : ");
         }
 
-        OsmParser parser = new OsmiumPbfParserImpl(path);
+
+
+        OsmParser parser = new OsmiumPbfParserImpl(path, ParsingUtil.getMinimizedAllowedValues());
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
         ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
 

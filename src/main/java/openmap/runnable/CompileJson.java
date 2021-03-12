@@ -3,12 +3,12 @@ package openmap.runnable;
 import openmap.framework.Graph;
 import openmap.framework.OsmParser;
 import openmap.standard.GraphBuilderImpl;
-import openmap.standard.OsmXmlParserImpl;
+import openmap.parsing.OsmXmlParserImpl;
 import openmap.utility.ConsoleUtils;
 
 import java.io.IOException;
 
-import static openmap.JsonParsing.DiskUtility.createJsonGraph;
+import static openmap.parsing.json.DiskUtility.createJsonGraph;
 
 public class CompileJson {
     public static void main(String[] args) throws IOException {

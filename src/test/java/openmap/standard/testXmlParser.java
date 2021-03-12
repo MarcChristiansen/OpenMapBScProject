@@ -2,6 +2,7 @@ package openmap.standard;
 
 import openmap.framework.*;
 
+import openmap.parsing.OsmXmlParserImpl;
 import org.junit.Before;
 import org.junit.Test;
 
