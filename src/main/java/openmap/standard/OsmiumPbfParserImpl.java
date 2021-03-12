@@ -17,6 +17,7 @@ import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -77,6 +78,12 @@ public class OsmiumPbfParserImpl implements OsmParser{
         OsmosisReader reader = new OsmosisReader(inputStream);
         reader.setSink(sink);
         reader.run();
+
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private class OsmiumPathAndBoundsParser implements Sink {
@@ -84,7 +91,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
         Bounds bounds;
 
         public OsmiumPathAndBoundsParser(){
-            this.osmWays = new ArrayList<>();
+
         }
 
         @Override
@@ -102,8 +109,8 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
                         //We convert the given nodelist to a list of ids that we can actually use.
                         osmWays.add(new OsmWayImpl(myWay.getWayNodes().stream().map(WayNode::getNodeId).collect(Collectors.toList()), tagMap));
-                    }
                         break;
+                    }
                 }
             }
             else if(entityContainer instanceof BoundContainer){
@@ -114,12 +121,11 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
         @Override
         public void initialize(Map<String, Object> metaData) {
-
+            this.osmWays = new ArrayList<>();
         }
 
         @Override
         public void complete() {
-
         }
 
         @Override
@@ -165,12 +171,12 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
         @Override
         public void complete() {
-
+            System.out.println("complete2");
         }
 
         @Override
         public void close() {
-
+            nodeMap = null;
         }
 
         public Map<Long, Node> getNodeMap() {

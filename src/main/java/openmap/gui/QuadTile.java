@@ -107,13 +107,15 @@ public class QuadTile implements MapTile {
         addNodeToTile(n);
 
         //loop through paths and add nodes to tiles if paths pass through
-        List<Path> pathList = n.getPaths();
+
+        //TODO UNCOMMENT
+        /*List<Path> pathList = n.getPaths();
         pathList.forEach(path -> {
             Node destNode = path.getDestination();
             double a = (n.getY()-destNode.getY())/(n.getX()-destNode.getX());
             double b = n.getY()-a*n.getX();
             addPath(n, destNode, a, b);
-        });
+        });*/
     }
 
     public void addNodeToTile(Node n){

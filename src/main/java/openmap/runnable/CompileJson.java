@@ -28,13 +28,12 @@ public class CompileJson {
 
         OsmParser parser = new OsmXmlParserImpl(path);
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
+        ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
 
         //((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
         Graph graph = graphBuilder.createGraph();
 
         createJsonGraph(graph, outPath);
         System.out.println("Serialized graph data is saved in " + outPath);
-
     }
-
 }

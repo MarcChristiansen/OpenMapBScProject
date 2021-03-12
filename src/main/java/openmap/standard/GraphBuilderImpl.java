@@ -43,6 +43,11 @@ public class GraphBuilderImpl implements graphBuilder {
         Map<Long, Node> wayNodeMap = parser.parseNodes(nodeWayCounter);
         Bounds bounds = parser.parseBounds();
 
+        System.out.println(wayList.size());
+        System.out.println(nodeWayCounter.size());
+        System.out.println(wayNodeMap.size());
+
+
 
         //Create the Map that will only contain intersections and endings. Empty at first
         Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
