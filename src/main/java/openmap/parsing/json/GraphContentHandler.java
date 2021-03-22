@@ -25,7 +25,6 @@ public class GraphContentHandler implements ContentHandler {
     @Override
     public void startJSON() throws ParseException, IOException {
         nodeList = new ArrayList<>();
-
         objectMap = new HashMap<>();
         objectStack = new ArrayDeque<>();
         pathList = new ArrayList<>();

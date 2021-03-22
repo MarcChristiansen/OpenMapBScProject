@@ -37,7 +37,7 @@ public class CompilePbf {
 
         OsmParser parser = new OsmiumPbfParserImpl(path, ParsingUtil.getMinimizedAllowedValues());
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
-        ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
+        ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(true);
 
 
         Graph graph = graphBuilder.createGraph();

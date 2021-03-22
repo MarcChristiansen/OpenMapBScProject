@@ -34,8 +34,8 @@ public class CompileXML {
         OsmParser parser = new OsmXmlParserImpl(path);
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
         ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(true);
-        ((GraphBuilderImpl)graphBuilder).setBikePaths(false);
-        ((GraphBuilderImpl)graphBuilder).setFootPaths(false);
+        //((GraphBuilderImpl)graphBuilder).setBikePaths(false);
+        //((GraphBuilderImpl)graphBuilder).setFootPaths(false);
         ((GraphBuilderImpl)graphBuilder).setShouldRefitBorders(true);
 
         Graph graph = graphBuilder.createGraph();

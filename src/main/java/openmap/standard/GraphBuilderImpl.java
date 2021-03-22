@@ -73,7 +73,7 @@ public class GraphBuilderImpl implements graphBuilder {
 
                 int maxSpeed = FindMaxSpeed(way);
 
-                if (!shouldOptimizeGraph  || nodeWayCounter.get(currentNodeId) > 1 || i == 0 || i == tempList.size()-1){
+                if (!shouldOptimizeGraph  ||  nodeWayCounter.get(currentNodeId) > 1 || i == 0 || i == tempList.size()-1){
                     if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
 
                     if(previousNodeId != -1){
@@ -207,21 +207,20 @@ public class GraphBuilderImpl implements graphBuilder {
         return shouldOptimizeGraph;
     }
 
-    /**
-     * tells if foot paths are allowed in the graph
-     * @param footPaths True or false boolean value
-     */
-    public void setFootPaths(boolean footPaths) {
-        this.footPaths = footPaths;
-    }
-
-    /**
-     * tells if bike paths are allowed in the graph
-     * @param bikePaths True or false boolean value
-     */
-    public void setBikePaths(boolean bikePaths) {
-        this.bikePaths = bikePaths;
-    }
+//    /**
+//     * tells if foot paths are allowed in the graph
+//     * @param footPaths True or false boolean value
+//     */
+//    public void setFootPaths(boolean footPaths) {
+//        this.footPaths = footPaths;
+//    }
+//    /**
+//     * tells if bike paths are allowed in the graph
+//     * @param bikePaths True or false boolean value
+//     */
+//    public void setBikePaths(boolean bikePaths) {
+//        this.bikePaths = bikePaths;
+//    }
 
 
 
