@@ -1,7 +1,9 @@
 package openmap.framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -47,4 +49,10 @@ public interface Path {
      * @return A json object copy of the object
      */
     public JSONObject getJSONObject();
+
+    /**
+     * Write path to Json file using a json generator
+     * @return A json object copy of the object
+     */
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 }

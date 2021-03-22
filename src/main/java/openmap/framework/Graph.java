@@ -1,7 +1,9 @@
 package openmap.framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -21,5 +23,7 @@ public interface Graph {
     public void doDeserialization();
 
     public JSONObject getJSONObject();
+
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 
 }

@@ -1,10 +1,12 @@
 package openmap.standard;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -67,10 +69,21 @@ public class StandardPathImpl implements Path, Serializable {
     }
 
     @Override
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException {
+        jGenerator.writeStartObject();
+        jGenerator.writeNumberField(JsonGraphConstants.PathDestId, nodeId);
+        jGenerator.writeNumberField(JsonGraphConstants.PathWeight, weight);
+        jGenerator.writeEndObject();
+
+    }
+
+    @Override
     public String toString() {
         return "StandardPathImpl{" +
                 "destination=" + destination.getId() +
                 ", weight=" + weight +
                 '}';
     }
+
+
 }

@@ -9,6 +9,7 @@ import openmap.utility.ConsoleUtils;
 import java.io.IOException;
 
 import static openmap.parsing.json.DiskUtility.createJsonGraph;
+import static openmap.parsing.json.DiskUtility.createJsonGraphJGen;
 
 public class CompileJson {
     public static void main(String[] args) throws IOException {

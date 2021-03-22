@@ -1,6 +1,9 @@
 package openmap.framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.simple.JSONObject;
+
+import java.io.IOException;
 
 /**
  * Interface that represents the bounds of a graph.
@@ -25,5 +28,6 @@ public interface Bounds {
     public void setMaxY(double v);
 
     public JSONObject getJSONObject();
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 
 }

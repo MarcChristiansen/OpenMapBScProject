@@ -1,5 +1,8 @@
 package openmap.parsing.json;
 
+import com.fasterxml.jackson.core.JsonEncoding;
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonGenerator;
 import openmap.framework.Graph;
 import openmap.standard.GraphImpl;
 import org.json.simple.parser.JSONParser;
@@ -62,6 +65,32 @@ public class DiskUtility {
         try (FileWriter file = new FileWriter(outPath)) {
             graph.getJSONObject().writeJSONString(file);
             file.flush();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /***
+     * Serialize a graph to a json file using the stream method with a jgenerator
+     * Will create file if it does not already exist
+     * @param graph The graph to serialize
+     * @param outPath The path to the file where we want to save the graph
+     * @throws IOException Might exception if filename mismatch or other mishaps
+     */
+    public static void createJsonGraphJGen(Graph graph, String outPath) throws IOException{
+
+        try (FileOutputStream stream = new FileOutputStream(outPath)) {
+            JsonFactory jFactory = new JsonFactory();
+            JsonGenerator jGenerator = jFactory
+                    .createGenerator(stream, JsonEncoding.UTF8);
+
+            graph.WriteToJsonGenerator(jGenerator);
+
+            jGenerator.flush();
+            jGenerator.close();
+            stream.flush();
 
         } catch (IOException e) {
             e.printStackTrace();

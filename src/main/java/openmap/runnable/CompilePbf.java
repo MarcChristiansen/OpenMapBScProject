@@ -12,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import static openmap.parsing.json.DiskUtility.createJsonGraph;
+import static openmap.parsing.json.DiskUtility.createJsonGraphJGen;
 
 /**
  * Simple class to help create xml files from snippets we use
@@ -43,7 +44,7 @@ public class CompilePbf {
         Graph graph = graphBuilder.createGraph();
 
 
-        createJsonGraph(graph, outPath);
+        createJsonGraphJGen(graph, outPath);
         System.out.println("Serialized graph data is saved in " + outPath);
 
     }

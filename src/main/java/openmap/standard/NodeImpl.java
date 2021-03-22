@@ -1,5 +1,6 @@
 package openmap.standard;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Node;
 import openmap.framework.Path;
@@ -8,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -149,6 +151,24 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
         obj.put(JsonGraphConstants.NodePath, jArray);
 
         return obj;
+    }
+
+    @Override
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException {
+        jGenerator.writeStartObject();
+
+        jGenerator.writeArrayFieldStart(JsonGraphConstants.NodePath);
+        for (Path p : pathList) {
+            p.WriteToJsonGenerator(jGenerator);
+        }
+        jGenerator.writeEndArray();
+
+        jGenerator.writeNumberField(JsonGraphConstants.NodeId, id);
+        jGenerator.writeNumberField(JsonGraphConstants.NodeX, coordinate.x);
+        jGenerator.writeNumberField(JsonGraphConstants.NodeY, coordinate.y);
+
+        jGenerator.writeEndObject();
+
     }
 
     @Override

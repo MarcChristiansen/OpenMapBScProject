@@ -1,7 +1,9 @@
 package openmap.framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -83,6 +85,13 @@ public interface Node {
      * @return A json object copy of the object
      */
     public JSONObject getJSONObject();
+
+    /**
+     * Write a node to a json file using a jGenerator
+     * @param jGenerator
+     * @throws IOException
+     */
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 
 
 }
