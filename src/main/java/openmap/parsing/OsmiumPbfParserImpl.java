@@ -53,7 +53,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
     }
 
     @Override
-    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter) {
         if(nodeMap == null){
             OsmiumNodeParser sink = new OsmiumNodeParser(nodeWayCounter);
             runReaderWithSink(sink);
@@ -148,11 +148,11 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
     private class OsmiumNodeParser implements Sink {
 
-        Map<Long, Integer> nodeWayCounter;
+        Map<Long, Byte> nodeWayCounter;
 
         Map<Long, Node> nodeMap;
 
-        public OsmiumNodeParser(Map<Long, Integer> nodeWayCounter) {
+        public OsmiumNodeParser(Map<Long, Byte> nodeWayCounter) {
             this.nodeWayCounter = nodeWayCounter;
             this.nodeMap = new HashMap<>();
         }
@@ -162,7 +162,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
             if (entityContainer instanceof NodeContainer) {
                 org.openstreetmap.osmosis.core.domain.v0_6.Node node = ((NodeContainer) entityContainer).getEntity();
                 long id = node.getId();
-                if(nodeWayCounter.getOrDefault(id, 0) > 0){
+                if(nodeWayCounter.getOrDefault(id, (byte)(0)) > 0){
                     nodeMap.put(id, new NodeImpl(id, node.getLatitude(), node.getLongitude()));
                 }
             }

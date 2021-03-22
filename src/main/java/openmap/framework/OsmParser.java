@@ -24,7 +24,7 @@ public interface OsmParser {
      * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in //Todo try and refactor this away
      * @return A map that maps from ids in nodes to the actual node.
      */
-    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter);
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter);
 
     /**
      * Parse the bounds of the given OSM file into a bounds object

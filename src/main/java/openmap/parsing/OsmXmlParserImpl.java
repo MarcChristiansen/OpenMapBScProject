@@ -28,7 +28,7 @@ public class OsmXmlParserImpl implements OsmParser {
     }
 
     @Override
-    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter) {
         Map<Long, Node> NodeMap = new HashMap<Long, Node>();
 
         XMLEventReader reader = getReader();
@@ -51,7 +51,7 @@ public class OsmXmlParserImpl implements OsmParser {
 
                             //Check if node is in the nodeWayCounter
                             long idLong = Long.parseLong(id.getValue());
-                            if(nodeWayCounter.getOrDefault(idLong, 0)>0){
+                            if(nodeWayCounter.getOrDefault(idLong, (byte)(0))>0){
                                 Node node = new NodeImpl(idLong,
                                         Double.parseDouble(lat.getValue()),
                                         Double.parseDouble(lon.getValue()));

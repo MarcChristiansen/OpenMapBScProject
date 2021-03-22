@@ -13,8 +13,6 @@ public class GraphBuilderImpl implements graphBuilder {
     //Builder flags with defaults
     boolean shouldRefitBorders = true;
     boolean shouldOptimizeGraph = true;
-    boolean bikePaths = false;
-    boolean footPaths = false;
 
 
     public GraphBuilderImpl(OsmParser osmParser) {
@@ -39,7 +37,7 @@ public class GraphBuilderImpl implements graphBuilder {
     @Override
     public Graph createGraph() {
         List<OsmWay> wayList = parser.parseWays();
-        Map<Long, Integer> nodeWayCounter = countNodes(wayList);
+        Map<Long, Byte> nodeWayCounter = countNodes(wayList);
         Map<Long, Node> wayNodeMap = parser.parseNodes(nodeWayCounter);
         Bounds bounds = parser.parseBounds();
 
@@ -66,8 +64,8 @@ public class GraphBuilderImpl implements graphBuilder {
                 Long currentNodeId = tempList.get(i);
                 //Since we load all nodes in path we do not need default.
 
-                //Sum length of all paths between two nodes
-                if(i != 0){
+                //Sum length of all paths between two nodes. Only check if node actually exists
+                if(i != 0 && wayNodeMap.getOrDefault(currentNodeId, null) != null){
                     pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
                 }
 
@@ -164,15 +162,23 @@ public class GraphBuilderImpl implements graphBuilder {
 
     /**
      * O(n*m)
+     * Count the amount of ways a node interacts with, start and end nodes are counted double
      */
-    private Map<Long, Integer> countNodes(List<OsmWay> WayList) {
-        Map<Long, Integer> nodeWayCounter = new HashMap<Long, Integer>();
+    private Map<Long, Byte> countNodes(List<OsmWay> WayList) {
+        Map<Long, Byte> nodeWayCounterTemp = new HashMap<>();
         WayList.forEach(Way -> {
+            //Enforce we count one extra for being the first or last element of a way.
+            long firstId = Way.getNodeIdList().get(0);
+            long finalId = Way.getNodeIdList().get(Way.getNodeIdList().size()-1);
+            nodeWayCounterTemp.put(firstId, (byte)(nodeWayCounterTemp.getOrDefault(firstId, ((byte)0))+1));
+            nodeWayCounterTemp.put(finalId, (byte)(nodeWayCounterTemp.getOrDefault(finalId, ((byte)0))+1));
+
+
             Way.getNodeIdList().forEach(id -> {
-                nodeWayCounter.put(id, nodeWayCounter.getOrDefault(id, 0)+1);
+                nodeWayCounterTemp.put(id, (byte)(nodeWayCounterTemp.getOrDefault(id, ((byte)0))+1));
             });
         });
-        return nodeWayCounter;
+        return nodeWayCounterTemp;
     }
 
     /**
