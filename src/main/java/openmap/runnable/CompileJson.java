@@ -34,7 +34,7 @@ public class CompileJson {
         //((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
         Graph graph = graphBuilder.createGraph();
 
-        createJsonGraph(graph, outPath);
+        createJsonGraphJGen(graph, outPath);
         System.out.println("Serialized graph data is saved in " + outPath);
     }
 }
