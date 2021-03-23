@@ -213,21 +213,4 @@ public class GraphBuilderImpl implements graphBuilder {
         return shouldOptimizeGraph;
     }
 
-//    /**
-//     * tells if foot paths are allowed in the graph
-//     * @param footPaths True or false boolean value
-//     */
-//    public void setFootPaths(boolean footPaths) {
-//        this.footPaths = footPaths;
-//    }
-//    /**
-//     * tells if bike paths are allowed in the graph
-//     * @param bikePaths True or false boolean value
-//     */
-//    public void setBikePaths(boolean bikePaths) {
-//        this.bikePaths = bikePaths;
-//    }
-
-
-
 }

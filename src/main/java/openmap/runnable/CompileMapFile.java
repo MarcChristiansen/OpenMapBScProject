@@ -39,7 +39,7 @@ public class CompileMapFile {
         OsmParser parser = null;
         String extension = getFileExtension(path);
 
-        List<String> wayFilter = ParsingUtil.getMinimizedAllowedValues();
+        List<String> wayFilter = ParsingUtil.getDefaultAllowedValues();
 
         if(extension.equals("osm")){
             parser = new OsmXmlParserImpl(path, wayFilter);
