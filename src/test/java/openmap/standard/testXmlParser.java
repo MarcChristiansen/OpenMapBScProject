@@ -3,6 +3,7 @@ package openmap.standard;
 import openmap.framework.*;
 
 import openmap.parsing.OsmXmlParserImpl;
+import openmap.parsing.ParsingUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,7 +20,7 @@ public class testXmlParser {
     @Before
     public void setUp() {
         Path resourceDirectory = Paths.get("src","test","resources", "testOsmFiles", "testMapInter.osm");
-        parser = new OsmXmlParserImpl(resourceDirectory.toFile().getAbsolutePath());
+        parser = new OsmXmlParserImpl(resourceDirectory.toFile().getAbsolutePath(), ParsingUtil.getDefaultAllowedValues());
     }
 
     @Test

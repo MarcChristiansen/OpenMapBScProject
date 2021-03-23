@@ -12,6 +12,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import static openmap.parsing.json.DiskUtility.createJsonGraph;
 import static openmap.parsing.json.DiskUtility.createJsonGraphJGen;
@@ -35,18 +36,16 @@ public class CompileMapFile {
             outPath = readLine(
                     "Enter ser path : ");
         }
-
         OsmParser parser = null;
-
         String extension = getFileExtension(path);
 
-        System.out.println(extension);
+        List<String> wayFilter = ParsingUtil.getMinimizedAllowedValues();
 
         if(extension.equals("osm")){
-            parser = new OsmXmlParserImpl(path);
+            parser = new OsmXmlParserImpl(path, wayFilter);
         }
         else if(extension.equals("pbf")){
-            parser = new OsmiumPbfParserImpl(path, ParsingUtil.getMinimizedAllowedValues());
+            parser = new OsmiumPbfParserImpl(path, wayFilter);
         }
         else{
             throw new FileFormatException("File needs to be either pbf or osm format. a " + extension + " file was given.");

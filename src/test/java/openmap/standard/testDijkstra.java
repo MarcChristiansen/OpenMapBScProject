@@ -5,6 +5,7 @@ import openmap.framework.Node;
 import openmap.framework.OsmParser;
 import openmap.framework.PathFinder;
 import openmap.parsing.OsmXmlParserImpl;
+import openmap.parsing.ParsingUtil;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -23,7 +24,7 @@ public class testDijkstra {
     @Before
     public void setUp() {
         Path resourceDirectory = Paths.get("src","test","resources", "testOsmFiles", "testMapInter.osm");
-        parser = new OsmXmlParserImpl(resourceDirectory.toFile().getAbsolutePath());
+        parser = new OsmXmlParserImpl(resourceDirectory.toFile().getAbsolutePath(), ParsingUtil.getDefaultAllowedValues());
 
         //create nodemap
         Map<Long, Node> nodeMap = new HashMap<Long, Node>();

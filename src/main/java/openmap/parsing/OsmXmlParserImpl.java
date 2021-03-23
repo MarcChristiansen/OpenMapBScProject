@@ -22,9 +22,11 @@ import java.util.*;
 public class OsmXmlParserImpl implements OsmParser {
 
     String fileIn;
+    List<String> highWayFilter;
 
-    public OsmXmlParserImpl(String fileIn){
+    public OsmXmlParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
+        this.highWayFilter = highWayFilter;
     }
 
     @Override
@@ -187,7 +189,7 @@ public class OsmXmlParserImpl implements OsmParser {
                     EndElement endelement = nextEvent.asEndElement();
                     if(endelement.getName().getLocalPart().equals("way")){
                         //create new OSM way and add to list, if the way is a highway
-                        if(currentTags.getOrDefault("highway", null) != null){
+                        if(highWayFilter.stream().anyMatch(currentTags.getOrDefault("highway", "")::equalsIgnoreCase)){
                             wayList.add(new OsmWayImpl(new ArrayList<Long>(nodeRefList), new HashMap<String, String>(currentTags)));
                         }
                     }

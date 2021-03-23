@@ -1,6 +1,7 @@
 package openmap.runnable;
 
 import openmap.framework.*;
+import openmap.parsing.ParsingUtil;
 import openmap.standard.DijkstraImpl;
 import openmap.standard.GraphBuilderImpl;
 import openmap.parsing.OsmXmlParserImpl;
@@ -18,7 +19,7 @@ public class DijkstraDenmarkTest {
         path = "F:\\AU\\Open map data\\denmark-latest.osm";
         //path = "C:\\testmapInter.osm";
 
-        OsmParser parser = new OsmXmlParserImpl(path);
+        OsmParser parser = new OsmXmlParserImpl(path, ParsingUtil.getDefaultAllowedValues());
         graphBuilder graphBuilder = new GraphBuilderImpl(parser);
 
         Graph graph = graphBuilder.createGraph();
