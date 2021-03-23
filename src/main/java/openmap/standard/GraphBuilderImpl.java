@@ -45,14 +45,10 @@ public class GraphBuilderImpl implements graphBuilder {
         System.out.println(nodeWayCounter.size());
         System.out.println(wayNodeMap.size());
 
-        if(!shouldOptimizeGraph) {
-            nodeWayCounter = null;
-        }
-
         //Create the Map that will only contain intersections and endings. Empty at first
         Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
 
-        for (OsmWay way: wayList)  {
+        wayList.forEach(way -> {
 
             List<Long> tempList = way.getNodeIdList();
 
@@ -119,7 +115,7 @@ public class GraphBuilderImpl implements graphBuilder {
                 }
 
             }
-        }
+        });
 
         return new GraphImpl(finalNodeMap, bounds);
     }

@@ -2,9 +2,10 @@ package openmap.framework;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 /**
- * Interface for Parser for the Open street map XML format.
+ * Interface for Parser for the Open street map XML or pbf format.
  * Used to parse the OSM xml into the format used by the graph.
  *
  * @author Kristoffer Villadsen and Marc Christiansen
@@ -20,6 +21,12 @@ public interface OsmParser {
     public List<OsmWay> parseWays();
 
     /**
+     * Run action on all paths
+     * @param action Perform given action on all valid paths
+     */
+    public void runWithWays(Consumer<OsmWay> action);
+
+    /**
      * Parses all nodes with a value on their id >1
      * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in //Todo try and refactor this away
      * @return A map that maps from ids in nodes to the actual node.
@@ -31,4 +38,6 @@ public interface OsmParser {
      * @return a bounds object holding the bounds of the graph.
      */
     public Bounds parseBounds();
+
+
 }

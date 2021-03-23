@@ -7,6 +7,7 @@ import openmap.framework.OsmParser;
 import openmap.standard.BoundsImpl;
 import openmap.standard.NodeImpl;
 import openmap.standard.OsmWayImpl;
+import org.apache.commons.lang3.NotImplementedException;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -15,6 +16,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Implementation of the OSM xml parser
@@ -207,6 +209,11 @@ public class OsmXmlParserImpl implements OsmParser {
         }
 
         return wayList;
+    }
+
+    @Override
+    public void runWithWays(Consumer<OsmWay> action) {
+        throw new NotImplementedException("Not finished yet for .osm files...");
     }
 
     private XMLEventReader getReader() {

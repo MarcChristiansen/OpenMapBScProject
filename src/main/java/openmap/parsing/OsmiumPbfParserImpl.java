@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class OsmiumPbfParserImpl implements OsmParser{
@@ -50,6 +51,16 @@ public class OsmiumPbfParserImpl implements OsmParser{
             this.osmWays = sink.getOsmWays();
         }
         return this.osmWays;
+    }
+
+    @Override
+    public void runWithWays(Consumer<OsmWay> action) {
+        if(osmWays == null){
+
+        }
+        else {
+            osmWays.forEach(action);
+        }
     }
 
     @Override
@@ -92,10 +103,21 @@ public class OsmiumPbfParserImpl implements OsmParser{
         List<OsmWay> osmWays;
         Bounds bounds;
         List<String> highWayFilter;
+        Consumer<OsmWay> action;
+
+        //Flags
+        Boolean actionIteration = false;
+
 
         public OsmiumPathAndBoundsParser(List<String> highWayFilter){
             this.highWayFilter = highWayFilter;
             this.osmWays = new ArrayList<>();
+        }
+
+        public OsmiumPathAndBoundsParser(List<String> highWayFilter, Consumer<OsmWay> action){
+            this.highWayFilter = highWayFilter;
+            this.action = action;
+            actionIteration = true;
         }
 
         @Override
@@ -112,7 +134,14 @@ public class OsmiumPbfParserImpl implements OsmParser{
                         }
 
                         //We convert the given nodelist to a list of ids that we can actually use.
-                        osmWays.add(new OsmWayImpl(myWay.getWayNodes().stream().map(WayNode::getNodeId).collect(Collectors.toList()), tagMap));
+                        OsmWay osmWay = new OsmWayImpl(myWay.getWayNodes().stream().map(WayNode::getNodeId).collect(Collectors.toList()), tagMap);
+
+                        if(actionIteration){
+                            action.accept(osmWay);
+                        }
+                        else{
+                            osmWays.add(osmWay);
+                        }
                         break;
                     }
                 }
