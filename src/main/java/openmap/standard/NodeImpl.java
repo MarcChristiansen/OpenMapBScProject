@@ -19,11 +19,9 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
 
     private long id;
 
-    //Might possibly be removed
     private Long predecessorId;
     private double distance;
     private boolean visited;
-
     private byte wayCounter;
 
     Coordinate coordinate;
