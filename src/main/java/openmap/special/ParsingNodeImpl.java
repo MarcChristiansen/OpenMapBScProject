@@ -1,5 +1,6 @@
-package openmap.standard;
+package openmap.special;
 
+import openmap.standard.BaseLineNodeImpl;
 import org.apache.commons.lang3.NotImplementedException;
 
 public class ParsingNodeImpl extends BaseLineNodeImpl {

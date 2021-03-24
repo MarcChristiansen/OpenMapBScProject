@@ -5,10 +5,8 @@ import openmap.framework.Node;
 import openmap.framework.OsmWay;
 import openmap.framework.OsmParser;
 import openmap.standard.BoundsImpl;
-import openmap.standard.NodeImpl;
 import openmap.standard.OsmWayImpl;
-import openmap.standard.ParsingNodeImpl;
-import org.apache.commons.lang3.NotImplementedException;
+import openmap.special.ParsingNodeImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;

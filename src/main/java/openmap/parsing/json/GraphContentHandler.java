@@ -8,8 +8,8 @@ import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.standard.BoundsImpl;
+import openmap.special.DecodingPathImpl;
 import openmap.standard.NodeImpl;
-import openmap.standard.StandardPathImpl;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
@@ -57,7 +57,7 @@ public class GraphContentHandler implements ContentHandler {
                 break;
 
             case JsonGraphConstants.NodePath:
-                pathList.add(new StandardPathImpl((long)objectMap.get(JsonGraphConstants.PathDestId), (double)objectMap.get(JsonGraphConstants.PathWeight)));
+                pathList.add(new DecodingPathImpl((long)objectMap.get(JsonGraphConstants.PathDestId), (double)objectMap.get(JsonGraphConstants.PathWeight)));
                 break;
         }
         return true;

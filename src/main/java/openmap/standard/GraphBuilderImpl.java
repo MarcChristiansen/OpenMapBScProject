@@ -1,6 +1,7 @@
 package openmap.standard;
 
 import openmap.framework.*;
+import openmap.special.ParsingNodeImpl;
 
 import java.util.HashMap;
 import java.util.List;
@@ -61,7 +62,7 @@ public class GraphBuilderImpl implements graphBuilder {
 
         Map<Long, Node> finalNodeMap;
 
-        //If the optimization level is 1 we reduce without saving on memory and therefore this is needed.
+        //Depending on the optimization level we might need a some other element
         if(OptimizationLevel != 1){ finalNodeMap = wayNodeMap; }
         else{ finalNodeMap = new HashMap<Long, Node>(); }
 

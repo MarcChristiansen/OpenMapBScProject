@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Node;
 import openmap.framework.Path;
+import openmap.special.DecodingPathImpl;
 import openmap.utility.CoordinateUtility;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -14,8 +15,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-abstract class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> {
+abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> {
 
     protected long id;
     Coordinate coordinate;
@@ -55,7 +57,7 @@ abstract class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> 
         this.pathList = new ArrayList<>();
 
         for (Object pathObj : pArray) {
-            pathList.add(new StandardPathImpl((JSONObject) pathObj));
+            pathList.add(new DecodingPathImpl((JSONObject) pathObj));
         }
     }
 
@@ -88,9 +90,11 @@ abstract class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> 
 
     @Override
     public void convertPathDeserialization(Map<Long, Node> nodeMap){
-        pathList.forEach(path -> {
-            path.doDeserialization(nodeMap);
-        });
+        //We map the current list of paths to standard paths.
+        //Intended for the path in the list to be decoding paths but to avoid crashes it works for all types as it only uses interface functions.
+        pathList = pathList.stream()
+                            .map(path -> new StandardPathImpl(nodeMap.get(path.getDestinationId()), path.getWeight()))
+                            .collect(Collectors.toCollection(ArrayList::new));
     }
 
     @Override

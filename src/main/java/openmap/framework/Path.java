@@ -34,12 +34,6 @@ public interface Path {
     double getWeight();
 
     /**
-     * Add references to other objects again through a known map of all nodes.
-     * @param nodeMap a map that maps node ids to nodes
-     */
-    void doDeserialization(Map<Long, Node> nodeMap);
-
-    /**
      * Return a json object representing this object
      * @return A json object copy of the object
      */
