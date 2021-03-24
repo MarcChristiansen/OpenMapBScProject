@@ -36,11 +36,11 @@ public class testDijkstra {
             X4-5XXX
             XXXXXXX
          */
-        Node node1 = new NodeImpl(1, 0, 0, (byte)(0));
-        Node node2 = new NodeImpl(2, 0, 0, (byte)(0));
-        Node node3 = new NodeImpl(3, 0, 0, (byte)(0));
-        Node node4 = new NodeImpl(4, 0, 0, (byte)(0));
-        Node node5 = new NodeImpl(5, 0, 0, (byte)(0));
+        Node node1 = new NodeImpl(1, 0, 0);
+        Node node2 = new NodeImpl(2, 0, 0);
+        Node node3 = new NodeImpl(3, 0, 0);
+        Node node4 = new NodeImpl(4, 0, 0);
+        Node node5 = new NodeImpl(5, 0, 0);
         node1.addPath(new StandardPathImpl(node2, 10.0));
         node1.addPath(new StandardPathImpl(node4, 2.0));
         node2.addPath(new StandardPathImpl(node1, 10.0));

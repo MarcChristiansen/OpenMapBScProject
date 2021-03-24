@@ -49,11 +49,6 @@ public class StandardPathImpl implements Path, Serializable {
     }
 
     @Override
-    public void prepareForSerialization() {
-        destination = null;
-    }
-
-    @Override
     public void doDeserialization(Map<Long, Node> nodeMap) {
         destination = nodeMap.get(nodeId);
     }
@@ -62,7 +57,7 @@ public class StandardPathImpl implements Path, Serializable {
     public JSONObject getJSONObject() {
         JSONObject obj = new JSONObject();
 
-        obj.put(JsonGraphConstants.PathDestId, nodeId);
+        obj.put(JsonGraphConstants.PathDestId, destination.getId());
         obj.put(JsonGraphConstants.PathWeight, weight);
 
         return obj;

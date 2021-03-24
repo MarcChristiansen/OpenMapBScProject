@@ -18,8 +18,6 @@ public interface Graph {
 
     public Bounds getBounds();
 
-    public void prepareForSerialization();
-
     public void doDeserialization();
 
     public JSONObject getJSONObject();

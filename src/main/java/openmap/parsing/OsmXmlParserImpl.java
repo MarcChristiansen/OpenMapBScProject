@@ -7,6 +7,7 @@ import openmap.framework.OsmParser;
 import openmap.standard.BoundsImpl;
 import openmap.standard.NodeImpl;
 import openmap.standard.OsmWayImpl;
+import openmap.standard.ParsingNodeImpl;
 import org.apache.commons.lang3.NotImplementedException;
 
 import javax.xml.namespace.QName;
@@ -64,7 +65,7 @@ public class OsmXmlParserImpl implements OsmParser {
                             long idLong = Long.parseLong(id.getValue());
                             byte wayCount = nodeWayCounter.getOrDefault(idLong, (byte)(0));
                             if(wayCount>minConnections){
-                                Node node = new NodeImpl(idLong,
+                                Node node = new ParsingNodeImpl(idLong,
                                         Double.parseDouble(lat.getValue()),
                                         Double.parseDouble(lon.getValue()),
                                         wayCount);

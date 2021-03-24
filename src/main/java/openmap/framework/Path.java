@@ -34,11 +34,6 @@ public interface Path {
     double getWeight();
 
     /**
-     * Get the path ready to serialize, by removing references to other objects that might cause stackoverflow
-     */
-    void prepareForSerialization();
-
-    /**
      * Add references to other objects again through a known map of all nodes.
      * @param nodeMap a map that maps node ids to nodes
      */

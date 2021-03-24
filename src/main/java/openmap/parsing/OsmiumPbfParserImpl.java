@@ -8,6 +8,7 @@ import openmap.framework.OsmParser;
 import openmap.standard.BoundsImpl;
 import openmap.standard.NodeImpl;
 import openmap.standard.OsmWayImpl;
+import openmap.standard.ParsingNodeImpl;
 import org.openstreetmap.osmosis.core.container.v0_6.BoundContainer;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.container.v0_6.NodeContainer;
@@ -213,7 +214,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
                 long id = node.getId();
                 byte wayCount = nodeWayCounter.getOrDefault(id, (byte)(0));
                 if(wayCount > minConnections){
-                    nodeMap.put(id, new NodeImpl(id, node.getLatitude(), node.getLongitude(),  wayCount));
+                    nodeMap.put(id, new ParsingNodeImpl(id, node.getLatitude(), node.getLongitude(),  wayCount));
                 }
             }
         }

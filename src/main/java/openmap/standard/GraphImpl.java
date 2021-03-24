@@ -62,11 +62,6 @@ public class GraphImpl implements Graph, Serializable {
     }
 
     @Override
-    public void prepareForSerialization(){
-        for (Map.Entry<Long, Node> entry : nodeMap.entrySet()) {  ((NodeImpl)entry.getValue()).convertPathForSerialization(); }
-    }
-
-    @Override
     public void doDeserialization(){
         //for (Map.Entry<Long, Node> entry : nodeMap.entrySet()) {  ((NodeImpl)entry.getValue()).convertPathDeserialization(nodeMap); }
 

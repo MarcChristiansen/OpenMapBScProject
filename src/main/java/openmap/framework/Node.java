@@ -69,10 +69,6 @@ public interface Node {
      */
     public void addPath(Path path);
 
-    /**
-     * Ensure all paths are ready to be serialized
-     */
-    public void convertPathForSerialization();
 
     /**
      * Deserialize paths to ensure they point to the correct nodes
@@ -92,12 +88,5 @@ public interface Node {
      * @throws IOException
      */
     public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
-
-    /**
-     * Add option to store amount of ways that use this node
-     * Only to be used while parsing
-     */
-    public byte getWayConnections();
-
 
 }

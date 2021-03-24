@@ -84,7 +84,7 @@ public class GraphBuilderImpl implements graphBuilder {
 
                 int maxSpeed = FindMaxSpeed(way);
 
-                if (currNode != null && (OptimizationLevel != 1 || currNode.getWayConnections() > 1 || i == 0 || i == tempList.size()-1)){
+                if (currNode != null && (OptimizationLevel != 1 || ((ParsingNodeImpl)currNode).getWayCounter() > 1 || i == 0 || i == tempList.size()-1)){
                     if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
 
                     if(previousNodeId != -1){
