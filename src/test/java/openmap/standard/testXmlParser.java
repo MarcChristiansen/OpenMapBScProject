@@ -23,11 +23,6 @@ public class testXmlParser {
         parser = new OsmXmlParserImpl(resourceDirectory.toFile().getAbsolutePath(), ParsingUtil.getDefaultAllowedValues());
     }
 
-    @Test
-    public void testSetShouldOnlyHave2HighWays(){
-        assert(parser.parseWays().size() == 2); //We only count highways
-    }
-
     /**
      * Bit of a weird test, but ensures our implementation actually reads the correct number of nodes given a correct map.
      * Also ensures we might be able to change how we create our map without bricking this test.

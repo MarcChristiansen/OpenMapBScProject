@@ -23,8 +23,10 @@ import java.util.function.Consumer;
  */
 public class OsmXmlParserImpl implements OsmParser {
 
+    List<OsmWay> osmWays;
     String fileIn;
     List<String> highWayFilter;
+
 
     public OsmXmlParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
@@ -33,6 +35,11 @@ public class OsmXmlParserImpl implements OsmParser {
 
     @Override
     public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter) {
+        return parseNodes(nodeWayCounter, 0);
+    }
+
+    @Override
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter, int minConnections) {
         Map<Long, Node> NodeMap = new HashMap<Long, Node>();
 
         XMLEventReader reader = getReader();
@@ -55,10 +62,12 @@ public class OsmXmlParserImpl implements OsmParser {
 
                             //Check if node is in the nodeWayCounter
                             long idLong = Long.parseLong(id.getValue());
-                            if(nodeWayCounter.getOrDefault(idLong, (byte)(0))>0){
+                            byte wayCount = nodeWayCounter.getOrDefault(idLong, (byte)(0));
+                            if(wayCount>minConnections){
                                 Node node = new NodeImpl(idLong,
                                         Double.parseDouble(lat.getValue()),
-                                        Double.parseDouble(lon.getValue()));
+                                        Double.parseDouble(lon.getValue()),
+                                        wayCount);
                                 //add to nodemap
                                 NodeMap.put(idLong, node);
                             }
@@ -141,8 +150,7 @@ public class OsmXmlParserImpl implements OsmParser {
         return bounds;
     }
 
-    @Override
-    public List<OsmWay> parseWays() {
+    public void parseWays() {
         List<OsmWay> wayList = new ArrayList<OsmWay>();
 
         XMLEventReader reader = getReader();
@@ -208,12 +216,14 @@ public class OsmXmlParserImpl implements OsmParser {
             }
         }
 
-        return wayList;
+        osmWays = wayList;
     }
 
     @Override
-    public void runWithWays(Consumer<OsmWay> action) {
-        throw new NotImplementedException("Not finished yet for .osm files...");
+    public void runWithAllWays(Consumer<OsmWay> action) {
+        if(osmWays == null) { parseWays(); }
+
+        osmWays.forEach(action);
     }
 
     private XMLEventReader getReader() {

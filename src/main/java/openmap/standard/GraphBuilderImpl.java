@@ -5,6 +5,7 @@ import openmap.framework.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class GraphBuilderImpl implements graphBuilder {
 
@@ -12,7 +13,7 @@ public class GraphBuilderImpl implements graphBuilder {
 
     //Builder flags with defaults
     boolean shouldRefitBorders = true;
-    boolean shouldOptimizeGraph = true;
+    int OptimizationLevel = 0;
 
 
     public GraphBuilderImpl(OsmParser osmParser) {
@@ -36,19 +37,35 @@ public class GraphBuilderImpl implements graphBuilder {
 
     @Override
     public Graph createGraph() {
-        List<OsmWay> wayList = parser.parseWays();
-        Map<Long, Byte> nodeWayCounter = countNodes(wayList);
-        Map<Long, Node> wayNodeMap = parser.parseNodes(nodeWayCounter);
+        //List<OsmWay> wayList = parser.parseWays();
+        Map<Long, Byte> nodeWayCounter = countNodes();
+        Map<Long, Node> wayNodeMap;
+        if(OptimizationLevel > 1){
+            System.out.println("Node way counter size before optimization: " + nodeWayCounter.size());
+            nodeWayCounter.values().removeIf(val -> val == 1);
+            System.out.println("Node way counter size after optimization: " + nodeWayCounter.size());
+
+            wayNodeMap = parser.parseNodes(nodeWayCounter, 1);
+        }
+        else{
+            wayNodeMap = parser.parseNodes(nodeWayCounter);
+        }
+
         Bounds bounds = parser.parseBounds();
 
-        System.out.println(wayList.size());
-        System.out.println(nodeWayCounter.size());
-        System.out.println(wayNodeMap.size());
+        //System.out.println(wayList.size());
+        System.out.println("node way counter size: " + nodeWayCounter.size());
+        System.out.println("Number of nodes loaded: " + wayNodeMap.size());
 
         //Create the Map that will only contain intersections and endings. Empty at first
-        Map<Long, Node> finalNodeMap = new HashMap<Long, Node>();
 
-        wayList.forEach(way -> {
+        Map<Long, Node> finalNodeMap;
+
+        //If the optimization level is 1 we reduce without saving on memory and therefore this is needed.
+        if(OptimizationLevel != 1){ finalNodeMap = wayNodeMap; }
+        else{ finalNodeMap = new HashMap<Long, Node>(); }
+
+        Consumer<OsmWay> action = (way -> {
 
             List<Long> tempList = way.getNodeIdList();
 
@@ -58,22 +75,20 @@ public class GraphBuilderImpl implements graphBuilder {
 
             for (int i = 0; i < tempList.size(); i++) {
                 Long currentNodeId = tempList.get(i);
-                //Since we load all nodes in path we do not need default.
 
+                Node currNode = wayNodeMap.getOrDefault(currentNodeId, null);
                 //Sum length of all paths between two nodes. Only check if node actually exists
-                if(i != 0 && wayNodeMap.getOrDefault(currentNodeId, null) != null){
+                if(i != 0 && currNode != null){
                     pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
                 }
 
                 int maxSpeed = FindMaxSpeed(way);
 
-                if (!shouldOptimizeGraph  ||  nodeWayCounter.get(currentNodeId) > 1 || i == 0 || i == tempList.size()-1){
+                if (currNode != null && (OptimizationLevel != 1 || currNode.getWayConnections() > 1 || i == 0 || i == tempList.size()-1)){
                     if(shouldRefitBorders) { ensureBounds(bounds, wayNodeMap.get(currentNodeId));}
 
                     if(previousNodeId != -1){
 
-
-                        Node currNode = wayNodeMap.get(currentNodeId);
                         Node preNode = wayNodeMap.get(previousNodeId);
 
                         String oneway = way.getTags().getOrDefault("oneway", "false");
@@ -101,8 +116,10 @@ public class GraphBuilderImpl implements graphBuilder {
                             preNode.addPath(new StandardPathImpl(currNode, pathLength));
                         }
 
-                        finalNodeMap.put(currentNodeId, currNode);
-                        finalNodeMap.put(previousNodeId, preNode);
+                        if(OptimizationLevel == 1) {
+                            finalNodeMap.put(currentNodeId, currNode);
+                            finalNodeMap.put(previousNodeId, preNode);
+                        }
 
                         //We move our previous node id
                         previousNodeId = currentNodeId;
@@ -116,6 +133,8 @@ public class GraphBuilderImpl implements graphBuilder {
 
             }
         });
+
+        parser.runWithAllWays(action);
 
         return new GraphImpl(finalNodeMap, bounds);
     }
@@ -160,9 +179,10 @@ public class GraphBuilderImpl implements graphBuilder {
      * O(n*m)
      * Count the amount of ways a node interacts with, start and end nodes are counted double
      */
-    private Map<Long, Byte> countNodes(List<OsmWay> WayList) {
+    private Map<Long, Byte> countNodes() {
         Map<Long, Byte> nodeWayCounterTemp = new HashMap<>();
-        WayList.forEach(Way -> {
+
+        Consumer<OsmWay> action = (Way -> {
             //Enforce we count one extra for being the first or last element of a way.
             long firstId = Way.getNodeIdList().get(0);
             long finalId = Way.getNodeIdList().get(Way.getNodeIdList().size()-1);
@@ -174,6 +194,9 @@ public class GraphBuilderImpl implements graphBuilder {
                 nodeWayCounterTemp.put(id, (byte)(nodeWayCounterTemp.getOrDefault(id, ((byte)0))+1));
             });
         });
+
+        parser.runWithAllWays(action);
+
         return nodeWayCounterTemp;
     }
 
@@ -195,18 +218,23 @@ public class GraphBuilderImpl implements graphBuilder {
 
     /**
      * Tells if the graph should be optimized
-     * @param shouldOptimizeGraph True or false boolean value
+     * 0 = Mo optimization
+     * 1 = Result optimization with no ram optimization (Maintains path length correctly)
+     * 2 = Memory optimization (might result in slightly imprecise paths)
+     * @param optimizationLevel 0, 1, 2. Anything above 2 is seen as 2
      */
-    public void setShouldOptimizeGraph(boolean shouldOptimizeGraph) {
-        this.shouldOptimizeGraph = shouldOptimizeGraph;
+    public void SetOptimizationLevel(int optimizationLevel) {
+        this.OptimizationLevel = optimizationLevel;
     }
 
     /**
-     * Check flag
-     * @return Flag that tells if graph will be optimized.
+     * 0 = No optimization
+     * 1 = Result optimization with no ram optimization (Maintains path length correctly)
+     * 2 = Memory optimization (might result in slightly imprecise paths)
+     * @return Optimization level
      */
-    public boolean ShouldOptimizeGraph() {
-        return shouldOptimizeGraph;
+    public int GetOptimizationLevel() {
+        return OptimizationLevel;
     }
 
 }

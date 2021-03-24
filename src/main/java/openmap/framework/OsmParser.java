@@ -14,24 +14,32 @@ import java.util.function.Consumer;
  */
 public interface OsmParser {
 
-    /**
-     * Parses all ways that are in some way a path
-     * @return A list of all ways parsed in a OSM representation
-     */
-    public List<OsmWay> parseWays();
+    ///**
+    // * Parses all ways that are in some way a path
+    // * @return A list of all ways parsed in a OSM representation
+    // */
+    //public List<OsmWay> parseWays();
 
     /**
      * Run action on all paths
      * @param action Perform given action on all valid paths
      */
-    public void runWithWays(Consumer<OsmWay> action);
+    public void runWithAllWays(Consumer<OsmWay> action);
 
     /**
      * Parses all nodes with a value on their id >1
-     * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in //Todo try and refactor this away
+     * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in
      * @return A map that maps from ids in nodes to the actual node.
      */
     public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter);
+
+    /**
+     * Parses all nodes with a value on their id >1
+     * @param nodeWayCounter Map that maps from nodeId to an integer of how many ways it participates in
+     * @param minConnections The minimum amount of connections needed
+     * @return A map that maps from ids in nodes to the actual node.
+     */
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter, int minConnections);
 
     /**
      * Parse the bounds of the given OSM file into a bounds object

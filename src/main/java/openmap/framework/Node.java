@@ -93,5 +93,11 @@ public interface Node {
      */
     public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 
+    /**
+     * Add option to store amount of ways that use this node
+     * Only to be used while parsing
+     */
+    public byte getWayConnections();
+
 
 }

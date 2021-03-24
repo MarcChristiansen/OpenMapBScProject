@@ -36,27 +36,40 @@ public class OsmiumPbfParserImpl implements OsmParser{
     String fileIn;
     List<String> highWayFilter;
 
+    //Flags
+    boolean shouldCacheWaysInRam = false;
+
     public OsmiumPbfParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
         this.highWayFilter = highWayFilter;
     }
 
-    @Override
-    public List<OsmWay> parseWays() {
+    public void parseWaysAndBounds() {
         if(osmWays == null){
             OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser(highWayFilter);
             runReaderWithSink(sink);
 
             this.bounds = sink.getBounds();
-            this.osmWays = sink.getOsmWays();
+
+            if(shouldCacheWaysInRam){
+                this.osmWays = sink.getOsmWays();
+            }
         }
-        return this.osmWays;
     }
 
     @Override
-    public void runWithWays(Consumer<OsmWay> action) {
-        if(osmWays == null){
+    public void runWithAllWays(Consumer<OsmWay> action) {
+        if(shouldCacheWaysInRam) {parseWaysAndBounds(); } //If we want to always cache to avoid a triple pass save ways
 
+        if(osmWays == null){
+            System.out.println("Running action on paths");
+            OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser(highWayFilter, action);
+            runReaderWithSink(sink);
+
+            //We save bounds if we do not already have them, no reason not to do this
+            if(bounds == null) {
+                this.bounds = sink.getBounds();
+            }
         }
         else {
             osmWays.forEach(action);
@@ -65,8 +78,13 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
     @Override
     public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter) {
+        return parseNodes(nodeWayCounter, 0);
+    }
+
+    @Override
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter, int minConnections) {
         if(nodeMap == null){
-            OsmiumNodeParser sink = new OsmiumNodeParser(nodeWayCounter);
+            OsmiumNodeParser sink = new OsmiumNodeParser(nodeWayCounter, minConnections);
             runReaderWithSink(sink);
             this.nodeMap = sink.getNodeMap();
         }
@@ -76,7 +94,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
     @Override
     public Bounds parseBounds() {
         if(this.bounds == null){
-            parseWays(); //Might be a bit weird, but allows us to skip a third iteration.
+            parseWaysAndBounds(); //Might be a bit weird, but allows us to skip a useless iteration
         }
         return this.bounds;
     }
@@ -180,10 +198,12 @@ public class OsmiumPbfParserImpl implements OsmParser{
         Map<Long, Byte> nodeWayCounter;
 
         Map<Long, Node> nodeMap;
+        int minConnections;
 
-        public OsmiumNodeParser(Map<Long, Byte> nodeWayCounter) {
+        public OsmiumNodeParser(Map<Long, Byte> nodeWayCounter, int minConnections) {
             this.nodeWayCounter = nodeWayCounter;
             this.nodeMap = new HashMap<>();
+            this.minConnections = minConnections;
         }
 
         @Override
@@ -191,8 +211,9 @@ public class OsmiumPbfParserImpl implements OsmParser{
             if (entityContainer instanceof NodeContainer) {
                 org.openstreetmap.osmosis.core.domain.v0_6.Node node = ((NodeContainer) entityContainer).getEntity();
                 long id = node.getId();
-                if(nodeWayCounter.getOrDefault(id, (byte)(0)) > 0){
-                    nodeMap.put(id, new NodeImpl(id, node.getLatitude(), node.getLongitude()));
+                byte wayCount = nodeWayCounter.getOrDefault(id, (byte)(0));
+                if(wayCount > minConnections){
+                    nodeMap.put(id, new NodeImpl(id, node.getLatitude(), node.getLongitude(),  wayCount));
                 }
             }
         }

@@ -21,6 +21,7 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
     private Long predecessorId;
     private double distance;
     private boolean visited;
+    private byte wayCounter;
 
     Coordinate coordinate;
     private List<Path> pathList;
@@ -31,7 +32,7 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
      * @param lat The latitude of the node
      * @param lon The longitude of the node
      */
-    public NodeImpl(long id, double lat, double lon){
+    public NodeImpl(long id, double lat, double lon, byte wayCounter){
         this.id = id;
 
         coordinate = new Coordinate(lat, lon);
@@ -39,6 +40,8 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
         coordinate = CoordinateUtility.CoordinateConversion.latLonToUtm32N(coordinate);
 
         pathList = new ArrayList<>();
+
+        this.wayCounter = wayCounter;
     }
 
     public NodeImpl(long id, double x, double y, List<Path> pathList){
@@ -87,10 +90,14 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
         return distance;
     }
 
+
     @Override
     public void setDistance(double distance) {
         this.distance = distance;
     }
+
+    @Override
+    public byte getWayConnections() { return wayCounter; }
 
     @Override
     public Long getPredecessor() {
@@ -170,6 +177,8 @@ public class NodeImpl implements Node, Serializable, Comparable<Node> {
         jGenerator.writeEndObject();
 
     }
+
+
 
     @Override
     public int compareTo(Node o) {

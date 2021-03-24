@@ -11,10 +11,8 @@ import org.openstreetmap.osmosis.osmbinary.file.FileFormatException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
 
-import static openmap.parsing.json.DiskUtility.createJsonGraph;
 import static openmap.parsing.json.DiskUtility.createJsonGraphJGen;
 
 /**
@@ -52,7 +50,7 @@ public class CompileMapFile {
         }
 
         openmap.framework.graphBuilder graphBuilder = new GraphBuilderImpl(parser);
-        ((GraphBuilderImpl)graphBuilder).setShouldOptimizeGraph(false);
+        ((GraphBuilderImpl)graphBuilder).SetOptimizationLevel(2);
 
 
         Graph graph = graphBuilder.createGraph();
