@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> {
 
     protected long id;
-    Coordinate coordinate;
+    double x, y;
     protected List<Path> pathList;
 
     /**
@@ -32,9 +32,12 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
     public BaseLineNodeImpl(long id, double lat, double lon){
         this.id = id;
 
-        coordinate = new Coordinate(lat, lon);
+        Coordinate coordinate = new Coordinate(lat, lon);
 
         coordinate = CoordinateUtility.CoordinateConversion.latLonToUtm32N(coordinate);
+
+        this.x = coordinate.x;
+        this.y = coordinate.y;
 
         pathList = new ArrayList<>();
     }
@@ -42,14 +45,17 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
     public BaseLineNodeImpl(long id, double x, double y, List<Path> pathList){
         this.id = id;
 
-        coordinate = new Coordinate(x, y);
+        this.x = x;
+        this.y = y;
 
         this.pathList = pathList;
     }
 
     public BaseLineNodeImpl(JSONObject obj){
         this.id = (Long)obj.get(JsonGraphConstants.NodeId);
-        this.coordinate = new Coordinate((Double)obj.get(JsonGraphConstants.NodeX), (Double)obj.get(JsonGraphConstants.NodeY));
+        this.x = (Double)obj.get(JsonGraphConstants.NodeX);
+        this.y = (Double)obj.get(JsonGraphConstants.NodeY);
+
         this.pathList = new ArrayList<>();
 
         JSONArray pArray = (JSONArray)obj.get(JsonGraphConstants.NodePath);
@@ -67,16 +73,16 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
     }
 
     @Override
-    public double getLat() { return CoordinateUtility.CoordinateConversion.utm32NToLatLon(coordinate).x; }
+    public double getLat() { return CoordinateUtility.CoordinateConversion.utm32NToLatLon(new Coordinate(x, y)).x; }
 
     @Override
-    public double getLon() { return CoordinateUtility.CoordinateConversion.utm32NToLatLon(coordinate).y; }
+    public double getLon() { return CoordinateUtility.CoordinateConversion.utm32NToLatLon(new Coordinate(x, y)).y; }
 
     @Override
-    public double getX() { return coordinate.x; }
+    public double getX() { return x; }
 
     @Override
-    public double getY() { return coordinate.y; }
+    public double getY() { return y; }
 
     @Override
     public List<Path> getPaths() {
@@ -101,8 +107,8 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
     public JSONObject getJSONObject() {
         JSONObject obj = new JSONObject();
         obj.put(JsonGraphConstants.NodeId, id);
-        obj.put(JsonGraphConstants.NodeX, coordinate.x);
-        obj.put(JsonGraphConstants.NodeY, coordinate.y);
+        obj.put(JsonGraphConstants.NodeX, x);
+        obj.put(JsonGraphConstants.NodeY, y);
 
         JSONArray jArray = new JSONArray();
         for (Path p : pathList) {
@@ -110,6 +116,7 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
         }
 
         obj.put(JsonGraphConstants.NodePath, jArray);
+
 
         return obj;
     }
@@ -125,11 +132,10 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
         jGenerator.writeEndArray();
 
         jGenerator.writeNumberField(JsonGraphConstants.NodeId, id);
-        jGenerator.writeNumberField(JsonGraphConstants.NodeX, coordinate.x);
-        jGenerator.writeNumberField(JsonGraphConstants.NodeY, coordinate.y);
+        jGenerator.writeNumberField(JsonGraphConstants.NodeX, x);
+        jGenerator.writeNumberField(JsonGraphConstants.NodeY, y);
 
         jGenerator.writeEndObject();
-
     }
 
     @Override
