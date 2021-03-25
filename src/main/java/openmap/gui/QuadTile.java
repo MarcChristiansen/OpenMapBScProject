@@ -36,6 +36,7 @@ public class QuadTile implements MapTile {
     Bounds bounds;
     QuadTile parent;
     int width, height;
+    String name;
 
     int drawX, drawY;
 
@@ -45,6 +46,8 @@ public class QuadTile implements MapTile {
      * @param bounds The bounds of the map
      */
     public QuadTile(byte maxLayer, Bounds bounds){
+        name = "";
+
         int height = 1080;
 
         setupFields((byte)1, maxLayer, bounds, null, zoomFactor, 0, height, 0,0);
@@ -64,6 +67,11 @@ public class QuadTile implements MapTile {
      */
     private QuadTile(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor, int width, int height, int drawX, int drawY){
         setupFields(layer, maxLayer, bounds, parent, zoomFactor, width, height, drawX, drawY);
+    }
+
+    private QuadTile(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor, int width, int height, int drawX, int drawY, String name){
+        setupFields(layer, maxLayer, bounds, parent, zoomFactor, width, height, drawX, drawY);
+        this.name = name;
     }
 
     private void setupFields(byte layer, byte maxLayer, Bounds bounds, QuadTile parent, double zoomFactor,  int width, int height, int drawX, int drawY) {
@@ -112,7 +120,9 @@ public class QuadTile implements MapTile {
             Node destNode = path.getDestination();
             double a = (n.getY()-destNode.getY())/(n.getX()-destNode.getX());
             double b = n.getY()-a*n.getX();
-            addPath(n, destNode, a, b);
+            //Make the matrix of passthrough tiles
+            boolean[][] passThrough = pathMatrix(n, destNode, a, b);
+            addPath(n, passThrough);
         });
     }
 
@@ -133,7 +143,231 @@ public class QuadTile implements MapTile {
         children[tileNum].addNodeToTile(n);
     }
 
-    public void addPath(Node origin, Node destination, double a, double b){
+    private boolean[][] pathMatrix(Node origin, Node destination, double a, double b){
+        int size = (int)(Math.pow(2, (maxLayer-1)));
+        double tileWidth = bottomTileWidth();
+        double tileHeight = bottomTileHeight();
+        //System.out.println("width: "+tileWidth);
+        //System.out.println("height: "+tileHeight);
+        boolean[][] mat = new boolean[size][size];
+
+        boolean isLeft = origin.getX() >= destination.getX();
+        boolean isAbove = origin.getY() <= destination.getY();
+
+        //find origin tile
+
+        int orig_x = (int)((origin.getX()-bounds.getMinX())/tileWidth);
+        int orig_y = (int)((bounds.getMaxY()-origin.getY())/tileHeight);
+        int dest_x = (int)((destination.getX()-bounds.getMinX())/tileWidth);
+        int dest_y = (int)((bounds.getMaxY()-destination.getY())/tileHeight);
+
+        //set
+        if(orig_x > 31){
+            System.out.println("orig x bigger than 31");
+            System.out.println(((origin.getX()-bounds.getMinX())/tileWidth));
+            orig_x = 31;
+        }
+        if(orig_y > 31){
+            System.out.println("orig y bigger than 31");
+            System.out.println(((bounds.getMaxY()-origin.getY())/tileHeight));
+            orig_y = 31;
+        }
+        if(dest_x > 31){
+            System.out.println("dest x bigger than 31");
+            System.out.println(((destination.getX()-bounds.getMinX())/tileWidth));
+            dest_x = 31;
+        }
+        if(dest_y > 31){
+            System.out.println("dest y bigger than 31");
+            System.out.println(((bounds.getMaxY()-destination.getY())/tileHeight));
+            dest_y = 31;
+        }
+
+
+        int curr_x = orig_x;
+        int curr_y = orig_y;
+        /*
+        System.out.println("orig x: " + orig_x);
+        System.out.println("orig y: " + orig_y);
+        System.out.println("dest x: " + dest_x);
+        System.out.println("dest y: " + dest_y);
+        System.out.println(curr_x);
+        System.out.println(curr_y);
+        System.out.println(origin.getX());
+        System.out.println(bounds.getMinX());
+        System.out.println(tileWidth);
+        System.out.println(((origin.getX()-bounds.getMinX())/tileWidth));
+         */
+
+        mat[curr_x][curr_y] = true;
+        mat[dest_x][dest_y] = true;
+
+        while(curr_x != dest_x && curr_y != dest_y) {
+            /*
+            System.out.println("orig x: " + orig_x);
+            System.out.println("orig y: " + orig_y);
+            System.out.println("dest x: " + dest_x);
+            System.out.println("dest y: " + dest_y);
+            System.out.println(curr_x);
+            System.out.println(curr_y);
+             */
+            //check left and right
+            if(isLeft){
+                System.out.println("checking left");
+                double x = bounds.getMinX() + curr_x * tileWidth;
+                double y = a*x+b;
+                //check if it is within y values for current tile
+                System.out.println("left check y: " + y);
+                System.out.println(bounds.getMaxY() - curr_y * tileHeight);
+                System.out.println(bounds.getMaxY() - (curr_y+1) * tileHeight);
+                boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
+                if(yInBounds){
+                    curr_x = curr_x - 1;
+                    mat[curr_x][curr_y] = true;
+                }
+            }
+            else { //assume right
+                System.out.println("checking right");
+                double x = bounds.getMinX() + (curr_x+1) * tileWidth;
+                double y = a*x+b;
+                //check if it is within y values for current tile
+                System.out.println("right check y: " + y);
+                System.out.println(bounds.getMaxY() - curr_y * tileHeight);
+                System.out.println(bounds.getMaxY() - (curr_y+1) * tileHeight);
+                boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
+                if(yInBounds){
+                    curr_x = curr_x + 1;
+                    mat[curr_x][curr_y] = true;
+                }
+            }
+
+            //check up and down
+            if(isAbove){
+                System.out.println("check above");
+                double y = bounds.getMaxY() - curr_y * tileHeight;
+                double x = (y-b)/a;
+                //check if it is within y values for current tile
+                System.out.println("current x: " + x);
+                System.out.println(bounds.getMinX() + curr_x * tileWidth);
+                System.out.println(bounds.getMinX() + (curr_x+1) * tileWidth);
+                boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
+                if(xInBounds){
+                    curr_y = curr_y - 1;
+                    mat[curr_x][curr_y] = true;
+                }
+            }
+            else { //assume below
+                System.out.println("check below");
+                double y = bounds.getMaxY() - (curr_y+1) * tileHeight;
+                double x = (y-b)/a;
+                //check if it is within y values for current tile
+                System.out.println("current x: " + x);
+                System.out.println(bounds.getMinX() + curr_x * tileWidth);
+                System.out.println(bounds.getMinX() + (curr_x+1) * tileWidth);
+                boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
+                if(xInBounds){
+                    curr_y = curr_y + 1;
+                    mat[curr_x][curr_y] = true;
+                }
+            }
+        }
+
+
+
+        return mat;
+    }
+
+    private void addPath(Node origin, boolean[][] passThrough){
+        //if origin is in node bounds, don't add to overlap list
+        boolean originInBounds =  bounds.getMinX() <= origin.getX() && bounds.getMaxX() >= origin.getX() &&
+                bounds.getMinY() <= origin.getY() && bounds.getMaxY() >= origin.getY();
+        if(!originInBounds){ //If origin node is not in bounds for this tile, add to overlap list
+            overlappingNodeList.add(origin);
+        }
+
+        int x=0;
+        int y=0;
+        int currLayer = maxLayer-1;
+        for(char c : name.toCharArray()) {
+            currLayer -= 1;
+            int i = c - '0'; //get the integer for character c
+            int pow = (int)(Math.pow(2, currLayer));
+            x = x + i%2 * pow;
+            y = y + i/2 * pow;
+        }
+
+        boolean[] PassthroughChild = new boolean[4];
+        //if last layer check only own position
+        if(layer != maxLayer){
+            int tileSize = (int)(Math.pow(2, maxLayer-layer));
+            for(int j = 0; j<tileSize; j++){
+                for(int i = 0; i<tileSize; i++){
+                    if(passThrough[x+i][y+j]){
+                        if(i<tileSize/2 && j < tileSize/2){
+                            PassthroughChild[0] = true;
+                        }
+                        else if(i>=tileSize/2 && j < tileSize/2){
+                            PassthroughChild[1] = true;
+                        }
+                        else if(i<tileSize/2 && j >= tileSize/2){
+                            PassthroughChild[2] = true;
+                        }
+                        else if(i >= tileSize/2 && j >= tileSize/2){
+                            PassthroughChild[3] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        for(int tileNum = 0; tileNum < 4; tileNum++){
+            if(PassthroughChild[tileNum]){
+                boolean isChildNull = children[tileNum] == null;
+
+                if(isChildNull) {createChild(tileNum); }
+                children[tileNum].addPath(origin, passThrough);
+            }
+        }
+
+    }
+
+    private void OwnTile(){
+        System.out.println("min Y: " + bounds.getMinY());
+        System.out.println("max Y: " + bounds.getMaxY());
+        System.out.println("min X: " + bounds.getMinX());
+        System.out.println("max X: " + bounds.getMaxX());
+        System.out.println("tileWidth:" + (bounds.getMaxX()-bounds.getMinX()));
+        int x=0;
+        int y=0;
+        int layer = maxLayer-1;
+        for(char c : name.toCharArray()) {
+            layer -= 1;
+            int i = c - '0'; //get the integer for character c
+            int pow = (int)(Math.pow(2, layer));
+            x = x + i%2 * pow;
+            y = y + i/2 * pow;
+        }
+        System.out.println("x: " + x);
+        System.out.println("y: " + y);
+        System.out.println("calculated bounds");
+        double minX = 415761.7421790186 + x * 14902.589522976545;
+        System.out.println(minX);
+        //TODO finish this
+    }
+
+    private double bottomTileWidth(){
+        double tileWidth = bounds.getMaxX() - bounds.getMinX();
+        double bottomWidth = tileWidth / (Math.pow(2, maxLayer-1));
+        return bottomWidth;
+    }
+
+    private double bottomTileHeight(){
+        double tileHeight = bounds.getMaxY() - bounds.getMinY();
+        double bottomHeight = tileHeight / (Math.pow(2, maxLayer-1));
+        return bottomHeight;
+    }
+
+    public void addPathLegacy(Node origin, Node destination, double a, double b){
         //if origin or destination is within bounds don't add to nodelist
         boolean originInBounds =  bounds.getMinX() <= origin.getX() && bounds.getMaxX() >= origin.getX() &&
                 bounds.getMinY() <= origin.getY() && bounds.getMaxY() >= origin.getY();
@@ -143,10 +377,10 @@ public class QuadTile implements MapTile {
         boolean isLastLayer = maxLayer == layer;
         if(isLastLayer) { return; }
 
-        addPathToChildren(origin, destination, a, b);
+        addPathToChildrenLegacy(origin, destination, a, b);
     }
 
-    private void addPathToChildren(Node origin, Node destination, double a, double b) {
+    private void addPathToChildrenLegacy(Node origin, Node destination, double a, double b) {
         int originTile;
         boolean[] passThrough = new boolean[4];
 
@@ -176,7 +410,7 @@ public class QuadTile implements MapTile {
             pathMaxY = destination.getY();
         }
 
-        if(!!originInBounds){
+        if(!originInBounds){
 
             //Check external bounds
             //check left right
@@ -232,12 +466,12 @@ public class QuadTile implements MapTile {
             passThrough[originTile] = true;
         }
 
-        //Check internal borders
         double midX = (bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2);
         if(midX <= pathMaxX && midX >= pathMinX) { //check that the path could pass through the middle vertically
             double y = a*(bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2)+b;
             boolean topTile = y >= bounds.getMaxY()-(bounds.getMaxY()-bounds.getMinY())/2;
             boolean yInBounds = y <= bounds.getMaxY() && y >= bounds.getMinY() && y <= pathMaxY && y >= pathMinY;
+            //
             if(topTile && yInBounds){
                 passThrough[0] = true;
                 passThrough[1] = true;
@@ -272,7 +506,7 @@ public class QuadTile implements MapTile {
                 boolean isChildNull = children[tileNum] == null;
 
                 if(isChildNull) {createChild(tileNum); }
-                children[tileNum].addPath(origin, destination, a, b);
+                children[tileNum].addPathLegacy(origin, destination, a, b);
             }
         }
 
@@ -330,11 +564,7 @@ public class QuadTile implements MapTile {
 
         }
 
-        children[tileNum] = new QuadTile((byte)(layer+1), maxLayer, childBounds, this.parent, this.zoomFactor*2, width, height, newDrawX, newDrawY);
-    }
-
-    public void addOverlappingNode(Node n){
-        //TODO create nodeSetup where we handle nodes that have overlapping paths
+        children[tileNum] = new QuadTile((byte)(layer+1), maxLayer, childBounds, this.parent, this.zoomFactor*2, width, height, newDrawX, newDrawY, name+String.valueOf(tileNum));
     }
 
     private AffineTransform getMapDrawingAffineTransform(double panX, double panY, double zoomFactor) {
@@ -369,8 +599,11 @@ public class QuadTile implements MapTile {
         g.setPaint ( Color.WHITE );
         g.fillRect ( 0, 0, width, height );
 
+        //g.setPaint(Color.BLACK);
+        //g.drawRect(0, 0, width, height);
+
         AffineTransform oldTransform = g.getTransform();
-        System.out.println("layer: " + layer + " zoom " + zoomFactor);
+        System.out.println("layer: " + layer + " zoom " + zoomFactor + " tile " + name);
         AffineTransform at = getMapDrawingAffineTransform(bounds.getMinX(), bounds.getMinY()+(bounds.getMaxY()-bounds.getMinY()), zoomFactor);
         g.transform(at);
 
@@ -402,7 +635,26 @@ public class QuadTile implements MapTile {
             }
         }
 
+
+        if(name.equals("312")){
+            System.out.println(name);
+            System.out.println(overlappingNodeList.size());
+            System.out.println(nodeList);
+            OwnTile();
+        }
+        if(name.equals("313")){
+            System.out.println(name);
+            System.out.println(overlappingNodeList.size());
+            //System.out.println(nodeList);
+            //System.out.println(overlappingNodeList);
+        }
+        if(name.equals("03223")){
+            System.out.println(name);
+            OwnTile();
+        }
+
         for (Node node : overlappingNodeList) {
+
             g.setColor(Color.BLACK);
             for (Path p : node.getPaths()) {
                 g.drawLine((int) (node.getX()), (int) (node.getY()),
