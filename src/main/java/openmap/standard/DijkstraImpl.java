@@ -40,11 +40,13 @@ public class DijkstraImpl implements PathFinder {
         Long currId = destination;
         while(!currId.equals(source)){
             result.add(currId);
-            currId = nodeMap.get(currId).getPredecessor();
-            if(currId == null){
+            Node currNode = nodeMap.get(currId).getPredecessor();
+            if(currNode == null){
                 //return null if impossible
                 return null;
             }
+
+            currId = currNode.getId();
         }
         result.add(source);
         Collections.reverse(result);
@@ -59,7 +61,7 @@ public class DijkstraImpl implements PathFinder {
         //add source to priority queue with distance 0
         Node firstNode = graph.getNodeMap().get(source);
         firstNode.setDistance(0);
-        firstNode.setPredecessor(source);
+        firstNode.setPredecessor(firstNode);
         priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
 
         while (true){
@@ -81,7 +83,7 @@ public class DijkstraImpl implements PathFinder {
                     if(newDistance < path.getDestination().getDistance()) {
                         path.getDestination().setDistance(newDistance);
                         //add predecessor for the node
-                        path.getDestination().setPredecessor(currNode.getNode().getId());
+                        path.getDestination().setPredecessor(currNode.getNode());
                     }
 
                     //add to priority queue

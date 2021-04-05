@@ -1,5 +1,6 @@
 package openmap.special;
 
+import openmap.framework.Node;
 import openmap.standard.BaseLineNodeImpl;
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -29,12 +30,12 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
-    public Long getPredecessor() {
+    public Node getPredecessor() {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 
     @Override
-    public void setPredecessor(Long predecessorId) {
+    public void setPredecessor(Node predecessorId) {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 

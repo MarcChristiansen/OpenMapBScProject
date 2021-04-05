@@ -49,9 +49,9 @@ public interface Node {
 
     public void setDistance(double distance);
 
-    public Long getPredecessor();
+    public Node getPredecessor();
 
-    public void setPredecessor(Long predecessorId);
+    public void setPredecessor(Node predecessorId);
 
     public boolean getVisited();
 

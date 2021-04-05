@@ -1,23 +1,14 @@
 package openmap.standard;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Node;
 import openmap.framework.Path;
-import openmap.utility.CoordinateUtility;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.locationtech.jts.geom.Coordinate;
 
-import java.io.IOException;
-import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class NodeImpl extends BaseLineNodeImpl {
 
-    private Long predecessorId;
+    private Node predecessor;
     private double distance;
     private boolean visited;
 
@@ -41,7 +32,7 @@ public class NodeImpl extends BaseLineNodeImpl {
         super(obj);
 
         this.distance = Double.MAX_VALUE;
-        this.predecessorId = null;
+        this.predecessor = null;
     }
 
     @Override
@@ -55,13 +46,13 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
-    public Long getPredecessor() {
-        return predecessorId;
+    public Node getPredecessor() {
+        return predecessor;
     }
 
     @Override
-    public void setPredecessor(Long predecessorId) {
-        this.predecessorId = predecessorId;
+    public void setPredecessor(Node predecessor) {
+        this.predecessor = predecessor;
     }
 
     @Override

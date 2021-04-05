@@ -14,12 +14,6 @@ import java.util.function.Consumer;
  */
 public interface OsmParser {
 
-    ///**
-    // * Parses all ways that are in some way a path
-    // * @return A list of all ways parsed in a OSM representation
-    // */
-    //public List<OsmWay> parseWays();
-
     /**
      * Run action on all paths
      * @param action Perform given action on all valid paths
