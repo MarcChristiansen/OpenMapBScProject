@@ -37,6 +37,7 @@ public class QuadTile implements MapTile {
     QuadTile parent;
     int width, height;
     String name;
+    boolean checkOverlap;
 
     int drawX, drawY;
 
@@ -115,15 +116,17 @@ public class QuadTile implements MapTile {
         addNodeToTile(n);
 
         //loop through paths and add nodes to tiles if paths pass through
-        List<Path> pathList = n.getPaths();
-        pathList.forEach(path -> {
-            Node destNode = path.getDestination();
-            double a = (n.getY()-destNode.getY())/(n.getX()-destNode.getX());
-            double b = n.getY()-a*n.getX();
-            //Make the matrix of passthrough tiles
-            boolean[][] passThrough = pathMatrix(n, destNode, a, b);
-            addPath(n, passThrough);
-        });
+        if(checkOverlap) {
+            List<Path> pathList = n.getPaths();
+            pathList.forEach(path -> {
+                Node destNode = path.getDestination();
+                double a = (n.getY() - destNode.getY()) / (n.getX() - destNode.getX());
+                double b = n.getY() - a * n.getX();
+                //Make the matrix of passthrough tiles
+                boolean[][] passThrough = pathMatrix(n, destNode, a, b);
+                addPath(n, passThrough);
+            });
+        }
     }
 
     public void addNodeToTile(Node n){
@@ -635,24 +638,6 @@ public class QuadTile implements MapTile {
             }
         }
 
-
-        if(name.equals("312")){
-            System.out.println(name);
-            System.out.println(overlappingNodeList.size());
-            System.out.println(nodeList);
-            OwnTile();
-        }
-        if(name.equals("313")){
-            System.out.println(name);
-            System.out.println(overlappingNodeList.size());
-            //System.out.println(nodeList);
-            //System.out.println(overlappingNodeList);
-        }
-        if(name.equals("03223")){
-            System.out.println(name);
-            OwnTile();
-        }
-
         for (Node node : overlappingNodeList) {
 
             g.setColor(Color.BLACK);
@@ -731,5 +716,9 @@ public class QuadTile implements MapTile {
 
     public int getWidth() {
         return width;
+    }
+
+    public void setCheckOverlap(boolean flag){
+        checkOverlap = flag;
     }
 }
