@@ -37,7 +37,7 @@ public class QuadTile implements MapTile {
     QuadTile parent;
     int width, height;
     String name;
-    boolean checkOverlap;
+    boolean checkOverlap = true;
 
     int drawX, drawY;
 
