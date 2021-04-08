@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ParsingUtil {
+    public static List<String> getAllowedValues(String wayTypeListSelection) {
+
+        if(wayTypeListSelection.equalsIgnoreCase("mini")){
+            return getMinimizedAllowedValues();
+        }
+        return getDefaultAllowedValues();
+    }
+
     public static List<String> getDefaultAllowedValues(){
         List<String> allowedList = new ArrayList<>();
 
@@ -43,4 +51,6 @@ public class ParsingUtil {
 
         return allowedList;
     }
+
+
 }
