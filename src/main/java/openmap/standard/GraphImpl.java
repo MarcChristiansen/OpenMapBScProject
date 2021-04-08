@@ -1,12 +1,14 @@
 package openmap.standard;
 
-import openmap.JsonParsing.JsonGraphConstants;
+import com.fasterxml.jackson.core.JsonGenerator;
+import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Bounds;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
@@ -60,11 +62,6 @@ public class GraphImpl implements Graph, Serializable {
     }
 
     @Override
-    public void prepareForSerialization(){
-        for (Map.Entry<Long, Node> entry : nodeMap.entrySet()) {  ((NodeImpl)entry.getValue()).convertPathForSerialization(); }
-    }
-
-    @Override
     public void doDeserialization(){
         //for (Map.Entry<Long, Node> entry : nodeMap.entrySet()) {  ((NodeImpl)entry.getValue()).convertPathDeserialization(nodeMap); }
 
@@ -87,5 +84,20 @@ public class GraphImpl implements Graph, Serializable {
         obj.put(JsonGraphConstants.GraphNodes, jNodeArray);
 
         return obj;
+    }
+
+    @Override
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException {
+        jGenerator.writeStartObject();
+        bounds.WriteToJsonGenerator(jGenerator);
+
+        jGenerator.writeArrayFieldStart(JsonGraphConstants.GraphNodes);
+        for (Map.Entry<Long, Node> mapEntry : nodeMap.entrySet()) {
+            mapEntry.getValue().WriteToJsonGenerator(jGenerator);
+        }
+        jGenerator.writeEndArray();
+
+        jGenerator.writeEndObject();
+
     }
 }

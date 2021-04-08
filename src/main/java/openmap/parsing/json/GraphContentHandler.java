@@ -1,4 +1,4 @@
-package openmap.JsonParsing;
+package openmap.parsing.json;
 
 
 import java.io.IOException;
@@ -8,8 +8,8 @@ import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.standard.BoundsImpl;
+import openmap.special.DecodingPathImpl;
 import openmap.standard.NodeImpl;
-import openmap.standard.StandardPathImpl;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
@@ -25,7 +25,6 @@ public class GraphContentHandler implements ContentHandler {
     @Override
     public void startJSON() throws ParseException, IOException {
         nodeList = new ArrayList<>();
-
         objectMap = new HashMap<>();
         objectStack = new ArrayDeque<>();
         pathList = new ArrayList<>();
@@ -58,7 +57,7 @@ public class GraphContentHandler implements ContentHandler {
                 break;
 
             case JsonGraphConstants.NodePath:
-                pathList.add(new StandardPathImpl((long)objectMap.get(JsonGraphConstants.PathDestId), (double)objectMap.get(JsonGraphConstants.PathWeight)));
+                pathList.add(new DecodingPathImpl((long)objectMap.get(JsonGraphConstants.PathDestId), (double)objectMap.get(JsonGraphConstants.PathWeight)));
                 break;
         }
         return true;

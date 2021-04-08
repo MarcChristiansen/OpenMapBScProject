@@ -1,11 +1,13 @@
 package openmap.standard;
 
-import openmap.JsonParsing.JsonGraphConstants;
+import com.fasterxml.jackson.core.JsonGenerator;
+import openmap.parsing.json.JsonGraphConstants;
 import openmap.framework.Bounds;
 import openmap.utility.CoordinateUtility;
 import org.json.simple.JSONObject;
 import org.locationtech.jts.geom.Coordinate;
 
+import java.io.IOException;
 import java.io.Serializable;
 
 public class BoundsImpl implements Bounds, Serializable {
@@ -94,6 +96,16 @@ public class BoundsImpl implements Bounds, Serializable {
         obj.put(JsonGraphConstants.BoundsMaxY, maxCoordinate.y);
 
         return obj;
+    }
+
+    @Override
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException {
+        jGenerator.writeObjectFieldStart(JsonGraphConstants.GraphBounds);
+        jGenerator.writeNumberField(JsonGraphConstants.BoundsMinX, minCoordinate.x);
+        jGenerator.writeNumberField(JsonGraphConstants.BoundsMinY, minCoordinate.y);
+        jGenerator.writeNumberField(JsonGraphConstants.BoundsMaxX, maxCoordinate.x);
+        jGenerator.writeNumberField(JsonGraphConstants.BoundsMaxY, maxCoordinate.y);
+        jGenerator.writeEndObject();
     }
 
 

@@ -1,9 +1,12 @@
-package openmap.standard;
+package openmap.parsing;
 
 import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.OsmWay;
 import openmap.framework.OsmParser;
+import openmap.standard.BoundsImpl;
+import openmap.standard.OsmWayImpl;
+import openmap.special.ParsingNodeImpl;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLEventReader;
@@ -12,20 +15,30 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.events.*;
 import java.io.*;
 import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * Implementation of the OSM xml parser
  */
 public class OsmXmlParserImpl implements OsmParser {
 
+    List<OsmWay> osmWays;
     String fileIn;
+    List<String> highWayFilter;
 
-    public OsmXmlParserImpl(String fileIn){
+
+    public OsmXmlParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
+        this.highWayFilter = highWayFilter;
     }
 
     @Override
-    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter) {
+        return parseNodes(nodeWayCounter, 0);
+    }
+
+    @Override
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter, int minConnections) {
         Map<Long, Node> NodeMap = new HashMap<Long, Node>();
 
         XMLEventReader reader = getReader();
@@ -48,10 +61,12 @@ public class OsmXmlParserImpl implements OsmParser {
 
                             //Check if node is in the nodeWayCounter
                             long idLong = Long.parseLong(id.getValue());
-                            if(nodeWayCounter.getOrDefault(idLong, 0)>0){
-                                Node node = new NodeImpl(idLong,
+                            byte wayCount = nodeWayCounter.getOrDefault(idLong, (byte)(0));
+                            if(wayCount>minConnections){
+                                Node node = new ParsingNodeImpl(idLong,
                                         Double.parseDouble(lat.getValue()),
-                                        Double.parseDouble(lon.getValue()));
+                                        Double.parseDouble(lon.getValue()),
+                                        wayCount);
                                 //add to nodemap
                                 NodeMap.put(idLong, node);
                             }
@@ -134,8 +149,7 @@ public class OsmXmlParserImpl implements OsmParser {
         return bounds;
     }
 
-    @Override
-    public List<OsmWay> parseWays() {
+    public void parseWays() {
         List<OsmWay> wayList = new ArrayList<OsmWay>();
 
         XMLEventReader reader = getReader();
@@ -184,7 +198,7 @@ public class OsmXmlParserImpl implements OsmParser {
                     EndElement endelement = nextEvent.asEndElement();
                     if(endelement.getName().getLocalPart().equals("way")){
                         //create new OSM way and add to list, if the way is a highway
-                        if(currentTags.getOrDefault("highway", null) != null){
+                        if(highWayFilter.stream().anyMatch(currentTags.getOrDefault("highway", "")::equalsIgnoreCase)){
                             wayList.add(new OsmWayImpl(new ArrayList<Long>(nodeRefList), new HashMap<String, String>(currentTags)));
                         }
                     }
@@ -201,7 +215,14 @@ public class OsmXmlParserImpl implements OsmParser {
             }
         }
 
-        return wayList;
+        osmWays = wayList;
+    }
+
+    @Override
+    public void runWithAllWays(Consumer<OsmWay> action) {
+        if(osmWays == null) { parseWays(); }
+
+        osmWays.forEach(action);
     }
 
     private XMLEventReader getReader() {

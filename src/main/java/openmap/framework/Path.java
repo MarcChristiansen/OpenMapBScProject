@@ -1,7 +1,9 @@
 package openmap.framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -32,19 +34,14 @@ public interface Path {
     double getWeight();
 
     /**
-     * Get the path ready to serialize, by removing references to other objects that might cause stackoverflow
-     */
-    void prepareForSerialization();
-
-    /**
-     * Add references to other objects again through a known map of all nodes.
-     * @param nodeMap a map that maps node ids to nodes
-     */
-    void doDeserialization(Map<Long, Node> nodeMap);
-
-    /**
      * Return a json object representing this object
      * @return A json object copy of the object
      */
     public JSONObject getJSONObject();
+
+    /**
+     * Write path to Json file using a json generator
+     * @return A json object copy of the object
+     */
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 }

@@ -1,10 +1,13 @@
-package openmap.standard;
+package openmap.parsing;
 
 import crosby.binary.osmosis.OsmosisReader;
 import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.OsmWay;
 import openmap.framework.OsmParser;
+import openmap.standard.BoundsImpl;
+import openmap.standard.OsmWayImpl;
+import openmap.special.ParsingNodeImpl;
 import org.openstreetmap.osmosis.core.container.v0_6.BoundContainer;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
 import org.openstreetmap.osmosis.core.container.v0_6.NodeContainer;
@@ -17,42 +20,71 @@ import org.openstreetmap.osmosis.core.task.v0_6.Sink;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class OsmiumPbfParserImpl implements OsmParser{
     List<OsmWay> osmWays;
     Bounds bounds;
     Map<Long, Node> nodeMap;
-
     String fileIn;
+    List<String> highWayFilter;
 
-    public OsmiumPbfParserImpl(String fileIn){
+    //Flags
+    boolean shouldCacheWaysInRam = false;
+
+    public OsmiumPbfParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
+        this.highWayFilter = highWayFilter;
     }
 
-    @Override
-    public List<OsmWay> parseWays() {
+    public void parseWaysAndBounds() {
         if(osmWays == null){
-
-            OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser();
+            OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser(highWayFilter);
             runReaderWithSink(sink);
 
             this.bounds = sink.getBounds();
-            this.osmWays = sink.getOsmWays();
+
+            if(shouldCacheWaysInRam){
+                this.osmWays = sink.getOsmWays();
+            }
         }
-        return this.osmWays;
     }
 
+    @Override
+    public void runWithAllWays(Consumer<OsmWay> action) {
+        if(shouldCacheWaysInRam) {parseWaysAndBounds(); } //If we want to always cache to avoid a triple pass save ways
+
+        if(osmWays == null){
+            System.out.println("Running action on paths");
+            OsmiumPathAndBoundsParser sink = new OsmiumPathAndBoundsParser(highWayFilter, action);
+            runReaderWithSink(sink);
+
+            //We save bounds if we do not already have them, no reason not to do this
+            if(bounds == null) {
+                this.bounds = sink.getBounds();
+            }
+        }
+        else {
+            osmWays.forEach(action);
+        }
+    }
 
     @Override
-    public Map<Long, Node> parseNodes(Map<Long, Integer> nodeWayCounter) {
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter) {
+        return parseNodes(nodeWayCounter, 0);
+    }
+
+    @Override
+    public Map<Long, Node> parseNodes(Map<Long, Byte> nodeWayCounter, int minConnections) {
         if(nodeMap == null){
-            OsmiumNodeParser sink = new OsmiumNodeParser(nodeWayCounter);
+            OsmiumNodeParser sink = new OsmiumNodeParser(nodeWayCounter, minConnections);
             runReaderWithSink(sink);
             this.nodeMap = sink.getNodeMap();
         }
@@ -62,7 +94,7 @@ public class OsmiumPbfParserImpl implements OsmParser{
     @Override
     public Bounds parseBounds() {
         if(this.bounds == null){
-            parseWays(); //Might be a bit weird, but allows us to skip a third iteration.
+            parseWaysAndBounds(); //Might be a bit weird, but allows us to skip a useless iteration
         }
         return this.bounds;
     }
@@ -77,33 +109,59 @@ public class OsmiumPbfParserImpl implements OsmParser{
         OsmosisReader reader = new OsmosisReader(inputStream);
         reader.setSink(sink);
         reader.run();
+
+        try {
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private class OsmiumPathAndBoundsParser implements Sink {
         List<OsmWay> osmWays;
         Bounds bounds;
+        List<String> highWayFilter;
+        Consumer<OsmWay> action;
 
-        public OsmiumPathAndBoundsParser(){
+        //Flags
+        Boolean actionIteration = false;
+
+
+        public OsmiumPathAndBoundsParser(List<String> highWayFilter){
+            this.highWayFilter = highWayFilter;
             this.osmWays = new ArrayList<>();
+        }
+
+        public OsmiumPathAndBoundsParser(List<String> highWayFilter, Consumer<OsmWay> action){
+            this.highWayFilter = highWayFilter;
+            this.action = action;
+            actionIteration = true;
         }
 
         @Override
         public void process(EntityContainer entityContainer) {
             if (entityContainer instanceof WayContainer) {
                 Way myWay = ((WayContainer) entityContainer).getEntity();
-                for (Tag myTag : myWay.getTags()) {
-                    if ("highway".equalsIgnoreCase(myTag.getKey())) {
+                for (Tag testTag : myWay.getTags()) {
+                    if ("highway".equalsIgnoreCase(testTag.getKey()) && highWayFilter.stream().anyMatch(testTag.getValue()::equalsIgnoreCase)) {
 
                         //To ensure compatibility we convert our tags to a map.
                         Map<String, String> tagMap = new HashMap<>();
-                        for(Tag myTag2 : myWay.getTags()) {
-                            tagMap.put(myTag2.getKey(), myTag2.getValue());
+                        for(Tag tag : myWay.getTags()) {
+                            tagMap.put(tag.getKey(), tag.getValue());
                         }
 
                         //We convert the given nodelist to a list of ids that we can actually use.
-                        osmWays.add(new OsmWayImpl(myWay.getWayNodes().stream().map(WayNode::getNodeId).collect(Collectors.toList()), tagMap));
-                    }
+                        OsmWay osmWay = new OsmWayImpl(myWay.getWayNodes().stream().map(WayNode::getNodeId).collect(Collectors.toList()), tagMap);
+
+                        if(actionIteration){
+                            action.accept(osmWay);
+                        }
+                        else{
+                            osmWays.add(osmWay);
+                        }
                         break;
+                    }
                 }
             }
             else if(entityContainer instanceof BoundContainer){
@@ -119,7 +177,6 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
         @Override
         public void complete() {
-
         }
 
         @Override
@@ -138,13 +195,15 @@ public class OsmiumPbfParserImpl implements OsmParser{
 
     private class OsmiumNodeParser implements Sink {
 
-        Map<Long, Integer> nodeWayCounter;
+        Map<Long, Byte> nodeWayCounter;
 
         Map<Long, Node> nodeMap;
+        int minConnections;
 
-        public OsmiumNodeParser(Map<Long, Integer> nodeWayCounter) {
+        public OsmiumNodeParser(Map<Long, Byte> nodeWayCounter, int minConnections) {
             this.nodeWayCounter = nodeWayCounter;
             this.nodeMap = new HashMap<>();
+            this.minConnections = minConnections;
         }
 
         @Override
@@ -152,8 +211,9 @@ public class OsmiumPbfParserImpl implements OsmParser{
             if (entityContainer instanceof NodeContainer) {
                 org.openstreetmap.osmosis.core.domain.v0_6.Node node = ((NodeContainer) entityContainer).getEntity();
                 long id = node.getId();
-                if(nodeWayCounter.getOrDefault(id, 0) > 0){
-                    nodeMap.put(id, new NodeImpl(id, node.getLatitude(), node.getLongitude()));
+                byte wayCount = nodeWayCounter.getOrDefault(id, (byte)(0));
+                if(wayCount > minConnections){
+                    nodeMap.put(id, new ParsingNodeImpl(id, node.getLatitude(), node.getLongitude(),  wayCount));
                 }
             }
         }
@@ -164,13 +224,10 @@ public class OsmiumPbfParserImpl implements OsmParser{
         }
 
         @Override
-        public void complete() {
-
-        }
+        public void complete() { }
 
         @Override
         public void close() {
-
         }
 
         public Map<Long, Node> getNodeMap() {

@@ -469,6 +469,7 @@ public class QuadTile implements MapTile {
             passThrough[originTile] = true;
         }
 
+        //Check internal borders
         double midX = (bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2);
         if(midX <= pathMaxX && midX >= pathMinX) { //check that the path could pass through the middle vertically
             double y = a*(bounds.getMaxX()-(bounds.getMaxX()-bounds.getMinX())/2)+b;
@@ -602,9 +603,6 @@ public class QuadTile implements MapTile {
         g.setPaint ( Color.WHITE );
         g.fillRect ( 0, 0, width, height );
 
-        //g.setPaint(Color.BLACK);
-        //g.drawRect(0, 0, width, height);
-
         AffineTransform oldTransform = g.getTransform();
         System.out.println("layer: " + layer + " zoom " + zoomFactor + " tile " + name);
         AffineTransform at = getMapDrawingAffineTransform(bounds.getMinX(), bounds.getMinY()+(bounds.getMaxY()-bounds.getMinY()), zoomFactor);
@@ -639,7 +637,6 @@ public class QuadTile implements MapTile {
         }
 
         for (Node node : overlappingNodeList) {
-
             g.setColor(Color.BLACK);
             for (Path p : node.getPaths()) {
                 g.drawLine((int) (node.getX()), (int) (node.getY()),

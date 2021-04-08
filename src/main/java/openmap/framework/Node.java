@@ -1,7 +1,9 @@
 package openmap.framework;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.json.simple.JSONObject;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -47,9 +49,9 @@ public interface Node {
 
     public void setDistance(double distance);
 
-    public Long getPredecessor();
+    public Node getPredecessor();
 
-    public void setPredecessor(Long predecessorId);
+    public void setPredecessor(Node predecessorId);
 
     public boolean getVisited();
 
@@ -67,10 +69,6 @@ public interface Node {
      */
     public void addPath(Path path);
 
-    /**
-     * Ensure all paths are ready to be serialized
-     */
-    public void convertPathForSerialization();
 
     /**
      * Deserialize paths to ensure they point to the correct nodes
@@ -84,5 +82,11 @@ public interface Node {
      */
     public JSONObject getJSONObject();
 
+    /**
+     * Write a node to a json file using a jGenerator
+     * @param jGenerator
+     * @throws IOException
+     */
+    public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 
 }

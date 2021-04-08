@@ -38,11 +38,13 @@ public class DijkstraWrongImpl implements PathFinder {
         Long currId = destination;
         while(!currId.equals(source)){
             result.add(currId);
-            currId = nodeMap.get(currId).getPredecessor();
-            if(currId == null){
+            Node currNode = nodeMap.get(currId).getPredecessor();
+            if(currNode == null){
                 //return null if impossible
                 return null;
             }
+
+            currId = currNode.getId();
         }
         result.add(source);
         Collections.reverse(result);
@@ -82,7 +84,7 @@ public class DijkstraWrongImpl implements PathFinder {
                     if(newDistance < path.getDestination().getDistance()) {
                         path.getDestination().setDistance(newDistance);
                         //add predecessor for the node
-                        path.getDestination().setPredecessor(currNode.getId());
+                        path.getDestination().setPredecessor(currNode);
                     }
 
                     //add to priority queue
