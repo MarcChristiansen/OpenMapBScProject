@@ -23,7 +23,7 @@ public class QuadTileMapImpl implements TileMap {
         this.rootTile = new QuadTile(maxLayer, graph.getBounds());
 
         //set whether or not the tile should check for overlap
-        rootTile.setCheckOverlap(false);
+        rootTile.setCheckOverlap(true);
 
         //add all nodes to our root quadtile and let them propegate.
         for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {

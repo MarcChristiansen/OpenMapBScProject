@@ -166,23 +166,19 @@ public class QuadTile implements MapTile {
 
         //set
         if(orig_x > 31){
-            System.out.println("orig x bigger than 31");
-            System.out.println(((origin.getX()-bounds.getMinX())/tileWidth));
+            //System.out.println("orig x bigger than 31");
             orig_x = 31;
         }
         if(orig_y > 31){
-            System.out.println("orig y bigger than 31");
-            System.out.println(((bounds.getMaxY()-origin.getY())/tileHeight));
+            //System.out.println("orig y bigger than 31");
             orig_y = 31;
         }
         if(dest_x > 31){
-            System.out.println("dest x bigger than 31");
-            System.out.println(((destination.getX()-bounds.getMinX())/tileWidth));
+            //System.out.println("dest x bigger than 31");
             dest_x = 31;
         }
         if(dest_y > 31){
-            System.out.println("dest y bigger than 31");
-            System.out.println(((bounds.getMaxY()-destination.getY())/tileHeight));
+            //System.out.println("dest y bigger than 31");
             dest_y = 31;
         }
 
@@ -216,13 +212,9 @@ public class QuadTile implements MapTile {
              */
             //check left and right
             if(isLeft){
-                System.out.println("checking left");
+                //System.out.println("checking left");
                 double x = bounds.getMinX() + curr_x * tileWidth;
                 double y = a*x+b;
-                //check if it is within y values for current tile
-                System.out.println("left check y: " + y);
-                System.out.println(bounds.getMaxY() - curr_y * tileHeight);
-                System.out.println(bounds.getMaxY() - (curr_y+1) * tileHeight);
                 boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
                 if(yInBounds){
                     curr_x = curr_x - 1;
@@ -230,13 +222,8 @@ public class QuadTile implements MapTile {
                 }
             }
             else { //assume right
-                System.out.println("checking right");
                 double x = bounds.getMinX() + (curr_x+1) * tileWidth;
                 double y = a*x+b;
-                //check if it is within y values for current tile
-                System.out.println("right check y: " + y);
-                System.out.println(bounds.getMaxY() - curr_y * tileHeight);
-                System.out.println(bounds.getMaxY() - (curr_y+1) * tileHeight);
                 boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
                 if(yInBounds){
                     curr_x = curr_x + 1;
@@ -246,13 +233,9 @@ public class QuadTile implements MapTile {
 
             //check up and down
             if(isAbove){
-                System.out.println("check above");
                 double y = bounds.getMaxY() - curr_y * tileHeight;
                 double x = (y-b)/a;
                 //check if it is within y values for current tile
-                System.out.println("current x: " + x);
-                System.out.println(bounds.getMinX() + curr_x * tileWidth);
-                System.out.println(bounds.getMinX() + (curr_x+1) * tileWidth);
                 boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
                 if(xInBounds){
                     curr_y = curr_y - 1;
@@ -260,13 +243,9 @@ public class QuadTile implements MapTile {
                 }
             }
             else { //assume below
-                System.out.println("check below");
                 double y = bounds.getMaxY() - (curr_y+1) * tileHeight;
                 double x = (y-b)/a;
                 //check if it is within y values for current tile
-                System.out.println("current x: " + x);
-                System.out.println(bounds.getMinX() + curr_x * tileWidth);
-                System.out.println(bounds.getMinX() + (curr_x+1) * tileWidth);
                 boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
                 if(xInBounds){
                     curr_y = curr_y + 1;
