@@ -103,9 +103,9 @@ class MapPanelOld extends JPanel {
                     }
 
                     if(pathNode1 != null && pathNode2 !=null){
-                        List<Long> pathIdList = pathFinder.getShortestPath(pathNode1.getId(), pathNode2.getId());
-                        if(pathIdList != null) {
-                            setHighlightedPath(pathIdList);
+                        List<Node> pathNodeList = pathFinder.getShortestPath(pathNode1, pathNode2);
+                        if(pathNodeList != null) {
+                            setHighlightedPath(pathNodeList);
                             repaint();
                         } else{
                             System.out.println("Path does not exist");
@@ -158,7 +158,7 @@ class MapPanelOld extends JPanel {
 
     }
 
-    public void setHighlightedPath(List<Long> nodeList){
+    public void setHighlightedPath(List<Node> nodeList){
         tileMap.setHighlightedPath(nodeList);
     }
 

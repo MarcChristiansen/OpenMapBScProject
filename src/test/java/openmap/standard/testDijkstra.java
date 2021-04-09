@@ -65,12 +65,12 @@ public class testDijkstra {
     public void testDijkstraShouldreturnList32541(){
         PathFinder pf = new DijkstraImpl(graph);
 
-        List<Long> idList = pf.getShortestPath((long)1, (long)3);
-        assert(idList.get(0) == (long)1);
-        assert(idList.get(1) == (long)4);
-        assert(idList.get(2) == (long)5);
-        assert(idList.get(3) == (long)2);
-        assert(idList.get(4) == (long)3);
+        List<Node> idList = pf.getShortestPath(graph.getNodeMap().get(1L), graph.getNodeMap().get(3L));
+        assert(idList.get(0).getId() == 1L);
+        assert(idList.get(1).getId() == 4L);
+        assert(idList.get(2).getId() == 5L);
+        assert(idList.get(3).getId() == 2L);
+        assert(idList.get(4).getId() == 3L);
     }
 
 }

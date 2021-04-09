@@ -39,7 +39,6 @@ public class CompileMapFile {
             wayTypeListSelection = args[3];
         }
         else{
-
             path = readLine(
                     "Enter osm path : ");
 

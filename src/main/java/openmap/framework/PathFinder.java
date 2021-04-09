@@ -16,7 +16,7 @@ public interface PathFinder {
      * In case there is no possible path between source and destination, return a list with only one value that being -1
      * @param source the id of the source node
      * @param destination the id of the destination node
-     * @return a list of ids of all the nodes in the shortest path
+     * @return a list of nodes of all the nodes in the shortest path
      */
-    public List<Long> getShortestPath(Long source, Long destination);
+    public List<Node> getShortestPath(Node source, Node destination);
 }

@@ -13,7 +13,7 @@ public class DijkstraWrongImpl implements PathFinder {
     //private Map<Long, Long> predecessor;
     //private Map<Long, Double> distance;
     private Set<Node> visited;
-    private Long source = null;
+    private Node source = null;
 
     public DijkstraWrongImpl(Graph graph){
         this.graph = graph;
@@ -25,7 +25,7 @@ public class DijkstraWrongImpl implements PathFinder {
     }
 
     @Override
-    public List<Long> getShortestPath(Long source, Long destination) {
+    public List<Node> getShortestPath(Node source, Node destination) {
         //if it is another source, or first run. Recalculate shortest path with dijkstra.
         if(this.source == null || this.source != source){
             clearDistanceAndPredecessor();
@@ -33,25 +33,23 @@ public class DijkstraWrongImpl implements PathFinder {
             priorityQueue.clear();
             runDijkstra(source, destination);
         }
-        Map<Long, Node> nodeMap = graph.getNodeMap();
-        List<Long> result = new ArrayList<Long>();
-        Long currId = destination;
-        while(!currId.equals(source)){
-            result.add(currId);
-            Node currNode = nodeMap.get(currId).getPredecessor();
+
+        List<Node> result = new ArrayList<>();
+        Node currNode = destination;
+        while(!(currNode.getId() == (source.getId()))){
+            result.add(currNode);
+            currNode = currNode.getPredecessor();
             if(currNode == null){
                 //return null if impossible
                 return null;
             }
-
-            currId = currNode.getId();
         }
         result.add(source);
         Collections.reverse(result);
         return result;
     }
 
-    private void runDijkstra(Long source, Long destination){
+    private void runDijkstra(Node source, Node destination){
         //measureable values
         int visitcount = 0;
         long start = System.currentTimeMillis();
@@ -68,7 +66,7 @@ public class DijkstraWrongImpl implements PathFinder {
         while (!finished){
             Node currNode = priorityQueue.poll();
 
-            if(currNode == null || currNode.getId() == destination){
+            if(currNode == null || currNode.getId() == destination.getId()){
                 finished = true;
             }
             else if(!visited.contains(currNode)){

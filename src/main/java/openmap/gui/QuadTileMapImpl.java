@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class QuadTileMapImpl implements TileMap {
 
-    private List<Long> highlightedNodeList;
+    private List<Node> highlightedNodeList;
 
     QuadTile rootTile;
     Graph graph;
@@ -40,7 +40,7 @@ public class QuadTileMapImpl implements TileMap {
     }
 
     @Override
-    public void setHighlightedPath(List<Long> nodeList) {
+    public void setHighlightedPath(List<Node> nodeList) {
         this.highlightedNodeList = nodeList;
     }
 
@@ -63,8 +63,7 @@ public class QuadTileMapImpl implements TileMap {
 
 
         Node lastNode = null;
-        for (Long nl : highlightedNodeList) {
-            Node currentNode = graph.getNodeMap().get(nl);
+        for (Node currentNode : highlightedNodeList) {
 
             g.setColor(Color.RED);
             if (lastNode != null) {

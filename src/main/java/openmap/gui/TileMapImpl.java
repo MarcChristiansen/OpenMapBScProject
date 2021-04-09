@@ -22,7 +22,7 @@ public class TileMapImpl implements TileMap {
     private int tileSquareSize;
     private Graph graph;
 
-    private List<Long> highlightedNodeList;
+    private List<Node> highlightedNodeList;
 
     //Buffered render related stuff
     private int preRenderSize;
@@ -195,8 +195,7 @@ public class TileMapImpl implements TileMap {
 
 
         Node lastNode = null;
-        for (Long nl : highlightedNodeList) {
-            Node currentNode = graph.getNodeMap().get(nl);
+        for (Node currentNode : highlightedNodeList) {
 
             g.setColor(Color.RED);
             if (lastNode != null) {
@@ -214,7 +213,7 @@ public class TileMapImpl implements TileMap {
     }
 
     @Override
-    public void setHighlightedPath(List<Long> nodeList) {
+    public void setHighlightedPath(List<Node> nodeList) {
         this.highlightedNodeList = nodeList;
     }
 

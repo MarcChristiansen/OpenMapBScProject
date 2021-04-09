@@ -105,7 +105,7 @@ class MapPanel extends JPanel {
                     }
 
                     if(pathNode1 != null && pathNode2 !=null){
-                        List<Long> pathIdList = pathFinder.getShortestPath(pathNode1.getId(), pathNode2.getId());
+                        List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
                         if(pathIdList != null) {
                             setHighlightedPath(pathIdList);
                             repaint();
@@ -160,7 +160,7 @@ class MapPanel extends JPanel {
 
     }
 
-    public void setHighlightedPath(List<Long> nodeList){
+    public void setHighlightedPath(List<Node> nodeList){
         tileMap.setHighlightedPath(nodeList);
     }
 

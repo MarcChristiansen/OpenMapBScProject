@@ -27,7 +27,7 @@ public class DijkstraImpl implements PathFinder {
     }
 
     @Override
-    public List<Long> getShortestPath(Long source, Long destination) {
+    public List<Node> getShortestPath(Node source, Node destination) {
         //if it is another source, or first run. Recalculate shortest path with dijkstra.
         if(true){ //could be optimized to only run if source and destination have changed since last run
             clearDistanceAndPredecessor();
@@ -35,38 +35,36 @@ public class DijkstraImpl implements PathFinder {
             priorityQueue.clear();
             runDijkstra(source, destination);
         }
-        Map<Long, Node> nodeMap = graph.getNodeMap();
-        List<Long> result = new ArrayList<Long>();
-        Long currId = destination;
-        while(!currId.equals(source)){
-            result.add(currId);
-            Node currNode = nodeMap.get(currId).getPredecessor();
+        List<Node> result = new ArrayList<>();
+
+        Node currNode = destination;
+        while(!(currNode.getId() == source.getId())){
+            result.add(currNode);
+            currNode = currNode.getPredecessor();
             if(currNode == null){
                 //return null if impossible
                 return null;
             }
-
-            currId = currNode.getId();
         }
         result.add(source);
         Collections.reverse(result);
         return result;
     }
 
-    private void runDijkstra(Long source, Long destination){
+    private void runDijkstra(Node source, Node destination){
         //measureable values
         int visitcount = 0;
         long start = System.currentTimeMillis();
 
         //add source to priority queue with distance 0
-        Node firstNode = graph.getNodeMap().get(source);
+        Node firstNode = source;
         firstNode.setDistance(0);
         firstNode.setPredecessor(firstNode);
         priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
 
         while (true){
             NodeWrapper currNode = priorityQueue.poll();
-            if(currNode == null || currNode.getNode().getId() == destination){
+            if(currNode == null || currNode.getNode().getId() == destination.getId()){
                 break; //we obey whatever Gerth commands
             }
 
