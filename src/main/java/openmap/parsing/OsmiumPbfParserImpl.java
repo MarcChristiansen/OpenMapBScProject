@@ -99,6 +99,11 @@ public class OsmiumPbfParserImpl implements OsmParser{
         return this.bounds;
     }
 
+    @Override
+    public void CacheWays(boolean shouldCacheWays) {
+        this.shouldCacheWaysInRam = shouldCacheWays;
+    }
+
     private void runReaderWithSink(Sink sink) {
         InputStream inputStream = null;
         try {
