@@ -29,9 +29,10 @@ public class CompileMapFile {
         String outPath = "";
         int optimLevel = -1;
         String wayTypeListSelection = "";
+        boolean shouldUseTriplePass = true;
 
 
-        if(args != null && args.length == 4){
+        if(args != null && args.length == 5){
             path = args[0];
             outPath = args[1];
             optimLevel = Integer.parseInt(args[2]);
@@ -50,6 +51,9 @@ public class CompileMapFile {
 
             wayTypeListSelection = readLine(
                     "Enter path type set (normal or mini) : ");
+
+            shouldUseTriplePass = Boolean.parseBoolean(readLine(
+                    "Should we use a triple pass? (true/false)"));
         }
         OsmParser parser = null;
         String extension = getFileExtension(path);
@@ -65,6 +69,9 @@ public class CompileMapFile {
         else{
             throw new FileFormatException("File needs to be either pbf or osm format. a " + extension + " file was given.");
         }
+
+        //If we want a triple pass we do not want to cache ways.
+        parser.CacheWays(!shouldUseTriplePass);
 
         //GraphBuilder creation
         GraphBuilderImpl graphBuilder = new GraphBuilderImpl(parser);

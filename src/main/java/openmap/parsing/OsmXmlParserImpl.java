@@ -26,6 +26,9 @@ public class OsmXmlParserImpl implements OsmParser {
     String fileIn;
     List<String> highWayFilter;
 
+    //Flags
+    boolean shouldCacheWaysInRam = true;
+
 
     public OsmXmlParserImpl(String fileIn, List<String> highWayFilter){
         this.fileIn = fileIn;
@@ -149,8 +152,22 @@ public class OsmXmlParserImpl implements OsmParser {
         return bounds;
     }
 
-    public void parseWays() {
-        List<OsmWay> wayList = new ArrayList<OsmWay>();
+    @Override
+    public void CacheWays(boolean shouldCacheWays) {
+        this.shouldCacheWaysInRam = shouldCacheWays;
+    }
+
+    /**
+     * Parses all ways and possibly runs an action. If action is null then osmWays is populated with a list of all ways.
+     * @param action
+     */
+    public void parseWays(Consumer<OsmWay> action) {
+
+        List<OsmWay> wayList = null;
+        if(action == null){
+            wayList = new ArrayList<OsmWay>();
+        }
+
 
         XMLEventReader reader = getReader();
 
@@ -199,7 +216,13 @@ public class OsmXmlParserImpl implements OsmParser {
                     if(endelement.getName().getLocalPart().equals("way")){
                         //create new OSM way and add to list, if the way is a highway
                         if(highWayFilter.stream().anyMatch(currentTags.getOrDefault("highway", "")::equalsIgnoreCase)){
-                            wayList.add(new OsmWayImpl(new ArrayList<Long>(nodeRefList), new HashMap<String, String>(currentTags)));
+                            OsmWay newWay = new OsmWayImpl(new ArrayList<Long>(nodeRefList), new HashMap<String, String>(currentTags));
+                            if(action != null){
+                                action.accept(newWay);
+                            }else{
+                                wayList.add(newWay);
+                            }
+
                         }
                     }
                 }
@@ -215,14 +238,17 @@ public class OsmXmlParserImpl implements OsmParser {
             }
         }
 
+        //If the action existed we do not cache the way.
         osmWays = wayList;
     }
 
     @Override
     public void runWithAllWays(Consumer<OsmWay> action) {
-        if(osmWays == null) { parseWays(); }
-
-        osmWays.forEach(action);
+        if(shouldCacheWaysInRam){
+            if(osmWays == null) { parseWays(null);}
+            osmWays.forEach(action);
+        }
+        else parseWays(action);
     }
 
     private XMLEventReader getReader() {

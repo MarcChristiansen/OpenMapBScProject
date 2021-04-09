@@ -41,5 +41,11 @@ public interface OsmParser {
      */
     public Bounds parseBounds();
 
+    /**
+     * Used to set if ways should be cached.
+     */
+    public void CacheWays(boolean shouldCacheWays);
+
+
 
 }
