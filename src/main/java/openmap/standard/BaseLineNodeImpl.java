@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> {
 
     protected long id;
-    double x, y;
+    protected double x, y;
     protected List<Path> pathList;
 
     /**

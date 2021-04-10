@@ -1,5 +1,6 @@
 package openmap.gui;
 
+import openmap.alternative.AStarImpl;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
@@ -74,7 +75,7 @@ class MapPanel extends JPanel {
         this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
         //TODO REMOVE and make modular
-        pathFinder = new DijkstraImpl(this.graph);
+        pathFinder = new AStarImpl(this.graph);
 
         //Set initial graphics location
         panX = graph.getBounds().getMinX();
@@ -105,7 +106,12 @@ class MapPanel extends JPanel {
                     }
 
                     if(pathNode1 != null && pathNode2 !=null){
+                        PathFinder djikstra = new DijkstraImpl(graph);
+                        List<Node> djikPath = djikstra.getShortestPath(pathNode1, pathNode2);
                         List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
+
+                        System.out.println(djikPath.equals(pathIdList));
+
                         if(pathIdList != null) {
                             setHighlightedPath(pathIdList);
                             repaint();

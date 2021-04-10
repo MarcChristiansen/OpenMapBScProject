@@ -48,6 +48,4 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
     public void setVisited(boolean b) {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
-
-
 }

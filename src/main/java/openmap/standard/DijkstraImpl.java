@@ -12,10 +12,6 @@ public class DijkstraImpl implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
-    //private Map<Long, Long> predecessor;
-    //private Map<Long, Double> distance;
-    //private Set<Node> visited;
-    private Long source = null;
 
     public DijkstraImpl(Graph graph){
         this.graph = graph;
