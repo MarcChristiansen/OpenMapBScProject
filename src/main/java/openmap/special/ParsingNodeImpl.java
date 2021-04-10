@@ -1,8 +1,11 @@
 package openmap.special;
 
 import openmap.framework.Node;
+import openmap.framework.Path;
 import openmap.standard.BaseLineNodeImpl;
 import org.apache.commons.lang3.NotImplementedException;
+
+import java.util.List;
 
 public class ParsingNodeImpl extends BaseLineNodeImpl {
     byte wayCounter;
@@ -47,5 +50,17 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
     @Override
     public void setVisited(boolean b) {
         throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public List<Path> getIncomingPaths() {
+        throw new NotImplementedException("Not intended to be used in parsing");
+        //Technically not needed as information is still stored for decoding in the nodes so we don't use this in parsing
+    }
+
+    @Override
+    public void addIncomingPath(Path path) {
+        throw new NotImplementedException("Not intended to be used in parsing");
+        //Technically not needed as information is still stored for decoding in the nodes so we don't use this in parsing
     }
 }

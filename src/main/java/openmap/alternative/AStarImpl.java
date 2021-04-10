@@ -35,7 +35,7 @@ public class AStarImpl implements PathFinder {
                 return retraceSteps(source);
             }
 
-            for (Path p: currNodeW.getNode().getPaths()) {
+            for (Path p: currNodeW.getNode().getOutgoingPaths()) {
                 double totalWeight = currNodeW.getNode().getDistance()+p.getWeight();
                 Node pathDest = p.getDestination();
 

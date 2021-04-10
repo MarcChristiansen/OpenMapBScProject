@@ -85,22 +85,27 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
     public double getY() { return y; }
 
     @Override
-    public List<Path> getPaths() {
+    public List<Path> getOutgoingPaths() {
         return pathList; //Todo maybe make read-only?
     }
 
     @Override
-    public void addPath(Path path) {
+    public void addOutgoingPath(Path path) {
         pathList.add(path);
     }
 
     @Override
+    /**
+     * Deserialize paths MUST ONLY BE RUN ONCE
+     */
     public void convertPathDeserialization(Map<Long, Node> nodeMap){
         //We map the current list of paths to standard paths.
         //Intended for the path in the list to be decoding paths but to avoid crashes it works for all types as it only uses interface functions.
         pathList = pathList.stream()
-                            .map(path -> new StandardPathImpl(nodeMap.get(path.getDestinationId()), path.getWeight()))
+                            .map(path -> new StandardPathImpl(nodeMap.get(path.getDestinationId()), this, path.getWeight()))
                             .collect(Collectors.toCollection(ArrayList::new));
+
+        pathList.forEach(p -> p.getSource().addIncomingPath(p));
     }
 
     @Override

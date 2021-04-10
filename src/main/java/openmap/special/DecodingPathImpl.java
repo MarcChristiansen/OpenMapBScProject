@@ -35,6 +35,16 @@ public class DecodingPathImpl implements Path {
     }
 
     @Override
+    public Node getSource() {
+        throw new NotImplementedException("Class DecodingPathImpl only used for decoding, method should not be called");
+    }
+
+    @Override
+    public long getSourceId() {
+        throw new NotImplementedException("Class DecodingPathImpl only used for decoding, method should not be called");
+    }
+
+    @Override
     public double getWeight() {
         return weight;
     }

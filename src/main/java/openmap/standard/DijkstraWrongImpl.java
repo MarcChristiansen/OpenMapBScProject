@@ -75,7 +75,7 @@ public class DijkstraWrongImpl implements PathFinder {
                 visited.add(currNode);
 
                 //Go through all paths
-                currNode.getPaths().forEach(path -> {
+                currNode.getOutgoingPaths().forEach(path -> {
                     double newDistance = currNode.getDistance() + path.getWeight();
 
                     //check if new distance is lower

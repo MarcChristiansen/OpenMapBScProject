@@ -14,11 +14,15 @@ public class StandardPathImpl implements Path, Serializable {
 
 
     Node destination;
+    Node source;
     double weight;
 
-    public StandardPathImpl(Node destination, Double weight){
+
+    public StandardPathImpl(Node destination, Node source, Double weight){
         this.destination = destination;
         this.weight = weight;
+        this.source = source;
+
     }
 
     @Override
@@ -29,6 +33,16 @@ public class StandardPathImpl implements Path, Serializable {
     @Override
     public long getDestinationId() {
         return destination.getId();
+    }
+
+    @Override
+    public Node getSource() {
+        return source;
+    }
+
+    @Override
+    public long getSourceId() {
+        return source.getId();
     }
 
     @Override

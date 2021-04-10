@@ -19,13 +19,25 @@ public interface Path {
      * Return the destination node
      * @return The destination node
      */
-    Node getDestination(); //TODO should this be an id for a dest node
+    Node getDestination();
 
     /**
      * Return the destination id
      * @return The destination id
      */
-    long getDestinationId(); //TODO should this be an id for a dest node
+    long getDestinationId();
+
+    /**
+     * Return the Source node
+     * @return The Source node
+     */
+    Node getSource();
+
+    /**
+     * Return the Source id
+     * @return The Source id
+     */
+    long getSourceId();
 
     /**
      * returns the weight of this path
@@ -40,8 +52,7 @@ public interface Path {
     public JSONObject getJSONObject();
 
     /**
-     * Write path to Json file using a json generator
-     * @return A json object copy of the object
+     * Write path to Json file using a json generator for streaming
      */
     public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 }

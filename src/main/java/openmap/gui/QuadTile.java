@@ -1,12 +1,10 @@
 package openmap.gui;
 
 import openmap.framework.Bounds;
-import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.gui.framework.MapTile;
 import openmap.standard.BoundsImpl;
-import org.opengis.style.Graphic;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -117,7 +115,7 @@ public class QuadTile implements MapTile {
 
         //loop through paths and add nodes to tiles if paths pass through
         if(checkOverlap) {
-            List<Path> pathList = n.getPaths();
+            List<Path> pathList = n.getOutgoingPaths();
             pathList.forEach(path -> {
                 Node destNode = path.getDestination();
                 double a = (n.getY() - destNode.getY()) / (n.getX() - destNode.getX());
@@ -609,7 +607,7 @@ public class QuadTile implements MapTile {
     private void drawNodes(Graphics2D g) {
         for (Node node : nodeList) {
             g.setColor(Color.BLACK);
-            for (Path p : node.getPaths()) {
+            for (Path p : node.getOutgoingPaths()) {
                 g.drawLine((int) (node.getX()), (int) (node.getY()),
                         (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
             }
@@ -617,7 +615,7 @@ public class QuadTile implements MapTile {
 
         for (Node node : overlappingNodeList) {
             g.setColor(Color.BLACK);
-            for (Path p : node.getPaths()) {
+            for (Path p : node.getOutgoingPaths()) {
                 g.drawLine((int) (node.getX()), (int) (node.getY()),
                         (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
             }

@@ -107,14 +107,14 @@ public class GraphBuilderImpl implements graphBuilder {
 
                         //Add paths to both nodes between intersections or ends.
                         if(isOneway){
-                            preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                            preNode.addOutgoingPath(new StandardPathImpl(currNode, preNode, pathLength));
                         }
                         else if(isReverseOneway){
-                            currNode.addPath(new StandardPathImpl(preNode, pathLength));
+                            currNode.addOutgoingPath(new StandardPathImpl(preNode, currNode, pathLength));
                         }
                         else {
-                            currNode.addPath(new StandardPathImpl(preNode, pathLength));
-                            preNode.addPath(new StandardPathImpl(currNode, pathLength));
+                            currNode.addOutgoingPath(new StandardPathImpl(preNode, currNode, pathLength));
+                            preNode.addOutgoingPath(new StandardPathImpl(currNode, preNode, pathLength));
                         }
 
                         if(OptimizationLevel == 1) {

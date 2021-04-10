@@ -5,7 +5,6 @@ import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 
-import java.sql.SQLOutput;
 import java.util.*;
 
 public class DijkstraImpl implements PathFinder {
@@ -70,7 +69,7 @@ public class DijkstraImpl implements PathFinder {
                 //give first node predecessor
                 currNode.getNode().setVisited(true);
                 //Go through all paths
-                currNode.getNode().getPaths().forEach(path -> {
+                currNode.getNode().getOutgoingPaths().forEach(path -> {
                     double newDistance = currNode.getNode().getDistance() + path.getWeight();
 
                     //check if new distance is lower

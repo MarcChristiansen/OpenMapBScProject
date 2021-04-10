@@ -41,16 +41,16 @@ public class testDijkstra {
         Node node3 = new NodeImpl(3, 0, 0);
         Node node4 = new NodeImpl(4, 0, 0);
         Node node5 = new NodeImpl(5, 0, 0);
-        node1.addPath(new StandardPathImpl(node2, 10.0));
-        node1.addPath(new StandardPathImpl(node4, 2.0));
-        node2.addPath(new StandardPathImpl(node1, 10.0));
-        node2.addPath(new StandardPathImpl(node3, 2.0));
-        node2.addPath(new StandardPathImpl(node5, 2.0));
-        node3.addPath(new StandardPathImpl(node2, 2.0));
-        node4.addPath(new StandardPathImpl(node1, 2.0));
-        node4.addPath(new StandardPathImpl(node5, 2.0));
-        node5.addPath(new StandardPathImpl(node2, 2.0));
-        node5.addPath(new StandardPathImpl(node4, 2.0));
+        node1.addOutgoingPath(new StandardPathImpl(node2, node1, 10.0));
+        node1.addOutgoingPath(new StandardPathImpl(node4, node1,2.0));
+        node2.addOutgoingPath(new StandardPathImpl(node1, node2,10.0));
+        node2.addOutgoingPath(new StandardPathImpl(node3, node2,2.0));
+        node2.addOutgoingPath(new StandardPathImpl(node5, node2,2.0));
+        node3.addOutgoingPath(new StandardPathImpl(node2, node3,2.0));
+        node4.addOutgoingPath(new StandardPathImpl(node1, node4,2.0));
+        node4.addOutgoingPath(new StandardPathImpl(node5, node4,2.0));
+        node5.addOutgoingPath(new StandardPathImpl(node2, node5,2.0));
+        node5.addOutgoingPath(new StandardPathImpl(node4, node5,2.0));
 
         //add nodes to nodemap
         nodeMap.put(node1.getId(), node1);

@@ -159,7 +159,7 @@ public class TileMapImpl implements TileMap {
                             //Road drawing
                             if (zoomFactor >= nodeRatioFactor) {
                                 g.setColor(Color.BLACK);
-                                for (Path p : node.getPaths()) {
+                                for (Path p : node.getOutgoingPaths()) {
                                     g.drawLine((int) (node.getX()), (int) (node.getY()),
                                             (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
                                 }

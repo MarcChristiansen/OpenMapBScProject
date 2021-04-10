@@ -61,13 +61,25 @@ public interface Node {
      * Returns a list of the paths starting from this node
      * @return list of the paths starting from this node
      */
-    public List<Path> getPaths();
+    public List<Path> getOutgoingPaths();
 
     /**
-     * Add a path out to the path list
-     * @param path
+     * Returns a list of the paths ending in this node
+     * @return list of the paths ending in this node
      */
-    public void addPath(Path path);
+    public List<Path> getIncomingPaths();
+
+    /**
+     * Add an outgoing path out to the path list
+     * @param path The outgoing path
+     */
+    public void addOutgoingPath(Path path);
+
+    /**
+     * Add an incoming path out to the path list
+     * @param path The incoming path
+     */
+    public void addIncomingPath(Path path);
 
 
     /**
