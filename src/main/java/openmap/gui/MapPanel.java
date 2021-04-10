@@ -106,11 +106,11 @@ class MapPanel extends JPanel {
                     }
 
                     if(pathNode1 != null && pathNode2 !=null){
-                        PathFinder djikstra = new DijkstraImpl(graph);
-                        List<Node> djikPath = djikstra.getShortestPath(pathNode1, pathNode2);
+                        //PathFinder djikstra = new DijkstraImpl(graph);
+                        //List<Node> djikPath = djikstra.getShortestPath(pathNode1, pathNode2);
                         List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
 
-                        System.out.println(djikPath.equals(pathIdList));
+                        //System.out.println(djikPath.equals(pathIdList));
 
                         if(pathIdList != null) {
                             setHighlightedPath(pathIdList);

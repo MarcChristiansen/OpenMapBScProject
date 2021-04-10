@@ -26,13 +26,10 @@ public class DijkstraWrongImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
-        //if it is another source, or first run. Recalculate shortest path with dijkstra.
-        if(this.source == null || this.source != source){
-            clearDistanceAndPredecessor();
-            visited.clear();
-            priorityQueue.clear();
-            runDijkstra(source, destination);
-        }
+        clearDistanceAndPredecessor();
+        visited.clear();
+        priorityQueue.clear();
+        runDijkstra(source, destination);
 
         List<Node> result = new ArrayList<>();
         Node currNode = destination;
