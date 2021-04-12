@@ -4,7 +4,7 @@ import openmap.framework.*;
 
 import java.util.*;
 
-public class DijkstraBiDirIVeryWrongmpl implements PathFinder {
+public class DijkstraBiDirVeryWrongImpl implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> forwardQueue;
@@ -17,7 +17,7 @@ public class DijkstraBiDirIVeryWrongmpl implements PathFinder {
     //private Set<Node> visited;
     private Long source = null;
 
-    public DijkstraBiDirIVeryWrongmpl(Graph graph){
+    public DijkstraBiDirVeryWrongImpl(Graph graph){
         this.graph = graph;
         forwardQueue = new PriorityQueue<NodeWrapper>();
         backwardQueue = new PriorityQueue<NodeWrapper>();
@@ -169,18 +169,18 @@ public class DijkstraBiDirIVeryWrongmpl implements PathFinder {
 
                     double newDistance = backNode.getNode().getDistance2() + path.getWeight();
 
-                    if(path.getDestination().getPredecessor2() == null){
-                        path.getDestination().setPredecessor2(backNode.getNode());
+                    if(path.getSource().getPredecessor2() == null){
+                        path.getSource().setPredecessor2(backNode.getNode());
                     }
 
-                    if (newDistance < path.getDestination().getDistance2()) {
+                    if (newDistance < path.getSource().getDistance2()) {
                         //add predecessor for the node
-                        path.getDestination().setPredecessor2(backNode.getNode());
-                        path.getDestination().setDistance2(newDistance);
+                        path.getSource().setPredecessor2(backNode.getNode());
+                        path.getSource().setDistance2(newDistance);
                     }
 
                     //add to priority queue
-                    backwardQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
+                    backwardQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance()));
                 }
             }
         }

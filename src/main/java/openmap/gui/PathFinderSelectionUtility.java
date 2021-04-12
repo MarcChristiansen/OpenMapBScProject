@@ -3,10 +3,10 @@ package openmap.gui;
 import openmap.alternative.AStarImpl;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
+import openmap.standard.DijkstraBiDirImpl;
+import openmap.standard.DijkstraBiDirVeryWrongImpl;
 import openmap.standard.DijkstraImpl;
 import openmap.standard.DijkstraWrongImpl;
-
-import javax.lang.model.element.UnknownElementException;
 
 public class PathFinderSelectionUtility {
 
@@ -16,12 +16,14 @@ public class PathFinderSelectionUtility {
 
     private Graph graph;
 
-    private String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*"};
+    private String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
     private DijkstraWrongImpl dijkstraWrongPathfinder;
     private AStarImpl AStarPathFinder;
+    private DijkstraBiDirImpl DijkstraBiDirPathFinder;
+    private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
 
 
 
@@ -42,6 +44,14 @@ public class PathFinderSelectionUtility {
         if(pathFinderStrings[2].equals(finderId)){
             if(AStarPathFinder == null){ AStarPathFinder = new AStarImpl(graph); }
             return AStarPathFinder;
+        }
+        if(pathFinderStrings[3].equals(finderId)){
+            if(DijkstraBiDirPathFinder == null){ DijkstraBiDirPathFinder = new DijkstraBiDirImpl(graph); }
+            return DijkstraBiDirPathFinder;
+        }
+        if(pathFinderStrings[4].equals(finderId)){
+            if(DijkstraBiDirVeryWrongPathFinder == null){ DijkstraBiDirVeryWrongPathFinder = new DijkstraBiDirVeryWrongImpl(graph); }
+            return DijkstraBiDirVeryWrongPathFinder;
         }
 
         return null; //Todo Possibly make exception...
