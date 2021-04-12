@@ -52,7 +52,7 @@ public class DijkstraWrongImpl implements PathFinder {
         long start = System.currentTimeMillis();
 
         //add source to priority queue with distance 0
-        Node firstNode = graph.getNodeMap().get(source);
+        Node firstNode = source;
         firstNode.setDistance(0);
         priorityQueue.add(firstNode);
 
@@ -88,8 +88,8 @@ public class DijkstraWrongImpl implements PathFinder {
             }
         }
         long finish = System.currentTimeMillis();
-        System.out.println("Dijkstra visited " + visitcount + " nodes");
-        System.out.println("Dijkstra took " + (finish - start) + " ms");
+        System.out.println("Dijkstra wrong visited " + visitcount + " nodes");
+        System.out.println("Dijkstra wrong took " + (finish - start) + " ms");
     }
 
     private void clearDistanceAndPredecessor(){
