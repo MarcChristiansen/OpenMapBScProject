@@ -23,6 +23,9 @@ public class AStarImpl implements PathFinder {
         clearDistanceAndPredecessor();
         priorityQueue.clear();
 
+        //Initial setup
+        long start = System.currentTimeMillis();
+        List<Node> path = null;
         currTarget = destination;
         source.setDistance(0);
         priorityQueue.add(new NodeWrapperImpl(source, h(source)));
@@ -32,7 +35,8 @@ public class AStarImpl implements PathFinder {
             currNodeW = priorityQueue.poll();
 
             if(currNodeW.getNode() == currTarget){
-                return retraceSteps(source);
+                path = retraceSteps(source);
+                break;
             }
 
             for (Path p: currNodeW.getNode().getOutgoingPaths()) {
@@ -48,8 +52,10 @@ public class AStarImpl implements PathFinder {
             }
         }
 
-        //We could not find a path
-        return null;
+        long finish = System.currentTimeMillis();
+        System.out.println("A* took " + (finish - start) + " ms");
+
+        return path;
     }
 
     private List<Node> retraceSteps(Node source){

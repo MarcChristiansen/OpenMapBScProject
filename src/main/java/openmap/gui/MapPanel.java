@@ -5,7 +5,6 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.framework.TileMap;
-import openmap.standard.DijkstraBiDirImpl;
 import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
@@ -51,7 +50,11 @@ class MapPanel extends JPanel {
         return (int)(nodeRadius/zoomFactor);
     }
 
-    //Find the closest node in the graph to a given point.
+    /** Find the closest node in the graph to a given point.
+     * @param x X coordinate
+     * @param y y Coordinate
+     * @return The closest node
+     */
     public Node getClosestNode(double x, double y){
         Node best = null;
         double dist = 99999999;
@@ -68,16 +71,14 @@ class MapPanel extends JPanel {
         return best;
     }
 
-    public MapPanel(Graph graph) {
+    public MapPanel(Graph graph, PathFinder pathFinder) {
 
 
         this.graph = graph;
         //setBorder(BorderFactory.createLineBorder(Color.black));
         this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
-        //TODO REMOVE and make modular
-        //pathFinder = new AStarImpl(this.graph);
-        pathFinder = new DijkstraBiDirImpl(this.graph);
+        this.pathFinder = pathFinder;
 
         //Set initial graphics location
         panX = graph.getBounds().getMinX();
@@ -102,27 +103,12 @@ class MapPanel extends JPanel {
                 if(e.getButton() == 5 || e.getButton() == 4){ //5 is first side button, no constant exists
 
                     if(e.getButton() == 5) {
-                        System.out.println("source");
                         pathNode1 = getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
                     }else{
                         pathNode2 = getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);
                     }
 
-                    if(pathNode1 != null && pathNode2 !=null){
-                        PathFinder djikstra = new DijkstraImpl(graph);
-                        List<Node> djikPath = djikstra.getShortestPath(pathNode1, pathNode2);
-                        List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
-
-                        System.out.println(djikPath.equals(pathIdList));
-
-                        if(pathIdList != null) {
-                            setHighlightedPath(pathIdList);
-                            repaint();
-                        } else{
-                            System.out.println("Path does not exist");
-                        }
-
-                    }
+                    runPathFinder();
 
                 }
             }
@@ -169,6 +155,27 @@ class MapPanel extends JPanel {
 
     }
 
+    /**
+     * Attempt to run the pathfinder on the graph if we have both path nodes already.
+     */
+    private void runPathFinder() {
+        if(pathNode1 != null && pathNode2 !=null){
+            List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
+
+            if(pathIdList != null) {
+                setHighlightedPath(pathIdList);
+                repaint();
+            } else{
+                System.out.println("Path does not exist");
+            }
+        }
+    }
+
+    public void setPathFinder(PathFinder pathFinder) {
+        this.pathFinder = pathFinder;
+        runPathFinder();
+    }
+
     public void setHighlightedPath(List<Node> nodeList){
         tileMap.setHighlightedPath(nodeList);
     }
@@ -197,12 +204,9 @@ class MapPanel extends JPanel {
 
         int diameter = radius * 2;
 
-        //Center correctly
-        //g.fillRect(x,y, radius, radius); //TODO REMOVE
         g.fillOval(x - radius, y - radius, diameter, diameter);
 
     }
-
 
     @Override
     public Dimension getPreferredSize() {
@@ -265,7 +269,7 @@ class MapPanel extends JPanel {
 
             boolean shouldDrawNode = isVisible &&
                     (drawingFactor <= 1 ||
-                            nodeSkipCounter >= drawingFactor * 20 || //TODO REMOVE MAGIC CONSTANT 20
+                            nodeSkipCounter >= drawingFactor * 20 ||
                             nodeSkipCounter >= maxNodesToSkip);
 
             if (shouldDrawNode) {
@@ -314,7 +318,7 @@ class MapPanel extends JPanel {
             }
         }*/
 
-        System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight());
+        //System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight()); //TODO remember this.
 
         g.setTransform(matrix); // Restore
 

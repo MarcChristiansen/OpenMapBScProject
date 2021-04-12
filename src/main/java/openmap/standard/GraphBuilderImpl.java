@@ -73,14 +73,15 @@ public class GraphBuilderImpl implements graphBuilder {
             double pathLength = 0;
 
             long previousNodeId = -1; //-1 means no node
+            long tempPreNodeId = previousNodeId; //Node id mainly used for optim level 1 to know how far we are in the path
 
             for (int i = 0; i < tempList.size(); i++) {
-                Long currentNodeId = tempList.get(i);
+                long currentNodeId = tempList.get(i);
 
                 Node currNode = wayNodeMap.getOrDefault(currentNodeId, null);
                 //Sum length of all paths between two nodes. Only check if node actually exists
                 if(i != 0 && currNode != null){
-                    pathLength += getDistanceBetweenNodes(wayNodeMap.get(previousNodeId), wayNodeMap.get(currentNodeId));
+                    pathLength += getDistanceBetweenNodes(wayNodeMap.get(tempPreNodeId), currNode);
                 }
 
                 int maxSpeed = FindMaxSpeed(way);
@@ -124,12 +125,17 @@ public class GraphBuilderImpl implements graphBuilder {
 
                         //We move our previous node id
                         previousNodeId = currentNodeId;
+                        tempPreNodeId = previousNodeId;
 
                         pathLength = 0;
                     }
                     else{
                         previousNodeId = currentNodeId;
+                        tempPreNodeId = previousNodeId;
                     }
+                }
+                else if (currNode != null){
+                    tempPreNodeId = currentNodeId;
                 }
 
             }

@@ -650,7 +650,6 @@ public class QuadTile implements MapTile {
             double tempPanY = (panY-(getBounds().getMinY()+(getBounds().getMaxY()-getBounds().getMinY())))*zoomFactorInput;
             at.translate(-tempPanX, tempPanY);
             at.scale(zoomFactorInput/drawZoomFactor, zoomFactorInput/drawZoomFactor);
-            System.out.println((panX-bounds.getMinX()) + " " + (panY-bounds.getMinY()));
             g.setTransform(at);
         }
 

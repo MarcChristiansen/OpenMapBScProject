@@ -23,13 +23,12 @@ public class DijkstraImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
-        //if it is another source, or first run. Recalculate shortest path with dijkstra.
-        if(true){ //could be optimized to only run if source and destination have changed since last run
-            clearDistanceAndPredecessor();
-            //visited.clear();
-            priorityQueue.clear();
-            runDijkstra(source, destination);
-        }
+        //We always recalculate. Might not be efficient of same source but helps with compatibility for multiple algos
+        clearDistanceAndPredecessor();
+        //visited.clear();
+        priorityQueue.clear();
+        runDijkstra(source, destination);
+
         List<Node> result = new ArrayList<>();
 
         Node currNode = destination;

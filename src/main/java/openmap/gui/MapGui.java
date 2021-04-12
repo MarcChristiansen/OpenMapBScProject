@@ -5,13 +5,19 @@ import openmap.framework.Graph;
 import openmap.parsing.json.DiskUtility;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
+import openmap.standard.DijkstraWrongImpl;
 import openmap.utility.ConsoleUtils;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.IOException;
 
 class MapGui{
+
     public static void main(String args[]) throws IOException {
         String path = "";
 
@@ -34,36 +40,54 @@ class MapGui{
         }
 
         Graph graph = null;
-        try {
-            graph = DiskUtility.loadJsonGraph(path);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
+        try { graph = DiskUtility.loadJsonGraph(path); }
+        catch (Exception e){ e.printStackTrace(); }
 
         //Make the center component big, since that's the map
-        JPanel myPanel = new MapPanel(graph);
+        MapPanel myPanel = new MapPanel(graph, new DijkstraImpl(graph));
         System.out.println(graph.getNodeMap().size());
 
         myPanel.setPreferredSize(new Dimension(800, 400));
         pane.add(myPanel, BorderLayout.CENTER);
 
 
-        //((MapPanel)myPanel).setHighlightedPath(djikstra.getShortestPath(1511529408L, 1511479070L));
-
         //TODO implement this properly with actual working buttons and lists
 
-        JButton button = new JButton("Button 1 (PAGE_START)");
-        pane.add(button, BorderLayout.PAGE_START);
+        JLabel label = new JLabel("current file \"" + path + "\"");
+        label.setAlignmentX(Component.CENTER_ALIGNMENT);
+        pane.add(label, BorderLayout.PAGE_START);
 
-        button = new JButton("Button 3 (LINE_START)");
-        pane.add(button, BorderLayout.LINE_START);
 
-        //button = new JButton("Long-Named Button 4 (PAGE_END)");
-        //pane.add(button, BorderLayout.PAGE_END);
+        JPanel leftBox = new JPanel();
+        leftBox.setLayout(new BoxLayout(leftBox, BoxLayout.PAGE_AXIS));
+        leftBox.add(getComboBox(myPanel, graph));
+        JButton showVisitedBtn = new JButton("Show visited WIP");
+        showVisitedBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        leftBox.add(showVisitedBtn);
+        pane.add(leftBox, BorderLayout.LINE_START);
+    }
 
-        //button = new JButton("5 (LINE_END)");
-        //pane.add(button, BorderLayout.LINE_END);
+
+
+    public static JComboBox getComboBox(MapPanel mapPanel, Graph graph){
+
+        PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
+
+        String[] pathFinderStrings = pfsu.getPathFinderStrings();
+
+        //Create the combo box
+        JComboBox pathFinderList = new JComboBox(pathFinderStrings);
+        pathFinderList.setSelectedIndex(0);
+        pathFinderList.setMaximumSize(new Dimension(1920, 30));
+
+        pathFinderList.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String item = (String)(e.getItem());
+                mapPanel.setPathFinder(pfsu.getPathFinder(item));
+            }
+        });
+
+        return pathFinderList;
     }
 
     private static void createAndShowGUI(String path) {
