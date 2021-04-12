@@ -5,6 +5,7 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.framework.TileMap;
+import openmap.standard.DijkstraBiDirImpl;
 import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
@@ -75,7 +76,8 @@ class MapPanel extends JPanel {
         this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
         //TODO REMOVE and make modular
-        pathFinder = new AStarImpl(this.graph);
+        //pathFinder = new AStarImpl(this.graph);
+        pathFinder = new DijkstraBiDirImpl(this.graph);
 
         //Set initial graphics location
         panX = graph.getBounds().getMinX();
@@ -100,6 +102,7 @@ class MapPanel extends JPanel {
                 if(e.getButton() == 5 || e.getButton() == 4){ //5 is first side button, no constant exists
 
                     if(e.getButton() == 5) {
+                        System.out.println("source");
                         pathNode1 = getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
                     }else{
                         pathNode2 = getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);

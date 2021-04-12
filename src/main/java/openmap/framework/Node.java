@@ -49,13 +49,25 @@ public interface Node {
 
     public void setDistance(double distance);
 
+    public double getDistance2();
+
+    public void setDistance2(double distance);
+
     public Node getPredecessor();
 
+    public Node getPredecessor2();
+
     public void setPredecessor(Node predecessorId);
+
+    public void setPredecessor2(Node predecessorId);
 
     public boolean getVisited();
 
     public void setVisited(boolean b);
+
+    public boolean getVisited2();
+
+    public void setVisited2(boolean b);
 
     /**
      * Returns a list of the paths starting from this node
