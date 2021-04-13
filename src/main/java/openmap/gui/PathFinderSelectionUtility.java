@@ -3,6 +3,8 @@ package openmap.gui;
 import openmap.alternative.AStarImpl;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
+import openmap.standard.DijkstraBiDirImpl;
+import openmap.standard.DijkstraBiDirVeryWrongImpl;
 import openmap.standard.DijkstraImpl;
 import openmap.standard.DijkstraWrongImpl;
 
@@ -28,7 +30,7 @@ public class PathFinderSelectionUtility {
 
     private final Graph graph;
 
-    private String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
