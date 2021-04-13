@@ -23,9 +23,11 @@ public class DijkstraWrongImpl implements PathFinder {
     //private Map<Long, Double> distance;
     private Set<Node> visited;
     private Node source = null;
+    private long executionTime;
 
     public DijkstraWrongImpl(Graph graph){
         this.graph = graph;
+        this.executionTime = 0;
         priorityQueue = new PriorityQueue<Node>();
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
@@ -53,6 +55,11 @@ public class DijkstraWrongImpl implements PathFinder {
         result.add(source);
         Collections.reverse(result);
         return result;
+    }
+
+    @Override
+    public long getLastExecutionTime() {
+        return executionTime;
     }
 
     private void runDijkstra(Node source, Node destination){
@@ -97,6 +104,7 @@ public class DijkstraWrongImpl implements PathFinder {
             }
         }
         long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
         System.out.println("Dijkstra wrong visited " + visitcount + " nodes");
         System.out.println("Dijkstra wrong took " + (finish - start) + " ms");
     }

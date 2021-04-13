@@ -19,4 +19,6 @@ public interface PathFinder {
      * @return a list of nodes of all the nodes in the shortest path
      */
     public List<Node> getShortestPath(Node source, Node destination);
+
+    public long getLastExecutionTime();
 }

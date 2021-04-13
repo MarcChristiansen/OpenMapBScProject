@@ -11,9 +11,11 @@ public class AStarImpl implements PathFinder {
     private PriorityQueue<NodeWrapper> priorityQueue;
 
     private Node currTarget;
+    private long executionTime;
 
     public AStarImpl(Graph graph){
         this.graph = graph;
+        this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
     }
 
@@ -53,9 +55,15 @@ public class AStarImpl implements PathFinder {
         }
 
         long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
         System.out.println("A* took " + (finish - start) + " ms");
 
         return path;
+    }
+
+    @Override
+    public long getLastExecutionTime() {
+        return executionTime;
     }
 
     private List<Node> retraceSteps(Node source){

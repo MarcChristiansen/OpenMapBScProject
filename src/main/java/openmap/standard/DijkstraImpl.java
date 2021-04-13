@@ -18,9 +18,11 @@ public class DijkstraImpl implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
+    private long executionTime;
 
     public DijkstraImpl(Graph graph){
         this.graph = graph;
+        this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
@@ -50,6 +52,11 @@ public class DijkstraImpl implements PathFinder {
         result.add(source);
         Collections.reverse(result);
         return result;
+    }
+
+    @Override
+    public long getLastExecutionTime() {
+        return executionTime;
     }
 
     private void runDijkstra(Node source, Node destination){
@@ -91,6 +98,7 @@ public class DijkstraImpl implements PathFinder {
             }
         }
         long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
         System.out.println("Dijkstra visited " + visitcount + " nodes");
         System.out.println("Dijkstra took " + (finish - start) + " ms");
     }

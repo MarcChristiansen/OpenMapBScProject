@@ -16,9 +16,11 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
     //private Map<Long, Double> distance;
     //private Set<Node> visited;
     private Long source = null;
+    private long executionTime;
 
     public DijkstraBiDirVeryWrongImpl(Graph graph){
         this.graph = graph;
+        this.executionTime = 0;
         forwardQueue = new PriorityQueue<NodeWrapper>();
         backwardQueue = new PriorityQueue<NodeWrapper>();
         visitCount = 0;
@@ -51,6 +53,11 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
         result.add(source);
         Collections.reverse(result);
         return result;
+    }
+
+    @Override
+    public long getLastExecutionTime() {
+        return executionTime;
     }
 
     private void runBiDir(Node source, Node destination) {
@@ -205,6 +212,7 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
          */
 
         long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
         System.out.println("Dijkstra visited " + visitCount + " nodes");
         System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
