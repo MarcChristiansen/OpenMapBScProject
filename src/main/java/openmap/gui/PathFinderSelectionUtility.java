@@ -6,17 +6,29 @@ import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
 import openmap.standard.DijkstraWrongImpl;
 
-import javax.lang.model.element.UnknownElementException;
 
+/**
+ * Simple utility that only uses one instance of each pathfinder for the GUI.
+ * Also only creates an instance when a pothfinder is selected
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 013-04-2021
+ */
 public class PathFinderSelectionUtility {
 
+    /**
+     * Create a selection utility with a given graph
+     * All pathfinders will be linked to this graph
+     * @param graph The graph to use
+     */
     public PathFinderSelectionUtility(Graph graph) {
         this.graph = graph;
     }
 
-    private Graph graph;
+    private final Graph graph;
 
-    private String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
@@ -24,11 +36,20 @@ public class PathFinderSelectionUtility {
     private AStarImpl AStarPathFinder;
 
 
-
+    /**
+     * Get pathfinder string names.
+     * Primarily for use with something like a combobox
+     * @return A string array of id's usable in getPathFinder()
+     */
     public String[] getPathFinderStrings() {
         return pathFinderStrings;
     }
 
+    /**
+     * Given a string from the getPathFinderStrings() array return the relevant pathfinder
+     * @param finderId The string id
+     * @return Any relevant pathfinder, or null if none is found
+     */
     public PathFinder getPathFinder (String finderId) {
 
         if(pathFinderStrings[0].equals(finderId)){
@@ -44,7 +65,7 @@ public class PathFinderSelectionUtility {
             return AStarPathFinder;
         }
 
-        return null; //Todo Possibly make exception...
+        return null;
     }
 
 

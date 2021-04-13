@@ -43,6 +43,8 @@ public interface OsmParser {
 
     /**
      * Used to set if ways should be cached.
+     * If true this will cache ways
+     * If false this will force more passes of the raw data
      */
     public void CacheWays(boolean shouldCacheWays);
 

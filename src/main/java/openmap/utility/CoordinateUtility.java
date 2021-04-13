@@ -6,6 +6,13 @@ import org.locationtech.jts.geom.Coordinate;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
+/**
+ * Coordinate utility to convert coordinates.
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 9-02-2021
+ */
 public class CoordinateUtility {
     public static class CoordinateConversion {
         public static MathTransform transformLatLonToUtm32N;

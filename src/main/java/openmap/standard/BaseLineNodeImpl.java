@@ -17,6 +17,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ * Baseline abstract node.
+ *
+ * Only includes the implementations shared between all nodes
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 09-02-2021
+ */
 abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable<Node> {
 
     protected long id;

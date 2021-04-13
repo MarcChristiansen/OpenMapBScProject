@@ -12,6 +12,14 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Somewhat legacy - replaced with quadTiles.
+ * Simple tile map implementation with a single layer and an array
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 17-03-2021
+ */
 public class TileMapImpl implements TileMap {
 
     //Constants

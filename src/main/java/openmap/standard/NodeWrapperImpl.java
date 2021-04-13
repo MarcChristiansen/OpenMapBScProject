@@ -5,12 +5,26 @@ import openmap.framework.NodeWrapper;
 
 import java.util.Comparator;
 
+/**
+ * NodeWrapper for use in path finders.
+ *
+ * Primary usage is in priority queues to ensure non-mutable state
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 9-02-2021
+ */
 public class NodeWrapperImpl implements NodeWrapper, Comparable<NodeWrapper> {
 
     private Node node;
-    private Double dist;
+    private double dist;
 
-    public NodeWrapperImpl(Node node, Double dist) {
+    /**
+     * Initialize nodeWrapper
+     * @param node The node to reference
+     * @param dist The non mutable var to safe
+     */
+    public NodeWrapperImpl(Node node, double dist) {
         this.node = node;
         this.dist = dist;
     }
@@ -21,7 +35,7 @@ public class NodeWrapperImpl implements NodeWrapper, Comparable<NodeWrapper> {
     }
 
     @Override
-    public Double getDist() {
+    public double getDist() {
         return dist;
     }
 

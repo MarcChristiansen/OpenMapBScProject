@@ -9,6 +9,18 @@ import org.json.simple.JSONObject;
 
 import java.io.IOException;
 
+/**
+ * Stripped path implementation for decoding purposes. This does not actually contain a node but only a node id.
+ *
+ * Can easily be converted to standard node if a nodeMap is known.
+ *
+ * It is used as a result of the fact that not all nodes are known when loading paths for a given node.
+ * Therefore we need to delay the input of the actual nodeRef
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 01-04-2021
+ */
 public class DecodingPathImpl implements Path {
     Long nodeId;
     double weight;

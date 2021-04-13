@@ -7,6 +7,14 @@ import org.json.simple.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Standard node implementation extending baseline node.
+ * Also contains a lot of different fields for use in pathfinding to avoid excessive use of maps
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 09-02-2021
+ */
 public class NodeImpl extends BaseLineNodeImpl {
 
     private Node predecessor;

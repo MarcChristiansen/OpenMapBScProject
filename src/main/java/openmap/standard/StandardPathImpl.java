@@ -10,8 +10,16 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 
+/**
+ * Baseline path implementation
+ *
+ * Includes both a source and a destination for use with bidirectional algorithms
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 9-02-2021
+ */
 public class StandardPathImpl implements Path, Serializable {
-
 
     Node destination;
     Node source;

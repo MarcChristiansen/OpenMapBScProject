@@ -8,6 +8,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+/**
+ * Implementation of a graphBuilder
+ * Has some options in:
+ * Optimization level
+ * Remapping of bounds
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 09-02-2021
+ */
 public class GraphBuilderImpl implements graphBuilder {
 
     OsmParser parser;

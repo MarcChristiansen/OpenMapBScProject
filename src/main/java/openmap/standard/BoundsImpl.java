@@ -10,6 +10,13 @@ import org.locationtech.jts.geom.Coordinate;
 import java.io.IOException;
 import java.io.Serializable;
 
+/**
+ * Simple bounds implementation
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 09-02-2021
+ */
 public class BoundsImpl implements Bounds, Serializable {
 
     Coordinate minCoordinate, maxCoordinate;

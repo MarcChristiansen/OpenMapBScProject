@@ -9,6 +9,13 @@ import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * TileMap implementation using quadTiles.
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 15-03-2021
+ */
 public class QuadTileMapImpl implements TileMap {
 
     private List<Node> highlightedNodeList;
@@ -44,6 +51,13 @@ public class QuadTileMapImpl implements TileMap {
         this.highlightedNodeList = nodeList;
     }
 
+    /**
+     * Return the affine transformation used for drawing
+     * @param panX The current pan for x
+     * @param panY The current pan for y
+     * @param zoomFactor The current zoom factor
+     * @return A affine transformation that encapsulates the arguments for use when drawing
+     */
     private AffineTransform getMapDrawingAffineTransform(double panX, double panY, double zoomFactor) {
         AffineTransform at = new AffineTransform();
         at.scale(zoomFactor, zoomFactor);

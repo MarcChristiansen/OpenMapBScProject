@@ -1,5 +1,12 @@
 package openmap.parsing.json;
 
+/**
+ * Simple string identifier container for all strings related to JSON intermediate files.
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 20-02-2021
+ */
 public class JsonGraphConstants {
     //Graph
     public static final String GraphBounds = "Bounds";

@@ -159,7 +159,7 @@ public class OsmXmlParserImpl implements OsmParser {
 
     /**
      * Parses all ways and possibly runs an action. If action is null then osmWays is populated with a list of all ways.
-     * @param action
+     * @param action A lambda that takes a way, this will be run on all paths.
      */
     public void parseWays(Consumer<OsmWay> action) {
 

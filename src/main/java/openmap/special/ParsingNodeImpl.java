@@ -7,6 +7,17 @@ import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.List;
 
+/**
+ * Node used for parsing only.
+ *
+ * Contains some info for parsing and does not contain some other info.
+ *
+ * Serves as a memory optimization primarily
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 01-04-2021
+ */
 public class ParsingNodeImpl extends BaseLineNodeImpl {
     byte wayCounter;
 

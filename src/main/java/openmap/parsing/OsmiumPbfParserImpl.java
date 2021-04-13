@@ -29,6 +29,16 @@ import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+
+/**
+ *  Concrete implementation of the osmosis parser for PBF files
+ *
+ *  Primarily sinks are used from osmosis as there are the reader part
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 017-03-2021
+ */
 public class OsmiumPbfParserImpl implements OsmParser{
     List<OsmWay> osmWays;
     Bounds bounds;
@@ -122,6 +132,9 @@ public class OsmiumPbfParserImpl implements OsmParser{
         }
     }
 
+    /**
+     * Osmosis sink for parsing paths and bounds.
+     */
     private class OsmiumPathAndBoundsParser implements Sink {
         List<OsmWay> osmWays;
         Bounds bounds;
@@ -198,6 +211,9 @@ public class OsmiumPbfParserImpl implements OsmParser{
         }
     }
 
+    /**
+     * Osmosis sink for parsing Nodes
+     */
     private class OsmiumNodeParser implements Sink {
 
         Map<Long, Byte> nodeWayCounter;

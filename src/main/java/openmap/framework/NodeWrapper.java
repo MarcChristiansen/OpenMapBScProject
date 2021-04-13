@@ -10,5 +10,5 @@ package openmap.framework;
  */
 public interface NodeWrapper {
     public Node getNode();
-    public Double getDist();
+    public double getDist();
 }

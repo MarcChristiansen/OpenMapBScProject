@@ -6,6 +6,15 @@ import openmap.framework.PathFinder;
 
 import java.util.*;
 
+/**
+ * Wrong Dijkstra implementation that uses mutable state in the priority queue
+ *
+ * Mostly does not cause issues but might differ in some cases, which is a problem (therefore it is wrong)
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 25-02-2021
+ */
 public class DijkstraWrongImpl implements PathFinder {
 
     private Graph graph;

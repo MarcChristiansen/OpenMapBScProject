@@ -7,6 +7,13 @@ import openmap.framework.PathFinder;
 
 import java.util.*;
 
+/**
+ * Simple Dijkstra implementation using a nodeWrapper and storage in the nodes
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 25-02-2021
+ */
 public class DijkstraImpl implements PathFinder {
 
     private Graph graph;

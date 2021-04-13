@@ -45,16 +45,37 @@ public interface Node {
      */
     public double getY();
 
+    /**
+     * Distance used for pathfinding
+     * @return The distance used for pathfinding
+     */
     public double getDistance();
 
+    /**
+     * Set the distance used for pathfinding
+     */
     public void setDistance(double distance);
 
+    /**
+     * Predecessor in pathfinding
+     * @return The node predecessor in a pathfinding algo
+     */
     public Node getPredecessor();
 
+    /**
+     * Set the predecessor in pathfinding
+     */
     public void setPredecessor(Node predecessorId);
 
+    /** Check if this was visited in a pathfinding run if applicable
+     * @return Boolean indicating if this was visited
+     */
     public boolean getVisited();
 
+    /**
+     * Set if this was visited during a pathfinding run
+     * @param b True or False depending on if this was visited.
+     */
     public void setVisited(boolean b);
 
     /**

@@ -19,6 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The panel containing the actual map
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 017-03-2021
+ */
 class MapPanel extends JPanel {
 
     private final int nodeRadius = 5; //Node radius at default zoom or below
@@ -36,19 +43,6 @@ class MapPanel extends JPanel {
     Node pathNode2;
     boolean pathNodesChanged = true;
     PathFinder pathFinder;
-
-
-
-    /***
-     * Scale the node drawing size depending on the zoom factor
-     * @return A scaled node drawing size
-     */
-    public int getScaledNodeRadius() {
-        if(zoomFactor >= 1) {
-            return nodeRadius;
-        }
-        return (int)(nodeRadius/zoomFactor);
-    }
 
     /** Find the closest node in the graph to a given point.
      * @param x X coordinate
@@ -191,21 +185,6 @@ class MapPanel extends JPanel {
         else{
             this.zoomFactor=factor;
         }
-    }
-
-    /**
-     * Draw a correctly centered circle
-     * @param g Graphics object
-     * @param x x coordinate
-     * @param y y coordinate
-     * @param radius The radius to draw
-     */
-    private static void drawCircle(Graphics g, int x, int y, int radius) {
-
-        int diameter = radius * 2;
-
-        g.fillOval(x - radius, y - radius, diameter, diameter);
-
     }
 
     @Override

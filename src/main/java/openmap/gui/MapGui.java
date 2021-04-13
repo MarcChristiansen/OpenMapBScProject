@@ -16,6 +16,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.io.IOException;
 
+/**
+ * The top level class used for creating a GUI with a map attached.
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 017-03-2021
+ */
 class MapGui{
 
     public static void main(String args[]) throws IOException {

@@ -14,6 +14,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * The actual graph implementation
+ *
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 09-02-2021
+ */
 public class GraphImpl implements Graph, Serializable {
 
 
