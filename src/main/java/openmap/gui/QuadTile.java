@@ -427,7 +427,8 @@ public class QuadTile implements MapTile {
         AffineTransform oldTransform = g.getTransform();
         System.out.println("Directly drawing" + " zoom " + zoomFactor);
         AffineTransform at = getMapDrawingAffineTransform((int)panX, (int)panY, zoomFactor);
-        g.setTransform(at);
+        g.setTransform(new AffineTransform(oldTransform));
+        g.transform(at);
 
         drawNodes(g);
 
@@ -453,6 +454,10 @@ public class QuadTile implements MapTile {
     }
 
     public void drawMapView(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactorInput, Graphics2D g){
+        drawMapViewInternal(panX,  panY,  gWindowWidth,  gWindowHeight,  zoomFactorInput,  g, null);
+    }
+
+    private void drawMapViewInternal(double panX, double panY, int gWindowWidth, int gWindowHeight, double zoomFactorInput, Graphics2D g, AffineTransform orgTransform){
         boolean rectangleIntersectXCheck = panX > bounds.getMaxX() || bounds.getMinX() > panX+(gWindowWidth/zoomFactorInput);
         boolean rectangleIntersectYCheck = panY < bounds.getMinY() || bounds.getMaxY() < panY-(gWindowHeight/zoomFactorInput);
 
@@ -461,7 +466,7 @@ public class QuadTile implements MapTile {
             return;
         }
 
-        AffineTransform oldGTransform = null;
+        AffineTransform oldGTransform = orgTransform; //Roottile will set something other than null
 
         if(layer == 1){ //Setup transform if rootTile
             oldGTransform = g.getTransform();
@@ -480,28 +485,35 @@ public class QuadTile implements MapTile {
             double tempPanY = (panY-(getBounds().getMinY()+(getBounds().getMaxY()-getBounds().getMinY())))*zoomFactorInput;
             at.translate(-tempPanX, tempPanY);
             at.scale(zoomFactorInput/drawZoomFactor, zoomFactorInput/drawZoomFactor);
-            g.setTransform(at);
+            g.setTransform(new AffineTransform(oldGTransform));
+            g.transform(at);
         }
 
         if(zoomFactorInput <= this.zoomFactor) {
             g.drawImage(getCacheImage(), drawX, drawY, null); //Only relevant for the rootTile
         }else{
             if(maxLayer == this.layer) {
-                System.out.println("hej tiles bad");//We have reached the lowest level, we will begin directly drawing
+                //System.out.println("Lowest level reaches, drawing directly");//We have reached the lowest level, we will begin directly drawing
+                //Before we do a direct draw we want to go back to the original transform
+                AffineTransform temp = g.getTransform();
+                g.setTransform(new AffineTransform(oldGTransform));
                 drawDirect(panX, panY, zoomFactorInput, g);
+                g.setTransform(temp);
+                g.setTransform(temp);
+
             }
             else{
                 if(children[0] != null ){
-                    children[0].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                    children[0].drawMapViewInternal(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g, oldGTransform);
                 }
                 if(children[1] != null){
-                    children[1].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                    children[1].drawMapViewInternal(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g, oldGTransform);
                 }
                 if(children[2] != null){
-                    children[2].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                    children[2].drawMapViewInternal(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g, oldGTransform);
                 }
                 if(children[3] != null){
-                    children[3].drawMapView(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g);
+                    children[3].drawMapViewInternal(panX, panY, gWindowWidth, gWindowHeight, zoomFactorInput, g, oldGTransform);
                 }
             }
         }
@@ -509,7 +521,6 @@ public class QuadTile implements MapTile {
         if(layer == 1){
             g.setTransform(oldGTransform); //We ensure this is set only in layer 1
         }
-
     }
 
     public int getHeight() {

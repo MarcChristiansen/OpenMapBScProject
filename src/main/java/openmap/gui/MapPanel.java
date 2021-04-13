@@ -195,6 +195,8 @@ class MapPanel extends JPanel {
     protected void paintComponent(Graphics gg) {
         super.paintComponent(gg);
 
+
+
         //this.setBorder(null);
 
         Graphics2D g = (Graphics2D) gg;
@@ -227,6 +229,7 @@ class MapPanel extends JPanel {
          */
 
         tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, g);
+
 
 
 

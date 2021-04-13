@@ -57,13 +57,10 @@ class MapGui{
 
         //TODO implement this properly with actual working buttons and lists
 
-        JLabel label = new JLabel("current file \"" + path + "\"");
-        label.setAlignmentX(Component.CENTER_ALIGNMENT);
-        pane.add(label, BorderLayout.PAGE_START);
-
 
         JPanel lineStart = new JPanel(new GridBagLayout());
-        pane.add(lineStart, BorderLayout.LINE_END);
+        lineStart.setBorder(new TitledBorder("current file: \"" + path + "\""));
+        pane.add(lineStart, BorderLayout.LINE_START);
 
         JPanel ControlsCentered = new JPanel(new GridLayout(0, 1, 10, 10));
         ControlsCentered.setBorder(new TitledBorder("Map controls"));
@@ -94,7 +91,6 @@ class MapGui{
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String item = (String)(e.getItem());
                 mapPanel.setPathFinder(pfsu.getPathFinder(item));
-                System.out.println(pathFinderList.getSize().width);
             }
         });
 

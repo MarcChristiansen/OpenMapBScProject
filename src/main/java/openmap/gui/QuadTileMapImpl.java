@@ -29,8 +29,8 @@ public class QuadTileMapImpl implements TileMap {
 
         this.rootTile = new QuadTile(maxLayer, graph.getBounds());
 
-        //set whether or not the tile should check for overlap
-        rootTile.setCheckOverlap(false);
+        //set whether or not the tile should check for overlap on added nodes
+        rootTile.setCheckOverlap(true);
 
         //add all nodes to our root quadtile and let them propegate.
         for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {
@@ -43,6 +43,7 @@ public class QuadTileMapImpl implements TileMap {
     @Override
     public void drawMapView(double x, double y, int gWindowWidth, int gWindowHeight, double zoomFactor, Graphics2D g) {
         rootTile.drawMapView(x,y, gWindowWidth, gWindowHeight, zoomFactor, g);
+
         drawHighlightedPath(x, y, zoomFactor, g);
     }
 
