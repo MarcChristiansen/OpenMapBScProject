@@ -483,7 +483,6 @@ public class QuadTile implements MapTile {
             g.setTransform(at);
         }
 
-
         if(zoomFactorInput <= this.zoomFactor) {
             g.drawImage(getCacheImage(), drawX, drawY, null); //Only relevant for the rootTile
         }else{

@@ -41,7 +41,6 @@ class MapPanel extends JPanel {
     //Temp pathfinding stuff
     Node pathNode1;
     Node pathNode2;
-    boolean pathNodesChanged = true;
     PathFinder pathFinder;
 
     /** Find the closest node in the graph to a given point.
@@ -205,6 +204,8 @@ class MapPanel extends JPanel {
         gg.fillRect ( 0, 0, getWidth(), getHeight() );
         AffineTransform matrix = g.getTransform(); // Backup
 
+
+
         /*//Zoom related stuff and Panning stuff
         AffineTransform at = new AffineTransform();
         at.scale(zoomFactor, zoomFactor);
@@ -225,9 +226,8 @@ class MapPanel extends JPanel {
 
          */
 
-
-
         tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, g);
+
 
 
         //Rotation stuff

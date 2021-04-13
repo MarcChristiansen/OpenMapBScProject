@@ -9,11 +9,9 @@ import openmap.standard.DijkstraWrongImpl;
 import openmap.utility.ConsoleUtils;
 
 import javax.swing.*;
+import javax.swing.border.TitledBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.awt.event.*;
 import java.io.IOException;
 
 /**
@@ -24,6 +22,8 @@ import java.io.IOException;
  * @since 017-03-2021
  */
 class MapGui{
+
+    private static JFrame currframe;
 
     public static void main(String args[]) throws IOException {
         String path = "";
@@ -53,10 +53,7 @@ class MapGui{
         //Make the center component big, since that's the map
         MapPanel myPanel = new MapPanel(graph, new DijkstraImpl(graph));
         System.out.println(graph.getNodeMap().size());
-
-        myPanel.setPreferredSize(new Dimension(800, 400));
         pane.add(myPanel, BorderLayout.CENTER);
-
 
         //TODO implement this properly with actual working buttons and lists
 
@@ -65,13 +62,19 @@ class MapGui{
         pane.add(label, BorderLayout.PAGE_START);
 
 
-        JPanel leftBox = new JPanel();
-        leftBox.setLayout(new BoxLayout(leftBox, BoxLayout.PAGE_AXIS));
-        leftBox.add(getComboBox(myPanel, graph));
-        JButton showVisitedBtn = new JButton("Show visited WIP");
-        showVisitedBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        leftBox.add(showVisitedBtn);
-        pane.add(leftBox, BorderLayout.LINE_START);
+        JPanel lineStart = new JPanel(new GridBagLayout());
+        pane.add(lineStart, BorderLayout.LINE_END);
+
+        JPanel ControlsCentered = new JPanel(new GridLayout(0, 1, 10, 10));
+        ControlsCentered.setBorder(new TitledBorder("Map controls"));
+
+        lineStart.add(ControlsCentered);
+        JButton b = new JButton("Show visited WIP " );
+        ControlsCentered.add(getComboBox(myPanel, graph));
+        ControlsCentered.add(b);
+
+
+
     }
 
 
@@ -91,8 +94,10 @@ class MapGui{
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 String item = (String)(e.getItem());
                 mapPanel.setPathFinder(pfsu.getPathFinder(item));
+                System.out.println(pathFinderList.getSize().width);
             }
         });
+
 
         return pathFinderList;
     }
@@ -101,6 +106,7 @@ class MapGui{
 
         //Create and set up the window.
         JFrame frame = new JFrame("Map");
+        currframe = frame;
         frame.setPreferredSize(new Dimension(1920, 1080));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
