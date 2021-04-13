@@ -37,11 +37,11 @@ public class PathFinderSelectionUtility {
             if(dijkstraPathfinder == null){ dijkstraPathfinder = new DijkstraImpl(graph); }
             return dijkstraPathfinder;
         }
-        if(pathFinderStrings[1].equals(finderId)){
+        else if(pathFinderStrings[1].equals(finderId)){
             if(dijkstraWrongPathfinder == null){ dijkstraWrongPathfinder = new DijkstraWrongImpl(graph); }
             return dijkstraWrongPathfinder;
         }
-        if(pathFinderStrings[2].equals(finderId)){
+        else if(pathFinderStrings[2].equals(finderId)){
             if(AStarPathFinder == null){ AStarPathFinder = new AStarImpl(graph); }
             return AStarPathFinder;
         }
