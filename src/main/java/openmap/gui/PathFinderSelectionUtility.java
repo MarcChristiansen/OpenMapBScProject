@@ -28,12 +28,14 @@ public class PathFinderSelectionUtility {
 
     private final Graph graph;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*"};
+    private String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
     private DijkstraWrongImpl dijkstraWrongPathfinder;
     private AStarImpl AStarPathFinder;
+    private DijkstraBiDirImpl DijkstraBiDirPathFinder;
+    private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
 
 
     /**
@@ -64,8 +66,16 @@ public class PathFinderSelectionUtility {
             if(AStarPathFinder == null){ AStarPathFinder = new AStarImpl(graph); }
             return AStarPathFinder;
         }
+        if(pathFinderStrings[3].equals(finderId)){
+            if(DijkstraBiDirPathFinder == null){ DijkstraBiDirPathFinder = new DijkstraBiDirImpl(graph); }
+            return DijkstraBiDirPathFinder;
+        }
+        if(pathFinderStrings[4].equals(finderId)){
+            if(DijkstraBiDirVeryWrongPathFinder == null){ DijkstraBiDirVeryWrongPathFinder = new DijkstraBiDirVeryWrongImpl(graph); }
+            return DijkstraBiDirVeryWrongPathFinder;
+        }
 
-        return null;
+        return null; //Todo Possibly make exception...
     }
 
 

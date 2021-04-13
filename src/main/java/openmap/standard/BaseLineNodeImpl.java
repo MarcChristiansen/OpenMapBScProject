@@ -114,7 +114,8 @@ abstract public class BaseLineNodeImpl implements Node, Serializable, Comparable
                             .map(path -> new StandardPathImpl(nodeMap.get(path.getDestinationId()), this, path.getWeight()))
                             .collect(Collectors.toCollection(ArrayList::new));
 
-        pathList.forEach(p -> p.getSource().addIncomingPath(p));
+        //pathList.forEach(p -> p.getSource().addIncomingPath(p));
+        pathList.forEach(p -> p.getDestination().addIncomingPath(p));
     }
 
     @Override

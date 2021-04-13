@@ -44,12 +44,32 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
+    public double getDistance2() {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public void setDistance2(double distance) {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
     public Node getPredecessor() {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 
     @Override
+    public Node getPredecessor2() {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
     public void setPredecessor(Node predecessorId) {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public void setPredecessor2(Node predecessorId) {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 
@@ -60,6 +80,16 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
 
     @Override
     public void setVisited(boolean b) {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public boolean getVisited2() {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public void setVisited2(boolean b) {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 

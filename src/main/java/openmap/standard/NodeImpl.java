@@ -18,9 +18,15 @@ import java.util.List;
 public class NodeImpl extends BaseLineNodeImpl {
 
     private Node predecessor;
+    private Node predecessor2;
     private double distance;
+    private double distance2;
     private boolean visited;
+    private boolean visited2;
+    private boolean seen1;
+    private boolean seen2;
     private List<Path> incomingPaths;
+
 
     /**
      * Create a new node from an id and latitude and longitude (This uses UTM32N
@@ -47,13 +53,16 @@ public class NodeImpl extends BaseLineNodeImpl {
 
         incomingPaths = new ArrayList<>();
         this.distance = Double.MAX_VALUE;
+        this.distance2 = Double.MAX_VALUE;
         this.predecessor = null;
+        this.predecessor2 = null;
     }
 
     @Override
     public void addOutgoingPath(Path p){
         super.addOutgoingPath(p);
-        p.getSource().addIncomingPath(p);
+        //p.getSource().addIncomingPath(p);
+        p.getDestination().addIncomingPath(p);
     }
 
     @Override
@@ -67,13 +76,33 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
+    public double getDistance2() {
+        return distance2;
+    }
+
+    @Override
+    public void setDistance2(double distance) {
+        this.distance2 = distance;
+    }
+
+    @Override
     public Node getPredecessor() {
         return predecessor;
     }
 
     @Override
+    public Node getPredecessor2() {
+        return predecessor2;
+    }
+
+    @Override
     public void setPredecessor(Node predecessor) {
         this.predecessor = predecessor;
+    }
+
+    @Override
+    public void setPredecessor2(Node predecessor) {
+        this.predecessor2 = predecessor;
     }
 
     @Override
@@ -84,6 +113,16 @@ public class NodeImpl extends BaseLineNodeImpl {
     @Override
     public void setVisited(boolean b) {
         visited = b;
+    }
+
+    @Override
+    public boolean getVisited2() {
+        return visited2;
+    }
+
+    @Override
+    public void setVisited2(boolean b) {
+        visited2 = b;
     }
 
     @Override

@@ -56,16 +56,24 @@ public interface Node {
      */
     public void setDistance(double distance);
 
+    public double getDistance2();
+
+    public void setDistance2(double distance);
+
     /**
      * Predecessor in pathfinding
      * @return The node predecessor in a pathfinding algo
      */
     public Node getPredecessor();
 
+    public Node getPredecessor2();
+
     /**
      * Set the predecessor in pathfinding
      */
     public void setPredecessor(Node predecessorId);
+
+    public void setPredecessor2(Node predecessorId);
 
     /** Check if this was visited in a pathfinding run if applicable
      * @return Boolean indicating if this was visited
@@ -77,6 +85,10 @@ public interface Node {
      * @param b True or False depending on if this was visited.
      */
     public void setVisited(boolean b);
+
+    public boolean getVisited2();
+
+    public void setVisited2(boolean b);
 
     /**
      * Returns a list of the paths starting from this node
