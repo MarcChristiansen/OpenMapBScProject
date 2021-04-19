@@ -116,6 +116,7 @@ public class AStarImpl implements PathFinder {
             node.setDistance(Double.MAX_VALUE);
             node.setPredecessor(null);
             node.setVisited(false);
+
         });
     }
 }

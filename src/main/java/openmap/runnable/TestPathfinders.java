@@ -60,7 +60,9 @@ public class TestPathfinders {
             //check path with dijkstra
             for(String s : pathFinderStrings){
                 List<Node> shortestPath = shortestPathMap.getOrDefault(s, null);
-                if(shortestPathMap.getOrDefault("Dijkstra", null).equals(shortestPath)){
+                List<Node> spDijkstra = shortestPathMap.getOrDefault("Dijkstra", null);
+
+                if((spDijkstra == null && shortestPath == null) || (spDijkstra != null && spDijkstra.equals(shortestPath))){
                     //update counter by 1
                     agreeWithDijkstraTimes.put(s, agreeWithDijkstraTimes.getOrDefault(s, 0)+1);
                 }
