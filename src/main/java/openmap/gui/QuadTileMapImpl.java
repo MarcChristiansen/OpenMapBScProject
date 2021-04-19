@@ -2,12 +2,16 @@ package openmap.gui;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
+import openmap.framework.Path;
 import openmap.gui.framework.TileMap;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * TileMap implementation using quadTiles.
@@ -42,9 +46,20 @@ public class QuadTileMapImpl implements TileMap {
 
     @Override
     public void drawMapView(double x, double y, int gWindowWidth, int gWindowHeight, double zoomFactor, Graphics2D g) {
+        drawMapView(x,  y,  gWindowWidth,  gWindowHeight, zoomFactor, null, g);
+    }
+
+
+    public void drawMapView(double x, double y, int gWindowWidth, int gWindowHeight, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond, Graphics2D g) {
         rootTile.drawMapView(x,y, gWindowWidth, gWindowHeight, zoomFactor, g);
 
+        if(nodeCond != null && highlightedNodeList != null){
+            visualizePathFinderNodeUsage(x,y, zoomFactor, nodeCond, g);
+        }
+
         drawHighlightedPath(x, y, zoomFactor, g);
+
+
     }
 
     @Override
@@ -92,6 +107,37 @@ public class QuadTileMapImpl implements TileMap {
         }
 
         g.setStroke(oldStroke);
+        g.setTransform(oldTransform);
+    }
+
+    /**
+     * Visualize nodes based on predicate. Meant to be used to visualize pathfinders and their visited nodes
+     * @param panX Current pan for x
+     * @param panY Current pan for y
+     * @param zoomFactor Current zoom factor
+     * @param nodeCond The predicate
+     * @param g The graphics to draw to.
+     */
+    private void visualizePathFinderNodeUsage(double panX, double panY, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond , Graphics2D g){
+        AffineTransform oldTransform = g.getTransform();
+        AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
+        g.transform(at);
+
+        for (Node currentNode : graph.getNodeMap().values()) {
+
+            NodeDrawingInfo testInfo = nodeCond.apply(currentNode);
+
+
+
+            if (testInfo.shouldDraw()) { //If predicate says ok we draw it...
+                g.setColor(testInfo.getColor());
+
+                for (Path p : currentNode.getOutgoingPaths()) {
+                    g.drawLine((int) (currentNode.getX()), (int) (currentNode.getY()),
+                            (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
+                }
+            }
+        }
         g.setTransform(oldTransform);
     }
 }

@@ -1,14 +1,18 @@
 package openmap.framework;
 
+import openmap.gui.NodeDrawingInfo;
+
 import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Interface for paths in a graph representing a road network.
  * Paths connect two nodes in the graph
  *
  * @author Kristoffer Villadsen and Marc Christiansen
- * @version 1.0
- * @since 017-02-2021
+ * @version 1.1
+ * @since 015-04-2021
  */
 public interface PathFinder {
     /**
@@ -20,5 +24,15 @@ public interface PathFinder {
      */
     public List<Node> getShortestPath(Node source, Node destination);
 
+    /**
+     * Get last execution time of the algorithm.
+     * @return Last execution time of the algorithm
+     */
     public long getLastExecutionTime();
+
+    /**
+     * Function to test if given node was visited during run of this pathfinder.
+     * @return Function to be used to see if node should be drawn and what color
+     */
+    public Function<Node, NodeDrawingInfo> getVisitedCheckFunction();
 }

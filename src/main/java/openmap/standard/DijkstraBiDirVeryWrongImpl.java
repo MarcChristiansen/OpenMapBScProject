@@ -1,8 +1,13 @@
 package openmap.standard;
 
 import openmap.framework.*;
+import openmap.gui.NodeDrawingInfo;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class DijkstraBiDirVeryWrongImpl implements PathFinder {
 
@@ -58,6 +63,19 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
     @Override
     public long getLastExecutionTime() {
         return executionTime;
+    }
+
+    @Override
+    public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
+        return ((Node n) -> {
+            if(n.getDistance() < Double.MAX_VALUE){
+                if(n.getDistance2() < Double.MAX_VALUE) { return new NodeDrawingInfo(true, Color.ORANGE); }
+                return new NodeDrawingInfo(true, Color.BLUE);
+            }
+            if(n.getDistance2() < Double.MAX_VALUE) { return new NodeDrawingInfo(true, Color.GREEN);}
+
+            return new NodeDrawingInfo(false, null);
+        });
     }
 
     private void runBiDir(Node source, Node destination) {

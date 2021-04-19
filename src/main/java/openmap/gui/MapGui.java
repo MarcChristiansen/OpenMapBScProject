@@ -66,11 +66,10 @@ class MapGui{
         ControlsCentered.setBorder(new TitledBorder("Map controls"));
 
         lineStart.add(ControlsCentered);
-        JButton b = new JButton("Show visited WIP " );
+        JButton b = new JButton("Show seen paths" );
+        b.addActionListener(e -> myPanel.toggleShouldVisualizePathfinder());
         ControlsCentered.add(getComboBox(myPanel, graph));
         ControlsCentered.add(b);
-
-
 
     }
 

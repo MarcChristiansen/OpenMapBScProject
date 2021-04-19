@@ -4,8 +4,13 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
+import openmap.gui.NodeDrawingInfo;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 /**
  * Simple Dijkstra implementation using a nodeWrapper and storage in the nodes
@@ -57,6 +62,17 @@ public class DijkstraImpl implements PathFinder {
     @Override
     public long getLastExecutionTime() {
         return executionTime;
+    }
+
+    @Override
+    public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
+        return ((Node n) -> {
+            if(n.getDistance() < Double.MAX_VALUE){
+                return new NodeDrawingInfo(true, Color.BLUE);
+            }
+
+            return new NodeDrawingInfo(false, null);
+        });
     }
 
     private void runDijkstra(Node source, Node destination){

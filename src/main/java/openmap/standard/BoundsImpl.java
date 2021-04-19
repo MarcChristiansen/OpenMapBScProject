@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 public class BoundsImpl implements Bounds, Serializable {
 
-    Coordinate minCoordinate, maxCoordinate;
+    private Coordinate minCoordinate, maxCoordinate;
 
     public BoundsImpl(double minLat, double minLon, double maxLat, double maxLon) {
         minCoordinate = new Coordinate(minLat, minLon);

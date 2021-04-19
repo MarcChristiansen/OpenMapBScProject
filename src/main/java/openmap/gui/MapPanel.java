@@ -1,21 +1,16 @@
 package openmap.gui;
 
-import openmap.alternative.AStarImpl;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.framework.TileMap;
-import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
-import java.awt.image.BufferedImage;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,9 +34,10 @@ class MapPanel extends JPanel {
     private TileMap tileMap;
 
     //Temp pathfinding stuff
-    Node pathNode1;
-    Node pathNode2;
-    PathFinder pathFinder;
+    private Node pathNode1;
+    private Node pathNode2;
+    private PathFinder pathFinder;
+    private Boolean shouldVisualizePathfinder = false;
 
     /** Find the closest node in the graph to a given point.
      * @param x X coordinate
@@ -148,6 +144,11 @@ class MapPanel extends JPanel {
 
     }
 
+    public void toggleShouldVisualizePathfinder(){
+        shouldVisualizePathfinder = !shouldVisualizePathfinder;
+        repaint();
+    }
+
     /**
      * Attempt to run the pathfinder on the graph if we have both path nodes already.
      */
@@ -228,7 +229,14 @@ class MapPanel extends JPanel {
 
          */
 
-        tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, g);
+        if(shouldVisualizePathfinder) {
+            ((QuadTileMapImpl)tileMap).drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, pathFinder.getVisitedCheckFunction(),  g);
+        }
+        else{
+            tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor,  g);
+        }
+
+
 
 
 

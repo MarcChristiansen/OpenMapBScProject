@@ -1,9 +1,14 @@
 package openmap.alternative;
 
 import openmap.framework.*;
+import openmap.gui.NodeDrawingInfo;
 import openmap.standard.NodeWrapperImpl;
 
+import java.awt.*;
 import java.util.*;
+import java.util.List;
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class AStarImpl implements PathFinder {
 
@@ -56,7 +61,7 @@ public class AStarImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("A* took " + (finish - start) + " ms");
+        System.out.println("A* took " + (this.executionTime) + " ms");
 
         return path;
     }
@@ -64,6 +69,17 @@ public class AStarImpl implements PathFinder {
     @Override
     public long getLastExecutionTime() {
         return executionTime;
+    }
+
+    @Override
+    public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
+        return ((Node n) -> {
+            if(n.getDistance() < Double.MAX_VALUE){
+                return new NodeDrawingInfo(true, Color.BLUE);
+            }
+
+            return new NodeDrawingInfo(false, null);
+        });
     }
 
     private List<Node> retraceSteps(Node source){
