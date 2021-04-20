@@ -37,8 +37,8 @@ public class AStarImplBiDirImpl implements PathFinder {
         long start = System.currentTimeMillis();
         source.setDistance(0);
         destination.setDistance2(0);
-        priorityQueueForward.add(new NodeWrapperImpl(source, p(destination, source, source)));
-        priorityQueueBackward.add(new NodeWrapperImpl(destination, + p(source, destination, destination)));
+        priorityQueueForward.add(new NodeWrapperImpl(source, Pt(source, destination, destination)));
+        priorityQueueBackward.add(new NodeWrapperImpl(destination, Ps(source, destination, source)));
 
         Node meet = null;
 
@@ -46,31 +46,32 @@ public class AStarImplBiDirImpl implements PathFinder {
         Node temp;
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeW = priorityQueueForward.poll();
-
-            /*if (currNodeW.getNode().getDistance2() < Double.MAX_VALUE){ //We found the other path //TODO CHECK IF WORKS
-                meet = currNodeW.getNode();
-                break;
-            }*/
+            currNodeW.getNode().setVisited(true);
 
             temp = handleForwardPass(source, destination, currNodeW);
-            if(temp != null){
-                meet = temp;
-                break;
-            }
 
-            currNodeW = priorityQueueBackward.poll();
+            if(temp != null) { meet = temp; break;}
 
             /*
-            if (currNodeW.getNode().getDistance() < Double.MAX_VALUE){ //We found the other path //TODO CHECK IF WORKS
+            if (currNodeW.getNode().getVisited2()){ //We found the other path //TODO CHECK IF WORKS
                 meet = currNodeW.getNode();
                 break;
             }*/
 
+
+
+            currNodeW = priorityQueueBackward.poll();
+            currNodeW.getNode().setVisited2(true);
+
             temp = handleBackwardsPass(source, destination, currNodeW);
-            if(temp != null){
-                meet = temp;
+
+            if(temp != null) { meet = temp; break;}
+
+            /*if (currNodeW.getNode().getVisited()){ //We found the other path //TODO CHECK IF WORKS
+                meet = currNodeW.getNode();
                 break;
-            }
+            }*/
+
 
         }
         System.out.println((!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()));
@@ -94,14 +95,24 @@ public class AStarImplBiDirImpl implements PathFinder {
             if(totalWeight < pathDest.getDistance()) {
                 pathDest.setDistance(totalWeight);
                 pathDest.setPredecessor(currNodeW.getNode());
-                priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight+ p(destination, source, pathDest)));
+
+
+                priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight+ Pt(source, destination, pathDest)));
             }
 
-            if (pathDest.getDistance2() < Double.MAX_VALUE){ //We found the other path //TODO CHECK IF WORKS
+            if(pathDest.getVisited2()){
                 return pathDest;
             }
         }
         return null;
+    }
+
+    private double Pt(Node source, Node destination, Node pathDest) {
+        return 0.5 * (h(destination, pathDest) - h(source, pathDest));
+    }
+
+    private double Ps(Node source, Node destination, Node pathDest) {
+        return 0.5 * (h(source, pathDest) - h(destination, pathDest));
     }
 
     private Node handleBackwardsPass(Node source, Node destination, NodeWrapper currNodeW) {
@@ -113,10 +124,10 @@ public class AStarImplBiDirImpl implements PathFinder {
             if(totalWeight < pathDest.getDistance2()) {
                 pathDest.setDistance2(totalWeight);
                 pathDest.setPredecessor2(currNodeW.getNode());
-                priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + p(source, destination, pathDest)));
+                priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + Ps(source, destination, pathDest)));
             }
 
-            if (pathDest.getDistance() < Double.MAX_VALUE){ //We found the other path //TODO CHECK IF WORKS
+            if(pathDest.getVisited()){
                 return pathDest;
             }
 
@@ -125,6 +136,8 @@ public class AStarImplBiDirImpl implements PathFinder {
 
         return null;
     }
+
+
 
     @Override
     public long getLastExecutionTime() {
