@@ -92,11 +92,9 @@ class MapPanel extends JPanel {
                 if(e.getButton() == 5 || e.getButton() == 4){ //5 is first side button, no constant exists
 
                     if(e.getButton() == 5) {
-                        pathNode1 = graph.getNodeMap().get(5160347290L);
-                                //getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
+                        pathNode1 = getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
                     }else{
-                        pathNode2 = graph.getNodeMap().get(246060861L);
-                                //getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);
+                        pathNode2 = getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);
                     }
 
                     runPathFinder();
@@ -157,7 +155,6 @@ class MapPanel extends JPanel {
     private void runPathFinder() {
         if(pathNode1 != null && pathNode2 !=null){
             List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
-            System.out.println(pathIdList);
             if(pathIdList != null) {
                 setHighlightedPath(pathIdList);
                 repaint();
