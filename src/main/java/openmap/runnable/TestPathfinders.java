@@ -77,6 +77,10 @@ public class TestPathfinders {
                     //update counter by 1
                     agreeWithDijkstraTimes.put(s, agreeWithDijkstraTimes.getOrDefault(s, 0)+1);
                 }
+                else{
+                    System.out.println(source.getId());
+                    System.out.println(destination.getId());
+                }
                 //check if path does not exist
                 if(shortestPath == null){
                     pathNotExistTimes.put(s, pathNotExistTimes.getOrDefault(s, 0)+1);

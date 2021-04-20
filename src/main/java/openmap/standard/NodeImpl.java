@@ -134,4 +134,11 @@ public class NodeImpl extends BaseLineNodeImpl {
     public void addIncomingPath(Path path) {
         incomingPaths.add(path);
     }
+
+    @Override
+    public String toString() {
+        return "NodeImpl{" +
+                "id=" + id +
+                '}';
+    }
 }

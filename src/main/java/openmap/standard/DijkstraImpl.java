@@ -115,8 +115,8 @@ public class DijkstraImpl implements PathFinder {
         }
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("Dijkstra visited " + visitcount + " nodes");
-        System.out.println("Dijkstra took " + (finish - start) + " ms");
+        //System.out.println("Dijkstra visited " + visitcount + " nodes");
+        //System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
 
     private void clearDistanceAndPredecessor(){

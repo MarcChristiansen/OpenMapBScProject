@@ -31,6 +31,10 @@ public class AStarImplBiDirImpl implements PathFinder {
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
 
+        if(source == destination){
+            return Collections.singletonList(source);
+        }
+
         //Prepare for A* run
         clearDistanceAndPredecessor();
         priorityQueueForward.clear();
@@ -77,7 +81,7 @@ public class AStarImplBiDirImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("A* Bidirectional took " + (this.executionTime) + " ms");
+        //System.out.println("A* Bidirectional took " + (this.executionTime) + " ms");
 
         if(meet != null) {
             return retraceSteps(source, destination, meet);
@@ -198,8 +202,9 @@ public class AStarImplBiDirImpl implements PathFinder {
             }
         }
 
-        mtot.add(target);
-
+        if(meet != target) {
+            mtot.add(target);
+        }
 
 
         List<Node> res = Stream.concat(stom.stream(), mtot.stream())

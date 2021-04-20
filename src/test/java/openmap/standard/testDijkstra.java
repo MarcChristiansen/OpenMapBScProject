@@ -73,5 +73,14 @@ public class testDijkstra {
         assert(idList.get(4).getId() == 3L);
     }
 
+    @Test
+    public void testWithSameSourceAndDest(){
+        PathFinder pf = new DijkstraImpl(graph);
+
+        List<Node> idList = pf.getShortestPath(graph.getNodeMap().get(1L), graph.getNodeMap().get(1L));
+        assert(idList.size() == 1);
+
+    }
+
 }
 
