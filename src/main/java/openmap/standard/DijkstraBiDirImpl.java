@@ -196,8 +196,8 @@ public class DijkstraBiDirImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         executionTime = finish - start;
-        System.out.println("Dijkstra visited " + visitCount + " nodes");
-        System.out.println("Dijkstra took " + (finish - start) + " ms");
+        System.out.println("Bidirectional Dijkstra visited " + visitCount + " nodes");
+        System.out.println("Bidirectional Dijkstra took " + (finish - start) + " ms");
     }
 
     private void clearDistanceAndPredecessor(){

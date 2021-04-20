@@ -18,7 +18,8 @@ public class AStarImplBiDirImpl implements PathFinder {
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
     private long executionTime;
-    private double shortestDistance:
+    private double shortestDistance;
+    private Node meet = null;
 
     public AStarImplBiDirImpl(Graph graph){
         this.graph = graph;
@@ -29,7 +30,6 @@ public class AStarImplBiDirImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
-        double shortestDist = Double.MAX_VALUE;
 
         //Prepare for A* run
         clearDistanceAndPredecessor();
@@ -41,10 +41,10 @@ public class AStarImplBiDirImpl implements PathFinder {
         source.setDistance(0);
         destination.setDistance2(0);
         priorityQueueForward.add(new NodeWrapperImpl(source, Pt(source, destination, destination)));
-        priorityQueueBackward.add(new NodeWrapperImpl(destination, Pt(source, destination, source)));
+        priorityQueueBackward.add(new NodeWrapperImpl(destination, Ps(source, destination, source)));
 
-        Node meet = null;
-
+        meet = null;
+        shortestDistance = Double.MAX_VALUE;
         NodeWrapper currNodeWFor = null;
         NodeWrapper currNodeWBack = null;
         Node temp;
@@ -52,29 +52,28 @@ public class AStarImplBiDirImpl implements PathFinder {
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
 
+            //System.out.println(currNodeWFor.getDist());
+            //System.out.println(currNodeWBack.getDist());
+            //System.out.println(shortestDistance);
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
+                //System.out.println("break how???");
                 break;
             }
+            //System.out.println("hej");
 
+
+            handleForwardPass(source, destination, currNodeWFor);
             currNodeWFor.getNode().setVisited(true);
-
-
-
-            temp = handleForwardPass(source, destination, currNodeWFor);
-
-            if(temp != null) { meet = temp; break;}
-
-
-
-
-
+            handleBackwardsPass(source, destination, currNodeWBack);
             currNodeWBack.getNode().setVisited2(true);
 
-            temp = handleBackwardsPass(source, destination, currNodeWBack);
+            //System.out.println("hej2");
+
+
 
 
         }
-        System.out.println((!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()));
+        //System.out.println((!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()));
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
@@ -96,12 +95,15 @@ public class AStarImplBiDirImpl implements PathFinder {
                 pathDest.setDistance(totalWeight);
                 pathDest.setPredecessor(currNodeW.getNode());
 
-
                 priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight+ Pt(source, destination, pathDest)));
             }
 
             if(pathDest.getVisited2()){
-                //return pathDest;
+                //newDistance + path.getDestination().getDistance2()
+                if(pathDest.getDistance2() + pathDest.getDistance() < shortestDistance){
+                    shortestDistance = pathDest.getDistance2() + pathDest.getDistance();
+                    meet = pathDest;
+                }
             }
         }
         return null;
@@ -122,9 +124,12 @@ public class AStarImplBiDirImpl implements PathFinder {
             }
 
             if(pathDest.getVisited()){
-                //return pathDest;
+                //newDistance + path.getDestination().getDistance2()
+                if(pathDest.getDistance2() + pathDest.getDistance() < shortestDistance){
+                    shortestDistance = pathDest.getDistance2() + pathDest.getDistance();
+                    meet = pathDest;
+                }
             }
-
         }
 
 
