@@ -18,6 +18,7 @@ public class AStarImplBiDirImpl implements PathFinder {
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
     private long executionTime;
+    private double shortestDistance:
 
     public AStarImplBiDirImpl(Graph graph){
         this.graph = graph;
@@ -28,6 +29,8 @@ public class AStarImplBiDirImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
+        double shortestDist = Double.MAX_VALUE;
+
         //Prepare for A* run
         clearDistanceAndPredecessor();
         priorityQueueForward.clear();
@@ -38,39 +41,36 @@ public class AStarImplBiDirImpl implements PathFinder {
         source.setDistance(0);
         destination.setDistance2(0);
         priorityQueueForward.add(new NodeWrapperImpl(source, Pt(source, destination, destination)));
-        priorityQueueBackward.add(new NodeWrapperImpl(destination, Ps(source, destination, source)));
+        priorityQueueBackward.add(new NodeWrapperImpl(destination, Pt(source, destination, source)));
 
         Node meet = null;
 
-        NodeWrapper currNodeW = null;
+        NodeWrapper currNodeWFor = null;
+        NodeWrapper currNodeWBack = null;
         Node temp;
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
-            currNodeW = priorityQueueForward.poll();
-            currNodeW.getNode().setVisited(true);
+            currNodeWFor = priorityQueueForward.poll();
+            currNodeWBack = priorityQueueBackward.poll();
 
-            temp = handleForwardPass(source, destination, currNodeW);
+            if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
+                break;
+            }
+
+            currNodeWFor.getNode().setVisited(true);
+
+
+
+            temp = handleForwardPass(source, destination, currNodeWFor);
 
             if(temp != null) { meet = temp; break;}
 
-            /*
-            if (currNodeW.getNode().getVisited2()){ //We found the other path //TODO CHECK IF WORKS
-                meet = currNodeW.getNode();
-                break;
-            }*/
 
 
 
-            currNodeW = priorityQueueBackward.poll();
-            currNodeW.getNode().setVisited2(true);
 
-            temp = handleBackwardsPass(source, destination, currNodeW);
+            currNodeWBack.getNode().setVisited2(true);
 
-            if(temp != null) { meet = temp; break;}
-
-            /*if (currNodeW.getNode().getVisited()){ //We found the other path //TODO CHECK IF WORKS
-                meet = currNodeW.getNode();
-                break;
-            }*/
+            temp = handleBackwardsPass(source, destination, currNodeWBack);
 
 
         }
@@ -101,19 +101,13 @@ public class AStarImplBiDirImpl implements PathFinder {
             }
 
             if(pathDest.getVisited2()){
-                return pathDest;
+                //return pathDest;
             }
         }
         return null;
     }
 
-    private double Pt(Node source, Node destination, Node pathDest) {
-        return 0.5 * (h(destination, pathDest) - h(source, pathDest));
-    }
 
-    private double Ps(Node source, Node destination, Node pathDest) {
-        return 0.5 * (h(source, pathDest) - h(destination, pathDest));
-    }
 
     private Node handleBackwardsPass(Node source, Node destination, NodeWrapper currNodeW) {
         for (Path p: currNodeW.getNode().getIncomingPaths()) {
@@ -128,13 +122,21 @@ public class AStarImplBiDirImpl implements PathFinder {
             }
 
             if(pathDest.getVisited()){
-                return pathDest;
+                //return pathDest;
             }
 
         }
 
 
         return null;
+    }
+
+    private double Pt(Node source, Node destination, Node pathDest) {
+        return 0.5 * (h(destination, pathDest) - h(source, pathDest));
+    }
+
+    private double Ps(Node source, Node destination, Node pathDest) {
+        return 0.5 * (h(source, pathDest) - h(destination, pathDest));
     }
 
 
@@ -175,7 +177,12 @@ public class AStarImplBiDirImpl implements PathFinder {
         stom.add(source);
         Collections.reverse(stom);
 
-        currNode = meet;
+        if(meet != target){
+            currNode = meet.getPredecessor2();
+        }
+        else{
+            currNode = meet; //Edge case that meet is the target
+        }
         while (currNode != target){
             mtot.add(currNode);
             currNode = currNode.getPredecessor2();

@@ -14,14 +14,18 @@ public class TestPathfinders {
 
     public static void main(String args[]) throws IOException {
         String path = "";
+        int target = -1;
         int repetitions;
 
-        if(args != null && args.length == 1){
+        if(args != null && args.length == 2){
             path = args[0];
+            target = Integer.parseInt(args[1]);
         }
         else{
             path = ConsoleUtils.readLine(
                     "Enter json path : ");
+            target = Integer.parseInt(ConsoleUtils.readLine(
+                    "Enter target fun index... (-1) for all : "));
         }
 
         repetitions = Integer.parseInt(ConsoleUtils.readLine("Enter number of repetitions: "));
@@ -33,6 +37,13 @@ public class TestPathfinders {
 
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
         String[] pathFinderStrings = pfsu.getPathFinderStrings();
+
+        if(target > -1){
+            pathFinderStrings = new String[2];
+            pathFinderStrings[0] = pfsu.getPathFinderStrings()[0];
+            pathFinderStrings[1] = pfsu.getPathFinderStrings()[target];
+        }
+
         Object[] values = graph.getNodeMap().values().toArray();
         Random random = new Random(12315341231L);
 
