@@ -31,9 +31,9 @@ public class LandmarkPathfinderImpl implements PathFinder {
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
         if(!preProcessDone){
-            LandmarkSelection landmarkSelection = new RandomizedLandmarkSelectionImpl();
-            List<Node> landmarkList = landmarkSelection.findLandmarks(graph, 20);
-            landmarkSelection.preProcessNodes(graph, landmarkList);
+            LandmarkSelection landmarkSelection = new RandomizedLandmarkSelectionImpl(graph);
+            List<Node> landmarkList = landmarkSelection.findLandmarks(20);
+            landmarkSelection.preProcessNodes(landmarkList);
             preProcessDone = true;
         }
 

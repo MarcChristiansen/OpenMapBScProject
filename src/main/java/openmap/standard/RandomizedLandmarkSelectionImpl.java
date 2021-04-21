@@ -9,8 +9,15 @@ import java.util.List;
 import java.util.Random;
 
 public class RandomizedLandmarkSelectionImpl implements LandmarkSelection {
+
+    Graph graph;
+
+    public RandomizedLandmarkSelectionImpl(Graph graph){
+        this.graph = graph;
+    }
+
     @Override
-    public List<Node> findLandmarks(Graph graph, int k) {
+    public List<Node> findLandmarks(int k) {
         Object[] values = graph.getNodeMap().values().toArray();
         List<Node> landmarks = new ArrayList<Node>();
         Random random = new Random();
@@ -23,7 +30,7 @@ public class RandomizedLandmarkSelectionImpl implements LandmarkSelection {
     }
 
     @Override
-    public void preProcessNodes(Graph graph, List<Node> landmarks) {
+    public void preProcessNodes(List<Node> landmarks) {
         Object[] values = graph.getNodeMap().values().toArray();
         for(Object n : values){
             for(Node L : landmarks){
