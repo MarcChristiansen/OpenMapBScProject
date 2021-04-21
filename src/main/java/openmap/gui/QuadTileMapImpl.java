@@ -23,9 +23,11 @@ import java.util.function.Predicate;
 public class QuadTileMapImpl implements TileMap {
 
     private List<Node> highlightedNodeList;
+    private List<Node> LandmarkList;
 
-    QuadTile rootTile;
-    Graph graph;
+    private QuadTile rootTile;
+    private Graph graph;
+
 
     public QuadTileMapImpl(Graph graph, byte maxLayer){
         this.graph = graph;
@@ -58,6 +60,7 @@ public class QuadTileMapImpl implements TileMap {
         }
 
         drawHighlightedPath(x, y, zoomFactor, g);
+        drawLandmarks(x, y, zoomFactor, g);
 
 
     }
@@ -66,6 +69,8 @@ public class QuadTileMapImpl implements TileMap {
     public void setHighlightedPath(List<Node> nodeList) {
         this.highlightedNodeList = nodeList;
     }
+
+    public void setLandmarks(List<Node> landmarks) { this.LandmarkList = landmarks;}
 
     /**
      * Return the affine transformation used for drawing
@@ -107,6 +112,25 @@ public class QuadTileMapImpl implements TileMap {
         }
 
         g.setStroke(oldStroke);
+        g.setTransform(oldTransform);
+    }
+
+    private void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g) {
+        if (LandmarkList == null) { return; }
+
+        AffineTransform oldTransform = g.getTransform();
+        AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
+        g.transform(at);
+
+        for (Node currentNode : LandmarkList) {
+
+            g.setColor(Color.YELLOW);
+            g.fillRect((int) (currentNode.getX()-5/zoomFactor),
+                    (int) (currentNode.getY()-5/zoomFactor),
+                    (int)(10/zoomFactor),
+                    (int)(10/zoomFactor));
+        }
+
         g.setTransform(oldTransform);
     }
 

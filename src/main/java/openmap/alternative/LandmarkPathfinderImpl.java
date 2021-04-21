@@ -18,6 +18,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
     private Node currTarget;
     private long executionTime;
     private int landmark;
+    private List<Integer> landmarks;
 
     private boolean preProcessDone;
 
@@ -32,8 +33,9 @@ public class LandmarkPathfinderImpl implements PathFinder {
     public List<Node> getShortestPath(Node source, Node destination) {
         if(!preProcessDone){
             LandmarkSelection landmarkSelection = new RandomizedLandmarkSelectionImpl(graph);
-            List<Node> landmarkList = landmarkSelection.findLandmarks(20);
-            landmarkSelection.preProcessNodes(landmarkList);
+            landmarkSelection.findLandmarks(20);
+            List<Node> landmarkList = landmarkSelection.getLandmarks();
+            landmarkSelection.preProcessNodes();
             preProcessDone = true;
         }
 
@@ -104,6 +106,11 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
             return new NodeDrawingInfo(false, null);
         });
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsed() {
+        return landmarks;
     }
 
     private List<Node> retraceSteps(Node source){

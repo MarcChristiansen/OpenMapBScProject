@@ -82,6 +82,11 @@ public class AStarImpl implements PathFinder {
         });
     }
 
+    @Override
+    public List<Integer> getLandmarksUsed() {
+        return null;
+    }
+
     private List<Node> retraceSteps(Node source){
         List<Node> res = new ArrayList<>();
 

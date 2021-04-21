@@ -5,10 +5,10 @@ import openmap.alternative.AStarImplBiDirImpl;
 import openmap.alternative.LandmarkPathfinderImpl;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
-import openmap.standard.DijkstraBiDirImpl;
-import openmap.standard.DijkstraBiDirVeryWrongImpl;
+import openmap.alternative.DijkstraBiDirImpl;
+import openmap.alternative.DijkstraBiDirVeryWrongImpl;
 import openmap.standard.DijkstraImpl;
-import openmap.standard.DijkstraWrongImpl;
+import openmap.alternative.DijkstraWrongImpl;
 
 
 /**

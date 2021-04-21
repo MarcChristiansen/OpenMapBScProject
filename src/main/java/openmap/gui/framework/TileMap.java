@@ -25,4 +25,6 @@ public interface TileMap {
     void drawMapView(double panX, double panY, int windowWidth, int windowHeight, double zoomFactor, Graphics2D g);
 
     void setHighlightedPath(List<Node> nodeList);
+
+    void setLandmarks(List<Node> landmarks);
 }

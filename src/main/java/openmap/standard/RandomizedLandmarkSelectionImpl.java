@@ -11,26 +11,31 @@ import java.util.Random;
 public class RandomizedLandmarkSelectionImpl implements LandmarkSelection {
 
     Graph graph;
+    List<Node> landmarks;
 
     public RandomizedLandmarkSelectionImpl(Graph graph){
         this.graph = graph;
+        this.landmarks = new ArrayList<Node>();
     }
 
     @Override
-    public List<Node> findLandmarks(int k) {
+    public void findLandmarks(int k) {
         Object[] values = graph.getNodeMap().values().toArray();
-        List<Node> landmarks = new ArrayList<Node>();
+        landmarks.clear();
         Random random = new Random();
         for(int i = 0; i < k; i++){
             Node landmark = (Node)values[random.nextInt(values.length)];
             landmarks.add(landmark);
         }
+    }
 
+    @Override
+    public List<Node> getLandmarks() {
         return landmarks;
     }
 
     @Override
-    public void preProcessNodes(List<Node> landmarks) {
+    public void preProcessNodes() {
         Object[] values = graph.getNodeMap().values().toArray();
         for(Object n : values){
             for(Node L : landmarks){
