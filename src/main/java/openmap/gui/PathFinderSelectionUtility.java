@@ -2,6 +2,7 @@ package openmap.gui;
 
 import openmap.alternative.AStarImpl;
 import openmap.alternative.AStarImplBiDirImpl;
+import openmap.alternative.LandmarkPathfinderImpl;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraBiDirImpl;
@@ -31,7 +32,7 @@ public class PathFinderSelectionUtility {
 
     private final Graph graph;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
@@ -40,6 +41,7 @@ public class PathFinderSelectionUtility {
     private DijkstraBiDirImpl DijkstraBiDirPathFinder;
     private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
     private AStarImplBiDirImpl AStarImplBiDirPathFInder;
+    private LandmarkPathfinderImpl LandmarkPathfinder;
 
 
     /**
@@ -82,6 +84,11 @@ public class PathFinderSelectionUtility {
         if(pathFinderStrings[5].equals(finderId)){
             if(AStarImplBiDirPathFInder == null){ AStarImplBiDirPathFInder = new AStarImplBiDirImpl(graph); }
             return AStarImplBiDirPathFInder;
+        }
+
+        if(pathFinderStrings[6].equals(finderId)){
+            if(LandmarkPathfinder == null){ LandmarkPathfinder = new LandmarkPathfinderImpl(graph); }
+            return LandmarkPathfinder;
         }
 
         return null; //Todo Possibly make exception...

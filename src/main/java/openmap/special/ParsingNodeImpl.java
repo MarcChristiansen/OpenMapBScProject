@@ -100,6 +100,16 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
+    public List<Double> getLandmarkDistances() {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public void addLandmarkDistance(double dist) {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
     public void addIncomingPath(Path path) {
         throw new NotImplementedException("Not intended to be used in parsing");
         //Technically not needed as information is still stored for decoding in the nodes so we don't use this in parsing
