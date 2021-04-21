@@ -5,6 +5,7 @@ import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.gui.framework.MapTile;
 import openmap.gui.framework.TileMap;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -223,6 +224,11 @@ public class TileMapImpl implements TileMap {
     @Override
     public void setHighlightedPath(List<Node> nodeList) {
         this.highlightedNodeList = nodeList;
+    }
+
+    @Override
+    public void setLandmarks(List<Node> landmarks) {
+        throw new NotImplementedException("No landmarks in this one");
     }
 
 

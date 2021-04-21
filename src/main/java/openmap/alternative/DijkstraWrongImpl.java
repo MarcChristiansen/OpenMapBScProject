@@ -1,4 +1,4 @@
-package openmap.standard;
+package openmap.alternative;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
@@ -76,6 +76,11 @@ public class DijkstraWrongImpl implements PathFinder {
 
             return new NodeDrawingInfo(false, null);
         });
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsed() {
+        return null;
     }
 
     private void runDijkstra(Node source, Node destination){

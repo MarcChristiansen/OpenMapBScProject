@@ -1,14 +1,14 @@
 package openmap.gui;
 
 import openmap.alternative.AStarImpl;
-import openmap.alternative.AStarImplBiDirImplWrong;
 import openmap.alternative.AStarImplBiDirImpl;
+import openmap.alternative.LandmarkPathfinderImpl;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
-import openmap.standard.DijkstraBiDirImpl;
-import openmap.standard.DijkstraBiDirVeryWrongImpl;
+import openmap.alternative.DijkstraBiDirImpl;
+import openmap.alternative.DijkstraBiDirVeryWrongImpl;
 import openmap.standard.DijkstraImpl;
-import openmap.standard.DijkstraWrongImpl;
+import openmap.alternative.DijkstraWrongImpl;
 
 
 /**
@@ -32,7 +32,7 @@ public class PathFinderSelectionUtility {
 
     private final Graph graph;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Bidirectional A* Wrong"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Bidirectional A* Wrong", "Landmark"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
@@ -40,8 +40,8 @@ public class PathFinderSelectionUtility {
     private AStarImpl AStarPathFinder;
     private DijkstraBiDirImpl DijkstraBiDirPathFinder;
     private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
-    private AStarImplBiDirImpl AStarImplBiDirPathFinder;
-    private AStarImplBiDirImplWrong AStarImplBiDirPathFinderWrong;
+    private AStarImplBiDirImpl AStarImplBiDirPathFInder;
+    private LandmarkPathfinderImpl LandmarkPathfinder;
 
 
     /**
@@ -82,13 +82,13 @@ public class PathFinderSelectionUtility {
         }
 
         if(pathFinderStrings[5].equals(finderId)){
-            if(AStarImplBiDirPathFinder == null){ AStarImplBiDirPathFinder = new AStarImplBiDirImpl(graph); }
-            return AStarImplBiDirPathFinder;
+            if(AStarImplBiDirPathFInder == null){ AStarImplBiDirPathFInder = new AStarImplBiDirImpl(graph); }
+            return AStarImplBiDirPathFInder;
         }
 
-        if(pathFinderStrings[6].equals(finderId)){
-            if(AStarImplBiDirPathFinderWrong == null){ AStarImplBiDirPathFinderWrong = new AStarImplBiDirImplWrong(graph); }
-            return AStarImplBiDirPathFinderWrong;
+        if(pathFinderStrings[7].equals(finderId)){
+            if(LandmarkPathfinder == null){ LandmarkPathfinder = new LandmarkPathfinderImpl(graph); }
+            return LandmarkPathfinder;
         }
 
         return null; //Todo Possibly make exception...

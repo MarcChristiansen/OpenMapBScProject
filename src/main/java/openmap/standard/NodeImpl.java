@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Standard node implementation extending baseline node.
@@ -23,9 +24,8 @@ public class NodeImpl extends BaseLineNodeImpl {
     private double distance2;
     private boolean visited;
     private boolean visited2;
-    private boolean seen1;
-    private boolean seen2;
     private List<Path> incomingPaths;
+    private List<Double> landmarkDistances;
 
 
     /**
@@ -37,7 +37,6 @@ public class NodeImpl extends BaseLineNodeImpl {
     public NodeImpl(long id, double lat, double lon){
         super(id, lat, lon);
         incomingPaths = new ArrayList<>();
-
     }
 
     public NodeImpl(long id, double x, double y, List<Path> pathList){
@@ -128,6 +127,19 @@ public class NodeImpl extends BaseLineNodeImpl {
     @Override
     public List<Path> getIncomingPaths() {
         return incomingPaths;
+    }
+
+    @Override
+    public List<Double> getLandmarkDistances() {
+        return landmarkDistances;
+    }
+
+    @Override
+    public void addLandmarkDistance(double dist) {
+        if(landmarkDistances == null){
+            landmarkDistances = new ArrayList<>();
+        }
+        landmarkDistances.add(dist);
     }
 
     @Override

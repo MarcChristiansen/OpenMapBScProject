@@ -35,4 +35,10 @@ public interface PathFinder {
      * @return Function to be used to see if node should be drawn and what color
      */
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction();
+
+    /**
+     * Function to return a List with the indices of landmarks used
+     * @return a list of indices of landmarks used
+     */
+    public List<Integer> getLandmarksUsed();
 }

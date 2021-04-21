@@ -1,11 +1,8 @@
 package openmap.gui;
 
-import openmap.alternative.AStarImpl;
 import openmap.framework.Graph;
 import openmap.parsing.json.DiskUtility;
-import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
-import openmap.standard.DijkstraWrongImpl;
 import openmap.utility.ConsoleUtils;
 
 import javax.swing.*;
@@ -58,24 +55,37 @@ class MapGui{
         //TODO implement this properly with actual working buttons and lists
 
 
-        JPanel lineStart = new JPanel(new GridBagLayout());
-        lineStart.setBorder(new TitledBorder("current file: \"" + path + "\""));
-        pane.add(lineStart, BorderLayout.LINE_START);
+        JPanel gbl = new JPanel(new GridBagLayout());
+        gbl.setBorder(new TitledBorder("current file: \"" + path + "\""));
+        pane.add(gbl, BorderLayout.LINE_START);
 
-        JPanel ControlsCentered = new JPanel(new GridLayout(0, 1, 10, 10));
-        ControlsCentered.setBorder(new TitledBorder("Map controls"));
+        JPanel Controls = new JPanel(new GridLayout(0, 1, 10, 10));
 
-        lineStart.add(ControlsCentered);
+        JPanel PathfinderControls = new JPanel(new GridLayout(0, 1, 10, 10));
+        PathfinderControls.setBorder(new TitledBorder("Map controls"));
+
+        Controls.add(PathfinderControls);
         JButton b = new JButton("Show seen paths" );
         b.addActionListener(e -> myPanel.toggleShouldVisualizePathfinder());
-        ControlsCentered.add(getComboBox(myPanel, graph));
-        ControlsCentered.add(b);
+        PathfinderControls.add(getPathfinderComboBox(myPanel, graph));
+        PathfinderControls.add(b);
+
+        JPanel LandmarkControls = new JPanel(new GridLayout(0, 1, 10, 10));
+        LandmarkControls.setBorder(new TitledBorder("Landmark controls"));
+
+        Controls.add(LandmarkControls);
+        JButton b2 = new JButton("Show landmarks WIP" );
+        b2.addActionListener(e -> myPanel.toggleShouldVisualizeLandmarks());
+        LandmarkControls.add(getLandmarkComboBox(myPanel, graph));
+        LandmarkControls.add(b2);
+
+        gbl.add(Controls);
 
     }
 
 
 
-    public static JComboBox getComboBox(MapPanel mapPanel, Graph graph){
+    public static JComboBox getPathfinderComboBox(MapPanel mapPanel, Graph graph){
 
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
 
@@ -95,6 +105,30 @@ class MapGui{
 
 
         return pathFinderList;
+    }
+
+    public static JComboBox getLandmarkComboBox(MapPanel mapPanel, Graph graph){
+
+        LandmarkSelectionUtility lsu = new LandmarkSelectionUtility(graph);
+
+        String[] landmarkSelectionStrings = lsu.getLandmarkSelectionStrings();
+
+        //Create the combo box
+        JComboBox LandmarkList = new JComboBox(landmarkSelectionStrings);
+        LandmarkList.setSelectedIndex(0);
+        LandmarkList.setMaximumSize(new Dimension(1920, 30));
+
+        mapPanel.setLandmarkSelector(lsu.getLandmarkSelector(lsu.getLandmarkSelectionStrings()[0]));
+
+        LandmarkList.addItemListener(e -> {
+            if (e.getStateChange() == ItemEvent.SELECTED) {
+                String item = (String)(e.getItem());
+                mapPanel.setLandmarkSelector(lsu.getLandmarkSelector(item));
+            }
+        });
+
+
+        return LandmarkList;
     }
 
     private static void createAndShowGUI(String path) {

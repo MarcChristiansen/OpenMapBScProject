@@ -1,6 +1,7 @@
 package openmap.gui;
 
 import openmap.framework.Graph;
+import openmap.framework.LandmarkSelection;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.framework.TileMap;
@@ -38,6 +39,8 @@ class MapPanel extends JPanel {
     private Node pathNode2;
     private PathFinder pathFinder;
     private Boolean shouldVisualizePathfinder = false;
+    private boolean shouldVisualizeLandmark = false;
+    private LandmarkSelection landmarkSelector;
 
     /** Find the closest node in the graph to a given point.
      * @param x X coordinate
@@ -149,6 +152,12 @@ class MapPanel extends JPanel {
         repaint();
     }
 
+    public void toggleShouldVisualizeLandmarks() {
+        shouldVisualizeLandmark = !shouldVisualizeLandmark;
+        setLandmarks(landmarkSelector.getLandmarks());
+        repaint();
+    }
+
     /**
      * Attempt to run the pathfinder on the graph if we have both path nodes already.
      */
@@ -169,8 +178,28 @@ class MapPanel extends JPanel {
         runPathFinder();
     }
 
+    public void setLandmarkSelector(LandmarkSelection landmarkSelection) {
+        this.landmarkSelector = landmarkSelection;
+        runLandmarkSelector();
+    }
+
+    private void runLandmarkSelector() {
+        landmarkSelector.findLandmarks(20); //20 for now
+        landmarkSelector.preProcessNodes();
+        setLandmarks(landmarkSelector.getLandmarks());
+    }
+
     public void setHighlightedPath(List<Node> nodeList){
         tileMap.setHighlightedPath(nodeList);
+    }
+
+    public void setLandmarks(List<Node> landmarks){
+        if(shouldVisualizeLandmark){
+            tileMap.setLandmarks(landmarks);
+        }
+        else {
+            tileMap.setLandmarks(null);
+        }
     }
 
     private double getZoomFactor() {

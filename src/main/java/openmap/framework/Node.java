@@ -102,6 +102,10 @@ public interface Node {
      */
     public List<Path> getIncomingPaths();
 
+    public List<Double> getLandmarkDistances();
+
+    public void addLandmarkDistance(double dist);
+
     /**
      * Add an outgoing path out to the path list
      * @param path The outgoing path

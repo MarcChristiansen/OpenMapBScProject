@@ -1,4 +1,4 @@
-package openmap.standard;
+package openmap.alternative;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
@@ -6,6 +6,7 @@ import openmap.framework.Path;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
 import java.util.*;
@@ -80,6 +81,11 @@ public class DijkstraBiDirImpl implements PathFinder {
 
             return new NodeDrawingInfo(false, null);
         });
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsed() {
+        return null;
     }
 
     private void runBiDir(Node source, Node destination) {

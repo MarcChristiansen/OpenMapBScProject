@@ -100,6 +100,9 @@ public class TestPathfinders {
             System.out.println("Average execution time for " + s +": " + avgExecutionTime);
         }
 
+        //edges relaxed
+        //edges giving shorter distances
+
 
     }
 }
