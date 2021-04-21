@@ -5,13 +5,13 @@ import openmap.gui.NodeDrawingInfo;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class AStarImplBiDirImplCorrected implements PathFinder {
+public class AStarImplBiDirImplWrong implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueueForward;
@@ -21,7 +21,7 @@ public class AStarImplBiDirImplCorrected implements PathFinder {
     private double shortestDistance;
     private Node meet = null;
 
-    public AStarImplBiDirImplCorrected(Graph graph){
+    public AStarImplBiDirImplWrong(Graph graph){
         this.graph = graph;
         this.executionTime = 0;
         priorityQueueForward = new PriorityQueue<NodeWrapper>();
@@ -99,14 +99,13 @@ public class AStarImplBiDirImplCorrected implements PathFinder {
                 pathDest.setDistance(totalWeight);
                 pathDest.setPredecessor(currNodeW.getNode());
 
-                priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight + Pt(source, destination, pathDest)));
+                priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight+ Ps(source, destination, pathDest)));
             }
 
             if(pathDest.getVisited2()){
-                double testDist = pathDest.getDistance2() + pathDest.getDistance() + Pt(source, destination, pathDest) + Ps(source, destination, pathDest);
                 //newDistance + path.getDestination().getDistance2()
-                if(testDist < shortestDistance){
-                    shortestDistance = testDist;
+                if(pathDest.getDistance2() + pathDest.getDistance() < shortestDistance){
+                    shortestDistance = pathDest.getDistance2() + pathDest.getDistance();
                     meet = pathDest;
                 }
             }
@@ -125,14 +124,13 @@ public class AStarImplBiDirImplCorrected implements PathFinder {
             if(totalWeight < pathDest.getDistance2()) {
                 pathDest.setDistance2(totalWeight);
                 pathDest.setPredecessor2(currNodeW.getNode());
-                priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + Ps(source, destination, pathDest)));
+                priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + Pt(source, destination, pathDest)));
             }
 
             if(pathDest.getVisited()){
                 //newDistance + path.getDestination().getDistance2()
-                double testDist = pathDest.getDistance2() + pathDest.getDistance() + Pt(source, destination, pathDest) + Ps(source, destination, pathDest);
-                if(testDist < shortestDistance){
-                    shortestDistance = testDist;
+                if(pathDest.getDistance2() + pathDest.getDistance() < shortestDistance){
+                    shortestDistance = pathDest.getDistance2() + pathDest.getDistance();
                     meet = pathDest;
                 }
             }

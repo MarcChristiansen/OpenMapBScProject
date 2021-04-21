@@ -1,8 +1,8 @@
 package openmap.gui;
 
 import openmap.alternative.AStarImpl;
+import openmap.alternative.AStarImplBiDirImplWrong;
 import openmap.alternative.AStarImplBiDirImpl;
-import openmap.alternative.AStarImplBiDirImplCorrected;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraBiDirImpl;
@@ -32,7 +32,7 @@ public class PathFinderSelectionUtility {
 
     private final Graph graph;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Bidirectional A* correct"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Bidirectional A* Wrong"};
 
     //Pathfinders
     private DijkstraImpl dijkstraPathfinder;
@@ -40,8 +40,8 @@ public class PathFinderSelectionUtility {
     private AStarImpl AStarPathFinder;
     private DijkstraBiDirImpl DijkstraBiDirPathFinder;
     private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
-    private AStarImplBiDirImpl AStarImplBiDirPathFInder;
-    private AStarImplBiDirImplCorrected AStarImplBiDirPathFinderCorrected;
+    private AStarImplBiDirImpl AStarImplBiDirPathFinder;
+    private AStarImplBiDirImplWrong AStarImplBiDirPathFinderWrong;
 
 
     /**
@@ -82,13 +82,13 @@ public class PathFinderSelectionUtility {
         }
 
         if(pathFinderStrings[5].equals(finderId)){
-            if(AStarImplBiDirPathFInder == null){ AStarImplBiDirPathFInder = new AStarImplBiDirImpl(graph); }
-            return AStarImplBiDirPathFInder;
+            if(AStarImplBiDirPathFinder == null){ AStarImplBiDirPathFinder = new AStarImplBiDirImpl(graph); }
+            return AStarImplBiDirPathFinder;
         }
 
         if(pathFinderStrings[6].equals(finderId)){
-            if(AStarImplBiDirPathFinderCorrected == null){ AStarImplBiDirPathFinderCorrected = new AStarImplBiDirImplCorrected(graph); }
-            return AStarImplBiDirPathFinderCorrected;
+            if(AStarImplBiDirPathFinderWrong == null){ AStarImplBiDirPathFinderWrong = new AStarImplBiDirImplWrong(graph); }
+            return AStarImplBiDirPathFinderWrong;
         }
 
         return null; //Todo Possibly make exception...
