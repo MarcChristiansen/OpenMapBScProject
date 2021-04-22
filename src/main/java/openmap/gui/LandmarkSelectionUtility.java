@@ -2,6 +2,7 @@ package openmap.gui;
 
 import openmap.framework.Graph;
 import openmap.framework.LandmarkSelection;
+import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
 import openmap.landmark_selection.RandomizedLandmarkSelectionImpl;
 
 
@@ -26,10 +27,11 @@ public class LandmarkSelectionUtility {
 
     private final Graph graph;
 
-    private final String[] LandmarkSelectionStrings = { "Randomized"};
+    private final String[] LandmarkSelectionStrings = { "Randomized", "Farthest"};
 
     //Landmark Selectors
     private RandomizedLandmarkSelectionImpl randomizedLandmarkSelection;
+    private FarthestLandmarkSelectionImpl farthestLandmarkSelection;
 
 
     /**
@@ -51,6 +53,11 @@ public class LandmarkSelectionUtility {
         if(LandmarkSelectionStrings[0].equals(finderId)){
             if(randomizedLandmarkSelection == null){ randomizedLandmarkSelection = new RandomizedLandmarkSelectionImpl(graph); }
             return randomizedLandmarkSelection;
+        }
+
+        if(LandmarkSelectionStrings[1].equals(finderId)){
+            if(farthestLandmarkSelection == null){ farthestLandmarkSelection = new FarthestLandmarkSelectionImpl(graph); }
+            return farthestLandmarkSelection;
         }
 
         return null; //Todo Possibly make exception...

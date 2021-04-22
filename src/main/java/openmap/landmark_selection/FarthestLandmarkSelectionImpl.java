@@ -42,6 +42,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
         //find node farthest from all known landmarks
         for(int i = 1; i < k; i++){
+            System.out.println("hejsa" + i);
             distance = 0;
             double bestDistance = 0;
             bestNode = null;
@@ -53,6 +54,8 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                     }
                     distance = distance + d;
                 }
+
+                distance = distance / e.getValue().getLandmarkDistances().size();
 
                 if(distance > bestDistance){
                     bestDistance = e.getValue().getDistance();
