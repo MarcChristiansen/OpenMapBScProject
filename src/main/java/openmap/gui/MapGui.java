@@ -74,7 +74,7 @@ class MapGui{
         LandmarkControls.setBorder(new TitledBorder("Landmark controls"));
 
         Controls.add(LandmarkControls);
-        JButton b2 = new JButton("Show landmarks WIP" );
+        JButton b2 = new JButton("Show landmarks" );
         b2.addActionListener(e -> myPanel.toggleShouldVisualizeLandmarks());
         LandmarkControls.add(getLandmarkComboBox(myPanel, graph));
         LandmarkControls.add(b2);

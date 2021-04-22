@@ -6,6 +6,7 @@ import openmap.framework.Node;
 import openmap.landmark_selection.LandmarkSelectionAbstract;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Random;
 
 public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
@@ -29,6 +30,10 @@ public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
     }
 
     private void preProcessNodes() {
+
+        for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
+            e.getValue().getLandmarkDistances().clear();
+        }
 
         Object[] values = graph.getNodeMap().values().toArray();
         for(Node L : landmarks){
