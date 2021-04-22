@@ -75,6 +75,11 @@ public class DijkstraImpl implements PathFinder {
         });
     }
 
+    @Override
+    public List<Integer> getLandmarksUsed() {
+        return null;
+    }
+
     private void runDijkstra(Node source, Node destination){
         //measureable values
         int visitcount = 0;

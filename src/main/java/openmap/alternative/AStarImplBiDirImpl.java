@@ -44,40 +44,25 @@ public class AStarImplBiDirImpl implements PathFinder {
         long start = System.currentTimeMillis();
         source.setDistance(0);
         destination.setDistance2(0);
-        priorityQueueForward.add(new NodeWrapperImpl(source, Pt(source, destination, destination)));
-        priorityQueueBackward.add(new NodeWrapperImpl(destination, Ps(source, destination, source)));
+        priorityQueueForward.add(new NodeWrapperImpl(source, pForward(source, destination, destination)));
+        priorityQueueBackward.add(new NodeWrapperImpl(destination, pBackward(source, destination, source)));
 
         meet = null;
         shortestDistance = Double.MAX_VALUE;
-        NodeWrapper currNodeWFor = null;
-        NodeWrapper currNodeWBack = null;
-        Node temp;
+        NodeWrapper currNodeWFor, currNodeWBack;
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
 
-            //System.out.println(currNodeWFor.getDist());
-            //System.out.println(currNodeWBack.getDist());
-            //System.out.println(shortestDistance);
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
-                //System.out.println("break how???");
                 break;
             }
-            //System.out.println("hej");
-
 
             handleForwardPass(source, destination, currNodeWFor);
-            currNodeWFor.getNode().setVisited(true);
+
             handleBackwardsPass(source, destination, currNodeWBack);
-            currNodeWBack.getNode().setVisited2(true);
-
-            //System.out.println("hej2");
-
-
-
 
         }
-        //System.out.println((!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()));
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
@@ -99,13 +84,15 @@ public class AStarImplBiDirImpl implements PathFinder {
                 pathDest.setDistance(totalWeight);
                 pathDest.setPredecessor(currNodeW.getNode());
 
-                priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight + Pt(source, destination, pathDest)));
+                priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight + pForward(source, destination, pathDest))); //Pt + Ps should be zero
             }
 
             if(pathDest.getVisited2()){
                 testPathForShortestPath(source, destination, pathDest);
             }
         }
+
+        currNodeW.getNode().setVisited(true);
     }
 
     private void handleBackwardsPass(Node source, Node destination, NodeWrapper currNodeW) {
@@ -117,7 +104,7 @@ public class AStarImplBiDirImpl implements PathFinder {
             if(totalWeight < pathDest.getDistance2()) {
                 pathDest.setDistance2(totalWeight);
                 pathDest.setPredecessor2(currNodeW.getNode());
-                priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + Ps(source, destination, pathDest))); //Pt + Ps should be zero
+                priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + pBackward(source, destination, pathDest))); //Pt + Ps should be zero
             }
 
             if(pathDest.getVisited()){
@@ -125,10 +112,12 @@ public class AStarImplBiDirImpl implements PathFinder {
                 testPathForShortestPath(source, destination, pathDest);
             }
         }
+
+        currNodeW.getNode().setVisited2(true);
     }
 
     private void testPathForShortestPath(Node source, Node destination, Node pathDest) {
-        double testDist = pathDest.getDistance2() + pathDest.getDistance() + Pt(source, destination, pathDest) + Ps(source, destination, pathDest); //Pt + Ps should be zero
+        double testDist = pathDest.getDistance2() + pathDest.getDistance() + pForward(source, destination, pathDest) + pBackward(source, destination, pathDest); //Pt + Ps should be zero
         //newDistance + path.getDestination().getDistance2()
         if (testDist < shortestDistance) {
             shortestDistance = testDist;
@@ -136,12 +125,13 @@ public class AStarImplBiDirImpl implements PathFinder {
         }
     }
 
-    private double Pt(Node source, Node destination, Node pathDest) {
+    private double pForward(Node source, Node destination, Node pathDest) {
         return 0.5 * (h(destination, pathDest) - h(source, pathDest));
     }
 
-    private double Ps(Node source, Node destination, Node pathDest) {
-        return 0.5 * (h(source, pathDest) - h(destination, pathDest));
+    private double pBackward(Node source, Node destination, Node pathDest) {
+        return -pForward(source, destination, pathDest);
+                //0.5 * (h(source, pathDest) - h(destination, pathDest)); //Old manual rewrite...
     }
 
     @Override
@@ -168,52 +158,44 @@ public class AStarImplBiDirImpl implements PathFinder {
     }
 
     private List<Node> retraceSteps(Node source, Node target, Node meet){
-        List<Node> stom = new ArrayList<>();
-        List<Node> mtot = new ArrayList<>();
+        List<Node> sTom = new ArrayList<>();
+        List<Node> mTot = new ArrayList<>();
 
         Node currNode = meet;
         while (currNode != source){
-            stom.add(currNode);
+            sTom.add(currNode);
             currNode = currNode.getPredecessor();
 
-            if(currNode == null){
-                //return null if impossible
+            if(currNode == null){ //return null if impossible
                 return null;
             }
         }
+        sTom.add(source);
+        Collections.reverse(sTom);
 
-        stom.add(source);
-        Collections.reverse(stom);
-
-        if(meet != target){
-            currNode = meet.getPredecessor2();
-        }
+        //Edge case that meet is the target
+        if(meet != target){ currNode = meet.getPredecessor2(); }
         else{
-            currNode = meet; //Edge case that meet is the target
+            currNode = meet;
         }
+
         while (currNode != target){
-            mtot.add(currNode);
+            mTot.add(currNode);
             currNode = currNode.getPredecessor2();
 
-            if(currNode == null){
-                //return null if impossible
+            if(currNode == null){ //return null if impossible
                 return null;
             }
         }
 
         if(meet != target) {
-            mtot.add(target);
+            mTot.add(target);
         }
 
-
-        List<Node> res = Stream.concat(stom.stream(), mtot.stream())
+        List<Node> res = Stream.concat(sTom.stream(), mTot.stream())
                 .collect(Collectors.toList());
 
         return res;
-    }
-
-    private double p(Node NPos, Node Nneg, Node curr){
-        return (distance(NPos, curr) - distance(Nneg, curr))/2;
     }
 
     private double h(Node source, Node curr){

@@ -235,106 +235,12 @@ class MapPanel extends JPanel {
         gg.fillRect ( 0, 0, getWidth(), getHeight() );
         AffineTransform matrix = g.getTransform(); // Backup
 
-
-
-        /*//Zoom related stuff and Panning stuff
-        AffineTransform at = new AffineTransform();
-        at.scale(zoomFactor, zoomFactor);
-
-        at.translate(-panX, panY);
-
-        g.transform(at);
-        g.scale(1, -1);
-        g.translate(0, 0);
-
-        BufferedImage img = new BufferedImage((int)(getWidth()), (int)(getHeight()), BufferedImage.TYPE_INT_RGB );
-        Graphics2D gb =  img.createGraphics();
-
-        gb.setColor(Color.RED);
-        gb.drawLine(-10,-10,0,0);
-
-        gg.drawImage(img, (int)(graph.getBounds().getMinX()), (int)(graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY())), null);
-
-         */
-
         if(shouldVisualizePathfinder) {
             ((QuadTileMapImpl)tileMap).drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, pathFinder.getVisitedCheckFunction(),  g);
         }
         else{
             tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor,  g);
         }
-
-
-
-
-
-
-        //Rotation stuff
-        /*
-
-        g.setColor(Color.GREEN);
-
-        int nodeSkipCounter = 0;
-
-        for (Map.Entry<Long, Node> entry : graph.getNodeMap().entrySet()) {
-            Node node = entry.getValue();
-
-            nodeSkipCounter += 1;
-
-            double drawingFactor = nodeRatioFactor / zoomFactor;
-            boolean isVisible = panX <= node.getX() && node.getX() <= (panX + (getWidth() / zoomFactor)) &&
-                    panY >= node.getY() && node.getY() >= (panY - (getHeight() / zoomFactor));
-
-            boolean shouldDrawNode = isVisible &&
-                    (drawingFactor <= 1 ||
-                            nodeSkipCounter >= drawingFactor * 20 ||
-                            nodeSkipCounter >= maxNodesToSkip);
-
-            if (shouldDrawNode) {
-
-
-                g.setColor(Color.RED);
-                int x = (int) ((node.getX()));
-                int y = (int) ((node.getY()));
-
-                //drawCircle(g, x, y, getScaledNodeRadius());
-                nodeSkipCounter = 0;
-
-                //Road drawing
-                if (zoomFactor >= nodeRatioFactor) {
-                    g.setColor(Color.BLACK);
-                    for (Path p : node.getPaths()) {
-                        g.drawLine((int) (node.getX()), (int) (node.getY()),
-                                (int) (p.getDestination().getX()), (int) (p.getDestination().getY()));
-                    }
-                }
-            }
-
-        }
-
-         */
-
-        //Draw highlighted path
-
-
-        /*if (highlightedNodeList != null){
-                Node lastNode = null;
-            for (Long nl : highlightedNodeList) {
-                Node currentNode = graph.getNodeMap().get(nl);
-                //g.setColor(Color.CYAN);
-                //drawCircle(g, (int) currentNode.getX(), (int) currentNode.getY(), getScaledNodeRadius());
-
-                g.setColor(Color.RED);
-                g.setStroke(new BasicStroke(6f));
-                if (lastNode != null) {
-                    g.drawLine((int) (currentNode.getX()),
-                            (int) (currentNode.getY()),
-                            (int) (lastNode.getX()),
-                            (int) (lastNode.getY()));
-                }
-                lastNode = currentNode;
-            }
-        }*/
 
         //System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight()); //TODO remember this.
 

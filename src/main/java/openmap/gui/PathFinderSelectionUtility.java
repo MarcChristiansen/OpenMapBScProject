@@ -1,14 +1,9 @@
 package openmap.gui;
 
-import openmap.alternative.AStarImpl;
-import openmap.alternative.AStarImplBiDirImpl;
-import openmap.alternative.LandmarkPathfinderImpl;
+import openmap.alternative.*;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
-import openmap.alternative.DijkstraBiDirImpl;
-import openmap.alternative.DijkstraBiDirVeryWrongImpl;
 import openmap.standard.DijkstraImpl;
-import openmap.alternative.DijkstraWrongImpl;
 
 
 /**
@@ -40,7 +35,8 @@ public class PathFinderSelectionUtility {
     private AStarImpl AStarPathFinder;
     private DijkstraBiDirImpl DijkstraBiDirPathFinder;
     private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
-    private AStarImplBiDirImpl AStarImplBiDirPathFInder;
+    private AStarImplBiDirImpl AStarImplBiDirPathFinder;
+    private AStarImplBiDirImplWrong AStarImplBiDirPathFinderWrong;
     private LandmarkPathfinderImpl LandmarkPathfinder;
 
 
@@ -82,8 +78,13 @@ public class PathFinderSelectionUtility {
         }
 
         if(pathFinderStrings[5].equals(finderId)){
-            if(AStarImplBiDirPathFInder == null){ AStarImplBiDirPathFInder = new AStarImplBiDirImpl(graph); }
-            return AStarImplBiDirPathFInder;
+            if(AStarImplBiDirPathFinder == null){ AStarImplBiDirPathFinder = new AStarImplBiDirImpl(graph); }
+            return AStarImplBiDirPathFinder;
+        }
+
+        if(pathFinderStrings[6].equals(finderId)){
+            if(AStarImplBiDirPathFinderWrong == null){ AStarImplBiDirPathFinderWrong = new AStarImplBiDirImplWrong(graph); }
+            return AStarImplBiDirPathFinderWrong;
         }
 
         if(pathFinderStrings[7].equals(finderId)){
