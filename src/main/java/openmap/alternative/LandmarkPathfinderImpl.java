@@ -15,9 +15,10 @@ public class LandmarkPathfinderImpl implements PathFinder {
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
 
+    private Node source;
     private Node currTarget;
     private long executionTime;
-    private int landmark;
+    private int landmarkSubsetSize = 5;
     private List<Integer> landmarks;
 
     private boolean preProcessDone;
@@ -26,18 +27,12 @@ public class LandmarkPathfinderImpl implements PathFinder {
         this.graph = graph;
         this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
+        landmarks = new ArrayList<Integer>();
 
     }
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
-        if(!preProcessDone){
-            LandmarkSelection landmarkSelection = new RandomizedLandmarkSelectionImpl(graph);
-            landmarkSelection.findLandmarks(20);
-            List<Node> landmarkList = landmarkSelection.getLandmarks();
-            landmarkSelection.preProcessNodes();
-            preProcessDone = true;
-        }
 
         //Prepare for A* run
         clearDistanceAndPredecessor();
@@ -49,19 +44,14 @@ public class LandmarkPathfinderImpl implements PathFinder {
         currTarget = destination;
 
         //pick best landmark to work from
-        int bestLandmark = 0;
-        double h = 0;
-        for(int i = 0; i < source.getLandmarkDistances().size(); i++){
-            landmark = i;
-            if(h < h(source)){
-                bestLandmark = landmark;
-                h = h(source);
-            }
-        }
-        landmark = bestLandmark;
+        FindLandmarkSubset(source);
 
         source.setDistance(0);
-        priorityQueue.add(new NodeWrapperImpl(source, h(source)));
+
+        //find largest h
+        double h = getLowerbound(source);
+
+        priorityQueue.add(new NodeWrapperImpl(source, h));
 
         NodeWrapper currNodeW = null;
         while (!priorityQueue.isEmpty()){
@@ -80,7 +70,8 @@ public class LandmarkPathfinderImpl implements PathFinder {
                 if(totalWeight < pathDest.getDistance()) {
                     pathDest.setDistance(totalWeight);
                     pathDest.setPredecessor(currNodeW.getNode());
-                    priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h(pathDest)));
+                    h = getLowerbound(pathDest);
+                    priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h));
                 }
             }
         }
@@ -90,6 +81,40 @@ public class LandmarkPathfinderImpl implements PathFinder {
         System.out.println("Landmark took " + (this.executionTime) + " ms");
 
         return path;
+    }
+
+    private double getLowerbound(Node source) {
+        double h = 0;
+        for(int i : landmarks){
+            if(h < h(source, i)){
+                h = h(source, i);
+            }
+        }
+        return h;
+    }
+
+    private void FindLandmarkSubset(Node source) {
+        //really slow, but easy to read
+        //also is only run once when getting shortest path
+        //amount of landmarks and subsetsize are also low
+
+        int landmark;
+        int bestLandmark;
+        double h = 0;
+        for(int j = 0; j < landmarkSubsetSize; j++){
+            bestLandmark = 0;
+            h = 0;
+            for(int i = 0; i < source.getLandmarkDistances().size(); i++){
+                if(!landmarks.contains(i)){
+                    landmark = i;
+                    if(h < h(source, landmark)){
+                        bestLandmark = landmark;
+                        h = h(source, landmark);
+                    }
+                }
+            }
+            landmarks.add(bestLandmark);
+        }
     }
 
     @Override
@@ -133,11 +158,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         return res;
     }
 
-    private double h(Node n){
-        return distance(n, currTarget);
-    }
-
-    private double distance(Node n, Node currTarget) {
+    private double h(Node n, int landmark){
         return n.getLandmarkDistances().get(landmark) - currTarget.getLandmarkDistances().get(landmark);
     }
 

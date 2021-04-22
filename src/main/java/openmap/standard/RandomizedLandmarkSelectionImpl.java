@@ -3,6 +3,7 @@ package openmap.standard;
 import openmap.framework.Graph;
 import openmap.framework.LandmarkSelection;
 import openmap.framework.Node;
+import openmap.framework.PathFinder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,10 +13,12 @@ public class RandomizedLandmarkSelectionImpl implements LandmarkSelection {
 
     Graph graph;
     List<Node> landmarks;
+    PathFinder pf;
 
     public RandomizedLandmarkSelectionImpl(Graph graph){
         this.graph = graph;
         this.landmarks = new ArrayList<Node>();
+        this.pf = new LandmarkDijkstraImpl(graph);
     }
 
     @Override
@@ -36,11 +39,13 @@ public class RandomizedLandmarkSelectionImpl implements LandmarkSelection {
 
     @Override
     public void preProcessNodes() {
-        Object[] values = graph.getNodeMap().values().toArray();
-        for(Object n : values){
-            for(Node L : landmarks){
 
-                ((Node)n).addLandmarkDistance(distance(((Node)n), L));
+        Object[] values = graph.getNodeMap().values().toArray();
+        for(Node L : landmarks){
+            //run landmark Dijkstra
+            pf.getShortestPath(L, L);
+            for(Object n : values){
+                ((Node)n).addLandmarkDistance(((Node)n).getDistance());
             }
         }
     }
