@@ -1,12 +1,8 @@
 package openmap.gui;
 
-import openmap.alternative.AStarImpl;
-import openmap.alternative.AStarImplBiDirImpl;
-import openmap.alternative.LandmarkPathfinderImpl;
 import openmap.framework.Graph;
 import openmap.framework.LandmarkSelection;
-import openmap.framework.PathFinder;
-import openmap.standard.*;
+import openmap.landmark_selection.RandomizedLandmarkSelectionImpl;
 
 
 /**

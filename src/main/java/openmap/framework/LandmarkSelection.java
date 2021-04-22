@@ -7,6 +7,4 @@ public interface LandmarkSelection {
     public void findLandmarks(int k);
 
     public List<Node> getLandmarks();
-
-    public void preProcessNodes();
 }

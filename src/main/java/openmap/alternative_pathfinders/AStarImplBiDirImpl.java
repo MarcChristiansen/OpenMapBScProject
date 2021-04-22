@@ -1,4 +1,4 @@
-package openmap.alternative;
+package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;

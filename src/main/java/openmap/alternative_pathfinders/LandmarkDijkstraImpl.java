@@ -1,55 +1,52 @@
-package openmap.alternative;
+package openmap.alternative_pathfinders;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
+import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
- * Wrong Dijkstra implementation that uses mutable state in the priority queue
- *
- * Mostly does not cause issues but might differ in some cases, which is a problem (therefore it is wrong)
+ * Simple Dijkstra implementation using a nodeWrapper and storage in the nodes
  *
  * @author Kristoffer Villadsen and Marc Christiansen
  * @version 1.0
  * @since 25-02-2021
  */
-public class DijkstraWrongImpl implements PathFinder {
+public class LandmarkDijkstraImpl implements PathFinder {
 
     private Graph graph;
-    private PriorityQueue<Node> priorityQueue;
-    //private Map<Long, Long> predecessor;
-    //private Map<Long, Double> distance;
-    private Set<Node> visited;
-    private Node source = null;
+    private PriorityQueue<NodeWrapper> priorityQueue;
     private long executionTime;
 
-    public DijkstraWrongImpl(Graph graph){
+    public LandmarkDijkstraImpl(Graph graph){
         this.graph = graph;
         this.executionTime = 0;
-        priorityQueue = new PriorityQueue<Node>();
+        priorityQueue = new PriorityQueue<NodeWrapper>();
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
-        visited = new HashSet<Node>();
+        //visited = new HashSet<Node>();
 
     }
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
+        //We always recalculate. Might not be efficient of same source but helps with compatibility for multiple algos
         clearDistanceAndPredecessor();
-        visited.clear();
+        //visited.clear();
         priorityQueue.clear();
-        runDijkstra(source, destination);
+        runDijkstra(source);
 
         List<Node> result = new ArrayList<>();
+
         Node currNode = destination;
-        while(!(currNode.getId() == (source.getId()))){
+        while(!(currNode.getId() == source.getId())){
             result.add(currNode);
             currNode = currNode.getPredecessor();
             if(currNode == null){
@@ -83,7 +80,7 @@ public class DijkstraWrongImpl implements PathFinder {
         return null;
     }
 
-    private void runDijkstra(Node source, Node destination){
+    private void runDijkstra(Node source){
         //measureable values
         int visitcount = 0;
         long start = System.currentTimeMillis();
@@ -91,43 +88,40 @@ public class DijkstraWrongImpl implements PathFinder {
         //add source to priority queue with distance 0
         Node firstNode = source;
         firstNode.setDistance(0);
-        priorityQueue.add(firstNode);
+        firstNode.setPredecessor(firstNode);
+        priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
 
-        int nodeCount = graph.getNodeMap().size();
-
-        boolean finished = false;
-
-        while (!finished){
-            Node currNode = priorityQueue.poll();
-
-            if(currNode == null || currNode.getId() == destination.getId()){
-                finished = true;
+        while (true){
+            NodeWrapper currNode = priorityQueue.poll();
+            if(currNode == null){ //if queue is empty
+                break;
             }
-            else if(!visited.contains(currNode)){
-                visitcount++;
-                //Add node to visited
-                visited.add(currNode);
 
+            if(!currNode.getNode().getVisited()){
+                visitcount++;
+
+                //give first node predecessor
+                currNode.getNode().setVisited(true);
                 //Go through all paths
-                currNode.getOutgoingPaths().forEach(path -> {
-                    double newDistance = currNode.getDistance() + path.getWeight();
+                currNode.getNode().getOutgoingPaths().forEach(path -> {
+                    double newDistance = currNode.getNode().getDistance() + path.getWeight();
 
                     //check if new distance is lower
                     if(newDistance < path.getDestination().getDistance()) {
                         path.getDestination().setDistance(newDistance);
                         //add predecessor for the node
-                        path.getDestination().setPredecessor(currNode);
+                        path.getDestination().setPredecessor(currNode.getNode());
                     }
 
                     //add to priority queue
-                    priorityQueue.add(path.getDestination());
+                    priorityQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
                 });
             }
         }
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("Dijkstra wrong visited " + visitcount + " nodes");
-        System.out.println("Dijkstra wrong took " + (finish - start) + " ms");
+        //System.out.println("Dijkstra visited " + visitcount + " nodes");
+        //System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
 
     private void clearDistanceAndPredecessor(){
@@ -135,6 +129,7 @@ public class DijkstraWrongImpl implements PathFinder {
         nodeMap.values().forEach(node -> {
            node.setDistance(Double.MAX_VALUE);
            node.setPredecessor(null);
+           node.setVisited(false);
         });
     }
 

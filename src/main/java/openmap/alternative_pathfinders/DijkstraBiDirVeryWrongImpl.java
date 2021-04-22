@@ -1,4 +1,4 @@
-package openmap.alternative;
+package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
@@ -8,7 +8,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 public class DijkstraBiDirVeryWrongImpl implements PathFinder {
 

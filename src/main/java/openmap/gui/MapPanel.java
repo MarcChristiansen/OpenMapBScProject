@@ -185,7 +185,6 @@ class MapPanel extends JPanel {
 
     private void runLandmarkSelector() {
         landmarkSelector.findLandmarks(20); //20 for now
-        landmarkSelector.preProcessNodes();
         setLandmarks(landmarkSelector.getLandmarks());
     }
 

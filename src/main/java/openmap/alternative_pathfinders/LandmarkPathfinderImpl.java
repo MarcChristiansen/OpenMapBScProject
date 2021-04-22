@@ -1,9 +1,8 @@
-package openmap.alternative;
+package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
 import openmap.standard.NodeWrapperImpl;
-import openmap.standard.RandomizedLandmarkSelectionImpl;
 
 import java.awt.*;
 import java.util.*;

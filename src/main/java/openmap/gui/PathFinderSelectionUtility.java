@@ -1,6 +1,6 @@
 package openmap.gui;
 
-import openmap.alternative.*;
+import openmap.alternative_pathfinders.*;
 import openmap.framework.Graph;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
