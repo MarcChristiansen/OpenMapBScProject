@@ -22,23 +22,15 @@ public class PathFinderSelectionUtility {
      * @param graph The graph to use
      */
     public PathFinderSelectionUtility(Graph graph) {
+
         this.graph = graph;
+        pathfinders = new PathFinder[8];
     }
 
     private final Graph graph;
+    private final PathFinder[] pathfinders;
 
     private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Bidirectional A* Wrong", "Landmark"};
-
-    //Pathfinders
-    private DijkstraImpl dijkstraPathfinder;
-    private DijkstraWrongImpl dijkstraWrongPathfinder;
-    private AStarImpl AStarPathFinder;
-    private DijkstraBiDirImpl DijkstraBiDirPathFinder;
-    private DijkstraBiDirVeryWrongImpl DijkstraBiDirVeryWrongPathFinder;
-    private AStarImplBiDirImpl AStarImplBiDirPathFinder;
-    private AStarImplBiDirImplWrong AStarImplBiDirPathFinderWrong;
-    private LandmarkPathfinderImpl LandmarkPathfinder;
-
 
     /**
      * Get pathfinder string names.
@@ -57,39 +49,39 @@ public class PathFinderSelectionUtility {
     public PathFinder getPathFinder (String finderId) {
 
         if(pathFinderStrings[0].equals(finderId)){
-            if(dijkstraPathfinder == null){ dijkstraPathfinder = new DijkstraImpl(graph); }
-            return dijkstraPathfinder;
+            if(pathfinders[0] == null){ pathfinders[0] = new DijkstraImpl(graph); }
+            return pathfinders[0];
         }
         else if(pathFinderStrings[1].equals(finderId)){
-            if(dijkstraWrongPathfinder == null){ dijkstraWrongPathfinder = new DijkstraWrongImpl(graph); }
-            return dijkstraWrongPathfinder;
+            if(pathfinders[1] == null){ pathfinders[1] = new DijkstraWrongImpl(graph); }
+            return pathfinders[1];
         }
         else if(pathFinderStrings[2].equals(finderId)){
-            if(AStarPathFinder == null){ AStarPathFinder = new AStarImpl(graph); }
-            return AStarPathFinder;
+            if(pathfinders[2] == null){ pathfinders[2] = new AStarImpl(graph); }
+            return pathfinders[2];
         }
         if(pathFinderStrings[3].equals(finderId)){
-            if(DijkstraBiDirPathFinder == null){ DijkstraBiDirPathFinder = new DijkstraBiDirImpl(graph); }
-            return DijkstraBiDirPathFinder;
+            if(pathfinders[3] == null){ pathfinders[3] = new DijkstraBiDirImpl(graph); }
+            return pathfinders[3];
         }
         if(pathFinderStrings[4].equals(finderId)){
-            if(DijkstraBiDirVeryWrongPathFinder == null){ DijkstraBiDirVeryWrongPathFinder = new DijkstraBiDirVeryWrongImpl(graph); }
-            return DijkstraBiDirVeryWrongPathFinder;
+            if(pathfinders[4] == null){ pathfinders[4] = new DijkstraBiDirVeryWrongImpl(graph); }
+            return pathfinders[4];
         }
 
         if(pathFinderStrings[5].equals(finderId)){
-            if(AStarImplBiDirPathFinder == null){ AStarImplBiDirPathFinder = new AStarImplBiDirImpl(graph); }
-            return AStarImplBiDirPathFinder;
+            if(pathfinders[5] == null){ pathfinders[5] = new AStarImplBiDirImpl(graph); }
+            return pathfinders[5];
         }
 
         if(pathFinderStrings[6].equals(finderId)){
-            if(AStarImplBiDirPathFinderWrong == null){ AStarImplBiDirPathFinderWrong = new AStarImplBiDirImplWrong(graph); }
-            return AStarImplBiDirPathFinderWrong;
+            if(pathfinders[6] == null){ pathfinders[6] = new AStarImplBiDirImplWrong(graph); }
+            return pathfinders[6];
         }
 
         if(pathFinderStrings[7].equals(finderId)){
-            if(LandmarkPathfinder == null){ LandmarkPathfinder = new LandmarkPathfinderImpl(graph); }
-            return LandmarkPathfinder;
+            if(pathfinders[7] == null){ pathfinders[7] = new LandmarkPathfinderImpl(graph); }
+            return pathfinders[7];
         }
 
         return null; //Todo Possibly make exception...
