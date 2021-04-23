@@ -12,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -154,7 +155,7 @@ class MapPanel extends JPanel {
 
     public void toggleShouldVisualizeLandmarks() {
         shouldVisualizeLandmark = !shouldVisualizeLandmark;
-        setLandmarks(landmarkSelector.getLandmarks());
+        tileMap.setShouldDrawLandmarks(shouldVisualizeLandmark);
         repaint();
     }
 
@@ -166,12 +167,15 @@ class MapPanel extends JPanel {
             List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
             if(pathIdList != null) {
                 setHighlightedPath(pathIdList);
+                setLandmarksUsed(pathFinder.getLandmarksUsed());
                 repaint();
             } else{
                 System.out.println("Path does not exist");
             }
         }
     }
+
+
 
     public void setPathFinder(PathFinder pathFinder) {
         this.pathFinder = pathFinder;
@@ -181,6 +185,7 @@ class MapPanel extends JPanel {
     public void setLandmarkSelector(LandmarkSelection landmarkSelection) {
         this.landmarkSelector = landmarkSelection;
         runLandmarkSelector();
+
     }
 
     private void runLandmarkSelector() {
@@ -193,12 +198,12 @@ class MapPanel extends JPanel {
     }
 
     public void setLandmarks(List<Node> landmarks){
-        if(shouldVisualizeLandmark){
-            tileMap.setLandmarks(landmarks);
-        }
-        else {
-            tileMap.setLandmarks(null);
-        }
+        tileMap.setLandmarks(landmarks);
+        repaint();
+    }
+
+    private void setLandmarksUsed(List<Integer> landmarksUsed) {
+        tileMap.setLandmarksUsed(landmarksUsed);
     }
 
     private double getZoomFactor() {

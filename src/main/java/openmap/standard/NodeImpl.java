@@ -6,7 +6,6 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Standard node implementation extending baseline node.
@@ -25,7 +24,8 @@ public class NodeImpl extends BaseLineNodeImpl {
     private boolean visited;
     private boolean visited2;
     private List<Path> incomingPaths;
-    private List<Double> landmarkDistances;
+    private List<Double> landmarkDistancesFromLandmark;
+    private List<Double> landmarkDistancesToLandmark;
 
 
     /**
@@ -36,25 +36,33 @@ public class NodeImpl extends BaseLineNodeImpl {
      */
     public NodeImpl(long id, double lat, double lon){
         super(id, lat, lon);
-        incomingPaths = new ArrayList<>();
+        init();
     }
+
+
 
     public NodeImpl(long id, double x, double y, List<Path> pathList){
         super(id, x, y, pathList);
 
         //Handle incoming paths
-        incomingPaths = new ArrayList<>();
+        init();
 
     }
 
     public NodeImpl(JSONObject obj){
         super(obj);
 
-        incomingPaths = new ArrayList<>();
+        init();
         this.distance = Double.MAX_VALUE;
         this.distance2 = Double.MAX_VALUE;
         this.predecessor = null;
         this.predecessor2 = null;
+    }
+
+    private void init() {
+        incomingPaths = new ArrayList<>();
+        landmarkDistancesFromLandmark = new ArrayList<>();
+        landmarkDistancesToLandmark = new ArrayList<>();
     }
 
     @Override
@@ -130,16 +138,19 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
-    public List<Double> getLandmarkDistances() {
-        return landmarkDistances;
+    public List<Double> getDistancesFromLandmarks() {
+        return landmarkDistancesFromLandmark;
     }
 
     @Override
-    public void addLandmarkDistance(double dist) {
-        if(landmarkDistances == null){
-            landmarkDistances = new ArrayList<>();
-        }
-        landmarkDistances.add(dist);
+    public List<Double> getDistancesToLandmarks() {
+        return landmarkDistancesToLandmark;
+    }
+
+    @Override
+    public void addLandmarkDistance(double distFromLandmark, double distToLandmark) {
+        landmarkDistancesFromLandmark.add(distFromLandmark);
+        landmarkDistancesToLandmark.add(distToLandmark);
     }
 
     @Override

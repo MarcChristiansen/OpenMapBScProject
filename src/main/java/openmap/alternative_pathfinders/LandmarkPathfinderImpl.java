@@ -2,6 +2,7 @@ package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
+import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -14,10 +15,9 @@ public class LandmarkPathfinderImpl implements PathFinder {
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
 
-    private Node source;
     private Node currTarget;
     private long executionTime;
-    private int landmarkSubsetSize = 5;
+    private int landmarkSubsetSize = 4;
     private List<Integer> landmarks;
 
     private boolean preProcessDone;
@@ -32,6 +32,14 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
+
+        landmarks.clear();
+
+        if(source.getDistancesToLandmarks().size() == 0) {
+            System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
+            FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
+            fls.findLandmarks(20);
+        }
 
         //Prepare for A* run
         clearDistanceAndPredecessor();
@@ -103,7 +111,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         for(int j = 0; j < landmarkSubsetSize; j++){
             bestLandmark = 0;
             h = 0;
-            for(int i = 0; i < source.getLandmarkDistances().size(); i++){
+            for(int i = 0; i < source.getDistancesFromLandmarks().size(); i++){
                 if(!landmarks.contains(i)){
                     landmark = i;
                     if(h < h(source, landmark)){
@@ -158,8 +166,9 @@ public class LandmarkPathfinderImpl implements PathFinder {
     }
 
     private double h(Node n, int landmark){
-        return n.getLandmarkDistances().get(landmark) - currTarget.getLandmarkDistances().get(landmark);
-    }
+        return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesFromLandmarks().get(landmark);
+    }//-currTarget.getLandmarkDistancesFromLandmark().get(landmark) + n.getLandmarkDistancesFromLandmark().get(landmark);
+
 
     private void clearDistanceAndPredecessor(){
         Map<Long, Node> nodeMap = graph.getNodeMap();

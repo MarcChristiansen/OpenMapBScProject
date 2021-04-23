@@ -228,7 +228,17 @@ public class TileMapImpl implements TileMap {
 
     @Override
     public void setLandmarks(List<Node> landmarks) {
-        throw new NotImplementedException("No landmarks in this one");
+        throw new NotImplementedException("No landmarks yet in old map impl");
+    }
+
+    @Override
+    public void setLandmarksUsed(List<Integer> landmarksUsed) {
+        throw new NotImplementedException("No landmarks yet in old map impl");
+    }
+
+    @Override
+    public void setShouldDrawLandmarks(boolean shouldDrawLandmarks) {
+        throw new NotImplementedException("No landmarks yet in old map impl");
     }
 
 

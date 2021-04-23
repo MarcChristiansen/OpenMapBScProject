@@ -8,7 +8,7 @@ import openmap.framework.PathFinder;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 public abstract class LandmarkSelectionAbstract implements LandmarkSelection {
 
@@ -29,6 +29,11 @@ public abstract class LandmarkSelectionAbstract implements LandmarkSelection {
         return landmarks;
     }
 
-
+    protected void clearPreviousLandmarksFromNodes(){
+        for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
+            e.getValue().getDistancesFromLandmarks().clear();
+            e.getValue().getDistancesToLandmarks().clear();
+        }
+    }
 
 }

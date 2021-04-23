@@ -102,9 +102,11 @@ public interface Node {
      */
     public List<Path> getIncomingPaths();
 
-    public List<Double> getLandmarkDistances();
+    public List<Double> getDistancesFromLandmarks();
 
-    public void addLandmarkDistance(double dist);
+    public List<Double> getDistancesToLandmarks();
+
+    public void addLandmarkDistance(double distFromLandmark, double distToLandmark);
 
     /**
      * Add an outgoing path out to the path list
