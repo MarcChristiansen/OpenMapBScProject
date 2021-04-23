@@ -39,13 +39,17 @@ class MapPanel extends JPanel {
     private Node pathNode1;
     private Node pathNode2;
     private PathFinder pathFinder;
-    private Boolean shouldVisualizePathfinder = false;
+    private boolean shouldVisualizePathfinder = false;
     private boolean shouldVisualizeLandmark = false;
     private LandmarkSelection landmarkSelector;
 
     private List<Node> highlightedNodeList;
+
+    //Landmark stuff
     private List<Node> landmarkList;
     private List<Node> landmarksUsed;
+    private int landmarksToUse = 20;
+
 
 
     /** Find the closest node in the graph to a given point.
@@ -190,9 +194,24 @@ class MapPanel extends JPanel {
 
     }
 
-    private void runLandmarkSelector() {
-        landmarkSelector.findLandmarks(20); //20 for now
+    /**
+     * Set the number of landmarks to use in the next calculation
+     * Note: This this does not recompute landmarks currently used.
+     * Getting new landmarkds has to be done through setting a new landmark type or manual use of runLandmarkSelector()
+     * @param landmarksToUse
+     */
+    public void setLandmarksToUse(int landmarksToUse) {
+        this.landmarksToUse = landmarksToUse;
+    }
+
+    public int getLandmarksToUse(){
+        return landmarksToUse;
+    }
+
+    public void runLandmarkSelector() {
+        landmarkSelector.findLandmarks(landmarksToUse);
         setLandmarks(landmarkSelector.getLandmarks());
+        runPathFinder();
     }
 
     public void setHighlightedPath(List<Node> nodeList){

@@ -5,6 +5,8 @@ import openmap.framework.LandmarkSelection;
 import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
 import openmap.landmark_selection.RandomizedLandmarkSelectionImpl;
 
+import java.util.ArrayList;
+
 
 /**
  * Simple utility that only uses one instance of each pathfinder for the GUI.
@@ -16,6 +18,14 @@ import openmap.landmark_selection.RandomizedLandmarkSelectionImpl;
  */
 public class LandmarkSelectionUtility {
 
+
+
+    private final Graph graph;
+
+    private final String[] LandmarkSelectionStrings = { "Farthest", "Randomized"};
+
+    LandmarkSelection[] landmarkSelections;
+
     /**
      * Create a selection utility with a given graph
      * All pathfinders will be linked to this graph
@@ -23,17 +33,8 @@ public class LandmarkSelectionUtility {
      */
     public LandmarkSelectionUtility(Graph graph) {
         this.graph = graph;
+        landmarkSelections = new LandmarkSelection[2];
     }
-
-    private final Graph graph;
-
-    private final String[] LandmarkSelectionStrings = { "Farthest", "Randomized"};
-
-    //Landmark Selectors
-    private FarthestLandmarkSelectionImpl farthestLandmarkSelection;
-    private RandomizedLandmarkSelectionImpl randomizedLandmarkSelection;
-
-
 
     /**
      * Get landmark selector string names.
@@ -52,19 +53,15 @@ public class LandmarkSelectionUtility {
     public LandmarkSelection getLandmarkSelector (String finderId) {
 
         if(LandmarkSelectionStrings[0].equals(finderId)){
-            if(farthestLandmarkSelection == null){ farthestLandmarkSelection = new FarthestLandmarkSelectionImpl(graph); }
-            return farthestLandmarkSelection;
+            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImpl(graph); }
+            return landmarkSelections[0];
         }
 
         if(LandmarkSelectionStrings[1].equals(finderId)){
-            if(randomizedLandmarkSelection == null){ randomizedLandmarkSelection = new RandomizedLandmarkSelectionImpl(graph); }
-            return randomizedLandmarkSelection;
+            if(landmarkSelections[1] == null){ landmarkSelections[1] = new RandomizedLandmarkSelectionImpl(graph); }
+            return landmarkSelections[1];
         }
-
-
 
         return null; //Todo Possibly make exception...
     }
-
-
 }

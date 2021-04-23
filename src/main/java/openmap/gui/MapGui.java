@@ -7,6 +7,7 @@ import openmap.utility.ConsoleUtils;
 
 import javax.swing.*;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
@@ -59,25 +60,33 @@ class MapGui{
         gbl.setBorder(new TitledBorder("current file: \"" + path + "\""));
         pane.add(gbl, BorderLayout.LINE_START);
 
-        JPanel Controls = new JPanel(new GridLayout(0, 1, 10, 10));
+        JPanel Controls = new JPanel();//new GridLayout(0, 1, 10, 10));
+        Controls.setLayout(new BoxLayout(Controls, BoxLayout.Y_AXIS));
 
         JPanel PathfinderControls = new JPanel(new GridLayout(0, 1, 10, 10));
-        PathfinderControls.setBorder(new TitledBorder("Map controls"));
+        PathfinderControls.setBorder(new TitledBorder("Pathfinder controls"));
 
         Controls.add(PathfinderControls);
-        JButton b = new JButton("Show seen paths" );
-        b.addActionListener(e -> myPanel.toggleShouldVisualizePathfinder());
+        Controls.add(Box.createRigidArea(new Dimension(0, 10)));
+        JButton bShowPathfinderPath = new JButton("Show seen paths" );
+        bShowPathfinderPath.addActionListener(e -> myPanel.toggleShouldVisualizePathfinder());
         PathfinderControls.add(getPathfinderComboBox(myPanel, graph));
-        PathfinderControls.add(b);
+        PathfinderControls.add(bShowPathfinderPath);
 
-        JPanel LandmarkControls = new JPanel(new GridLayout(0, 1, 10, 10));
-        LandmarkControls.setBorder(new TitledBorder("Landmark controls"));
+        JPanel landmarkControls = new JPanel(new GridLayout(0, 1, 10, 10));
+        landmarkControls.setBorder(new TitledBorder("Landmark controls"));
 
-        Controls.add(LandmarkControls);
-        JButton b2 = new JButton("Show landmarks" );
-        b2.addActionListener(e -> myPanel.toggleShouldVisualizeLandmarks());
-        LandmarkControls.add(getLandmarkComboBox(myPanel, graph));
-        LandmarkControls.add(b2);
+        Controls.add(landmarkControls);
+        JButton bShowLandmarks = new JButton("Show landmarks" );
+        bShowLandmarks.addActionListener(e -> myPanel.toggleShouldVisualizeLandmarks());
+
+        JButton bRecomputeLandmarks = new JButton("Recompute landmarks" );
+        bRecomputeLandmarks.addActionListener(e -> myPanel.runLandmarkSelector());
+
+        landmarkControls.add(getLandmarkComboBox(myPanel, graph));
+        landmarkControls.add(bShowLandmarks);
+        landmarkControls.add(getLandmarkNumberSpinner(myPanel, graph));
+        landmarkControls.add(bRecomputeLandmarks);
 
         gbl.add(Controls);
 
@@ -129,6 +138,15 @@ class MapGui{
 
 
         return LandmarkList;
+    }
+
+    public static JSpinner getLandmarkNumberSpinner(MapPanel mapPanel, Graph graph){
+        SpinnerNumberModel numModel = new SpinnerNumberModel(mapPanel.getLandmarksToUse(), 0, graph.getNodeMap().size(), 1);
+        JSpinner landmarkSpinner = new JSpinner(numModel);
+
+        numModel.addChangeListener(e -> mapPanel.setLandmarksToUse(numModel.getNumber().intValue()));
+
+        return landmarkSpinner;
     }
 
     private static void createAndShowGUI(String path) {
