@@ -27,4 +27,8 @@ public interface TileMap {
     void setHighlightedPath(List<Node> nodeList);
 
     void setLandmarks(List<Node> landmarks);
+
+    void setLandmarksUsed(List<Integer> landmarksUsed);
+
+    void setShouldDrawLandmarks(boolean shouldDrawLandmarks);
 }

@@ -41,7 +41,7 @@ public class LandmarkDijkstraImpl implements PathFinder {
         clearDistanceAndPredecessor();
         //visited.clear();
         priorityQueue.clear();
-        runDijkstra(source);
+        runDijkstra(source); //Runs both an incoming and a reverse one...
 
         List<Node> result = new ArrayList<>();
 
@@ -118,11 +118,47 @@ public class LandmarkDijkstraImpl implements PathFinder {
                 });
             }
         }
+
+        firstNode = source;
+        firstNode.setDistance2(0);
+        firstNode.setPredecessor2(firstNode);
+        priorityQueue.clear();
+        priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance2()));
+
+        while (true){
+            NodeWrapper currNode = priorityQueue.poll();
+            if(currNode == null){ //if queue is empty
+                break;
+            }
+
+            if(!currNode.getNode().getVisited2()){
+                visitcount++;
+
+                //give first node predecessor
+                currNode.getNode().setVisited2(true);
+                //Go through all paths
+                currNode.getNode().getIncomingPaths().forEach(path -> {
+                    double newDistance = currNode.getNode().getDistance2() + path.getWeight();
+
+                    //check if new distance is lower
+                    if(newDistance < path.getSource().getDistance2()) {
+                        path.getSource().setDistance2(newDistance);
+                        //add predecessor for the node
+                        path.getSource().setPredecessor2(currNode.getNode());
+                    }
+
+                    //add to priority queue
+                    priorityQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
+                });
+            }
+        }
+
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
         //System.out.println("Dijkstra visited " + visitcount + " nodes");
         //System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
+
 
     private void clearDistanceAndPredecessor(){
         Map<Long, Node> nodeMap = graph.getNodeMap();
@@ -130,6 +166,10 @@ public class LandmarkDijkstraImpl implements PathFinder {
            node.setDistance(Double.MAX_VALUE);
            node.setPredecessor(null);
            node.setVisited(false);
+
+           node.setDistance2(Double.MAX_VALUE);
+           node.setPredecessor2(null);
+           node.setVisited2(false);
         });
     }
 
