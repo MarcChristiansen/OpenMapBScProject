@@ -18,6 +18,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
     private Node currTarget;
     private long executionTime;
     private int landmarkSubsetSize = 4;
+    private int landmarkAmount;
     private List<Integer> landmarks;
 
     private boolean preProcessDone;
@@ -27,7 +28,15 @@ public class LandmarkPathfinderImpl implements PathFinder {
         this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
         landmarks = new ArrayList<Integer>();
+        this.landmarkAmount = 20;
+    }
 
+    public LandmarkPathfinderImpl(Graph graph, int landmarkAmount){
+        this.graph = graph;
+        this.executionTime = 0;
+        priorityQueue = new PriorityQueue<NodeWrapper>();
+        landmarks = new ArrayList<Integer>();
+        this.landmarkAmount = landmarkAmount;
     }
 
     @Override
@@ -38,7 +47,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         if(source.getDistancesToLandmarks().size() == 0) {
             System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
             FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
-            fls.findLandmarks(20);
+            fls.findLandmarks(this.landmarkAmount);
         }
 
         //Prepare for A* run
