@@ -12,6 +12,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Somewhat legacy - replaced with quadTiles.
@@ -30,8 +31,6 @@ public class TileMapImpl implements TileMap {
     private MapTile[][] tileMapArray;
     private int tileSquareSize;
     private Graph graph;
-
-    private List<Node> highlightedNodeList;
 
     //Buffered render related stuff
     private int preRenderSize;
@@ -104,9 +103,6 @@ public class TileMapImpl implements TileMap {
             g.drawImage(bufferImg, 0, 0, null);
             g.setTransform(oldTransform);
 
-
-            drawHighlightedPath(panX, panY, zoomFactor, g);
-
             return;
         }
 
@@ -116,7 +112,6 @@ public class TileMapImpl implements TileMap {
         gg.setPaint ( Color.white );
         gg.fillRect ( 0, 0, width, height );
         drawRelevantTiles(panX, panY, width, height, zoomFactor, gg);
-        drawHighlightedPath(panX, panY, zoomFactor, gg);
         g.drawImage(img, 0, 0, null);
 
 
@@ -193,7 +188,8 @@ public class TileMapImpl implements TileMap {
         return at;
     }
 
-    private void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g) {
+    @Override
+    public void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> highlightedNodeList) {
         if (highlightedNodeList == null) { return; }
 
         AffineTransform oldTransform = g.getTransform();
@@ -222,23 +218,13 @@ public class TileMapImpl implements TileMap {
     }
 
     @Override
-    public void setHighlightedPath(List<Node> nodeList) {
-        this.highlightedNodeList = nodeList;
-    }
-
-    @Override
-    public void setLandmarks(List<Node> landmarks) {
+    public void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkList, List<Node> landmarksUsed) {
         throw new NotImplementedException("No landmarks yet in old map impl");
     }
 
     @Override
-    public void setLandmarksUsed(List<Integer> landmarksUsed) {
-        throw new NotImplementedException("No landmarks yet in old map impl");
-    }
-
-    @Override
-    public void setShouldDrawLandmarks(boolean shouldDrawLandmarks) {
-        throw new NotImplementedException("No landmarks yet in old map impl");
+    public void visualizePathFinderNodeUsage(double panX, double panY, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond, Graphics2D g) {
+        throw new NotImplementedException("Pathfinder node usage not implemented yet");
     }
 
 

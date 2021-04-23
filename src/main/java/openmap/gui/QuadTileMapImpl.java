@@ -21,27 +21,18 @@ import java.util.function.Function;
  */
 public class QuadTileMapImpl implements TileMap {
 
-    private List<Node> highlightedNodeList;
-    private List<Node> landmarkList;
-
     private QuadTile rootTile;
     private Graph graph;
-    private List<Node> landmarksUsed;
-
-    //Flags
-    private boolean shouldDrawLandmarks = false;
 
     public QuadTileMapImpl(Graph graph, byte maxLayer){
         this.graph = graph;
-        this.landmarksUsed = new ArrayList<>();
-
 
         this.rootTile = new QuadTile(maxLayer, graph.getBounds());
 
         //set whether or not the tile should check for overlap on added nodes
         rootTile.setCheckOverlap(true);
 
-        //add all nodes to our root quadtile and let them propegate.
+        //add all nodes to our root quadTile and let them propagate.
         for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {
             rootTile.addNode(entry.getValue());
         }
@@ -57,47 +48,8 @@ public class QuadTileMapImpl implements TileMap {
 
     public void drawMapView(double x, double y, int gWindowWidth, int gWindowHeight, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond, Graphics2D g) {
         rootTile.drawMapView(x,y, gWindowWidth, gWindowHeight, zoomFactor, g);
-
-        if(nodeCond != null && highlightedNodeList != null){
-            visualizePathFinderNodeUsage(x,y, zoomFactor, nodeCond, g);
-        }
-
-        drawHighlightedPath(x, y, zoomFactor, g);
-
-        if(shouldDrawLandmarks){
-            drawLandmarks(x, y, zoomFactor, g);
-        }
-
     }
 
-
-
-    @Override
-    public void setHighlightedPath(List<Node> nodeList) {
-        this.highlightedNodeList = nodeList;
-    }
-
-    @Override
-    public void setShouldDrawLandmarks(boolean shouldDrawLandmarks) {
-        this.shouldDrawLandmarks = shouldDrawLandmarks;
-    }
-
-    @Override
-    public void setLandmarks(List<Node> landmarks) {
-        this.landmarksUsed.clear(); //We need to clear any previously used landmarks
-        this.landmarkList = landmarks;
-    }
-
-    @Override
-    public void setLandmarksUsed(List<Integer> landmarksUsed) {
-        this.landmarksUsed.clear();
-
-        if(landmarksUsed != null && this.landmarkList != null){
-            for(Integer i : landmarksUsed){
-                this.landmarksUsed.add(this.landmarkList.get(i));
-            }
-        }
-    }
 
     /**
      * Return the affine transformation used for drawing
@@ -114,14 +66,17 @@ public class QuadTileMapImpl implements TileMap {
         return at;
     }
 
-    private void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g) {
-        if (highlightedNodeList == null) { return; }
+    @Override
+    public void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> highlightedNodeList) {
+        if (highlightedNodeList == null || highlightedNodeList.size() == 0) { return; }
 
         AffineTransform oldTransform = g.getTransform();
         Stroke oldStroke = g.getStroke();
         AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
         g.transform(at);
         g.setStroke(new BasicStroke((int)Math.max(5/zoomFactor, 5)));
+
+
 
 
         Node lastNode = null;
@@ -138,11 +93,24 @@ public class QuadTileMapImpl implements TileMap {
             lastNode = currentNode;
         }
 
+        g.setColor(Color.GREEN);
+        g.drawOval((int) (highlightedNodeList.get(0).getX()-5/zoomFactor),
+                (int) (highlightedNodeList.get(0).getY()-5/zoomFactor),
+                (int)(10/zoomFactor),
+                (int)(10/zoomFactor));
+
+        g.setColor(Color.BLUE);
+        g.drawOval((int) (highlightedNodeList.get(highlightedNodeList.size()-1).getX()-5/zoomFactor),
+                (int) (highlightedNodeList.get(highlightedNodeList.size()-1).getY()-5/zoomFactor),
+                (int)(10/zoomFactor),
+                (int)(10/zoomFactor));
+
         g.setStroke(oldStroke);
         g.setTransform(oldTransform);
     }
 
-    private void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g) {
+    @Override
+    public void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkList , List<Node> landmarksUsed) {
         if (landmarkList == null) { return; }
 
         AffineTransform oldTransform = g.getTransform();
@@ -178,7 +146,8 @@ public class QuadTileMapImpl implements TileMap {
      * @param nodeCond The predicate
      * @param g The graphics to draw to.
      */
-    private void visualizePathFinderNodeUsage(double panX, double panY, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond , Graphics2D g){
+    @Override
+    public void visualizePathFinderNodeUsage(double panX, double panY, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond , Graphics2D g){
         AffineTransform oldTransform = g.getTransform();
         AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
         g.transform(at);

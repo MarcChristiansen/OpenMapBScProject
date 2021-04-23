@@ -1,9 +1,11 @@
 package openmap.gui.framework;
 
 import openmap.framework.Node;
+import openmap.gui.NodeDrawingInfo;
 
 import java.awt.*;
 import java.util.List;
+import java.util.function.Function;
 
 /**
  * Interface for the manager of a tilemap
@@ -24,11 +26,9 @@ public interface TileMap {
      */
     void drawMapView(double panX, double panY, int windowWidth, int windowHeight, double zoomFactor, Graphics2D g);
 
-    void setHighlightedPath(List<Node> nodeList);
+    void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> highlightedNodeList);
 
-    void setLandmarks(List<Node> landmarks);
+    void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkList , List<Node> landmarksUsed);
 
-    void setLandmarksUsed(List<Integer> landmarksUsed);
-
-    void setShouldDrawLandmarks(boolean shouldDrawLandmarks);
+    void visualizePathFinderNodeUsage(double panX, double panY, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond , Graphics2D g);
 }

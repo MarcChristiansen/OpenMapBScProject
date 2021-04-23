@@ -43,6 +43,11 @@ class MapPanel extends JPanel {
     private boolean shouldVisualizeLandmark = false;
     private LandmarkSelection landmarkSelector;
 
+    private List<Node> highlightedNodeList;
+    private List<Node> landmarkList;
+    private List<Node> landmarksUsed;
+
+
     /** Find the closest node in the graph to a given point.
      * @param x X coordinate
      * @param y y Coordinate
@@ -68,7 +73,7 @@ class MapPanel extends JPanel {
 
 
         this.graph = graph;
-        //setBorder(BorderFactory.createLineBorder(Color.black));
+        this.landmarksUsed = new ArrayList<>();
         this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
         this.pathFinder = pathFinder;
@@ -78,8 +83,6 @@ class MapPanel extends JPanel {
         panY = graph.getBounds().getMinY()+(graph.getBounds().getMaxY()-graph.getBounds().getMinY());
 
         //Tile map creation
-
-
         zoomFactor = Math.min((double)(getPreferredSize().height)/(graph.getBounds().getMaxY() - graph.getBounds().getMinY()),
                 (double)(getPreferredSize().width)/(graph.getBounds().getMaxX() - graph.getBounds().getMinX()));
         if(zoomFactor > 1) { zoomFactor = 1; }
@@ -155,7 +158,6 @@ class MapPanel extends JPanel {
 
     public void toggleShouldVisualizeLandmarks() {
         shouldVisualizeLandmark = !shouldVisualizeLandmark;
-        tileMap.setShouldDrawLandmarks(shouldVisualizeLandmark);
         repaint();
     }
 
@@ -194,16 +196,22 @@ class MapPanel extends JPanel {
     }
 
     public void setHighlightedPath(List<Node> nodeList){
-        tileMap.setHighlightedPath(nodeList);
+        this.highlightedNodeList = nodeList;
     }
 
     public void setLandmarks(List<Node> landmarks){
-        tileMap.setLandmarks(landmarks);
+        this.landmarkList = landmarks;
         repaint();
     }
 
-    private void setLandmarksUsed(List<Integer> landmarksUsed) {
-        tileMap.setLandmarksUsed(landmarksUsed);
+    private void setLandmarksUsed(List<Integer> landmarksUsedIndex) {
+        this.landmarksUsed.clear();
+
+        if(landmarksUsedIndex != null && this.landmarkList != null){
+            for(Integer i : landmarksUsedIndex){
+                this.landmarksUsed.add(this.landmarkList.get(i));
+            }
+        }
     }
 
     private double getZoomFactor() {
@@ -228,8 +236,6 @@ class MapPanel extends JPanel {
     protected void paintComponent(Graphics gg) {
         super.paintComponent(gg);
 
-
-
         //this.setBorder(null);
 
         Graphics2D g = (Graphics2D) gg;
@@ -237,18 +243,17 @@ class MapPanel extends JPanel {
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         gg.setColor ( Color.white );
         gg.fillRect ( 0, 0, getWidth(), getHeight() );
-        AffineTransform matrix = g.getTransform(); // Backup
+        AffineTransform matrix = g.getTransform(); // Backup org transformation
 
-        if(shouldVisualizePathfinder) {
-            ((QuadTileMapImpl)tileMap).drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor, pathFinder.getVisitedCheckFunction(),  g);
-        }
-        else{
-            tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor,  g);
-        }
+        tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor,  g);
 
-        //System.out.println("(panX: " + panX + ", " + "panY" + panY + ")" + ", ZoomFactor: " + zoomFactor + " height: " + getHeight()); //TODO remember this.
+        if(shouldVisualizePathfinder){ tileMap.visualizePathFinderNodeUsage(panX, panY, zoomFactor, pathFinder.getVisitedCheckFunction(), g); }
 
-        g.setTransform(matrix); // Restore
+        if(highlightedNodeList != null) { tileMap.drawHighlightedPath(panX, panY, zoomFactor,  g, highlightedNodeList); }
+
+        if(landmarkList != null && shouldVisualizeLandmark) { tileMap.drawLandmarks(panX, panY, zoomFactor,  g, landmarkList, landmarksUsed); }
+
+        g.setTransform(matrix); // Restore original transformation
 
     }
 }
