@@ -18,25 +18,21 @@ public class LandmarkPathfinderImpl implements PathFinder {
     private Node currTarget;
     private long executionTime;
     private int landmarkSubsetSize = 4;
-    private int landmarkAmount;
+    private int defaultLandmarkAmount;
     private List<Integer> landmarks;
 
     private boolean preProcessDone;
 
     public LandmarkPathfinderImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
-        priorityQueue = new PriorityQueue<NodeWrapper>();
-        landmarks = new ArrayList<Integer>();
-        this.landmarkAmount = 20;
+        this(graph, 20);
     }
 
-    public LandmarkPathfinderImpl(Graph graph, int landmarkAmount){
+    public LandmarkPathfinderImpl(Graph graph, int defaultLandmarkAmount){
         this.graph = graph;
         this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
         landmarks = new ArrayList<Integer>();
-        this.landmarkAmount = landmarkAmount;
+        this.defaultLandmarkAmount = defaultLandmarkAmount;
     }
 
     @Override
@@ -47,7 +43,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         if(source.getDistancesToLandmarks().size() == 0) {
             System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
             FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
-            fls.findLandmarks(this.landmarkAmount);
+            fls.findLandmarks(this.defaultLandmarkAmount);
         }
 
         //Prepare for A* run
@@ -72,6 +68,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         NodeWrapper currNodeW = null;
         while (!priorityQueue.isEmpty()){
             currNodeW = priorityQueue.poll();
+
 
             if(currNodeW.getNode() == currTarget){
                 path = retraceSteps(source);
@@ -99,11 +96,11 @@ public class LandmarkPathfinderImpl implements PathFinder {
         return path;
     }
 
-    private double getLowerbound(Node source) {
+    private double getLowerbound(Node currNode) {
         double h = 0;
         for(int i : landmarks){
-            if(h < h(source, i)){
-                h = h(source, i);
+            if(h < h(currNode, i)){
+                h = h(currNode, i);
             }
         }
         return h;

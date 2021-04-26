@@ -28,7 +28,12 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
         double distance = 0;
         Node bestNode = null;
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-            if(e.getValue().getDistance() > distance && e.getValue().getDistance() != Double.MAX_VALUE){
+            if(e.getValue().getDistance() > distance &&
+                    e.getValue().getDistance() != Double.MAX_VALUE &&
+                    e.getValue().getDistance2() != Double.MAX_VALUE &&
+                    e.getValue().getIncomingPaths().size() != 0 &&
+                    e.getValue().getOutgoingPaths().size() != 0){
+
                 distance = e.getValue().getDistance();
                 bestNode = e.getValue();
             }
@@ -46,18 +51,23 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
             double bestDistance = 0;
             bestNode = null;
             for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-                for(double d : e.getValue().getDistancesFromLandmarks()){
-                    if(d == Double.MAX_VALUE){ //don't select islands
+                for(int j = 0; j < e.getValue().getDistancesFromLandmarks().size() ; j++){
+                    double d1 = e.getValue().getDistancesFromLandmarks().get(j);
+                    double d2 = e.getValue().getDistancesToLandmarks().get(j);
+
+                    if(d1 == Double.MAX_VALUE || d2 == Double.MAX_VALUE){ //don't select islands
                         distance = 0;
                         break;
                     }
 
-                    distance = distance + Math.sqrt(d);
+                    distance = distance + Math.sqrt(d1);
                 }
 
                 distance = distance / e.getValue().getDistancesFromLandmarks().size();
 
-                if(distance > bestDistance){
+                boolean hasPaths = e.getValue().getIncomingPaths().size() != 0 && e.getValue().getOutgoingPaths().size() != 0;
+
+                if(distance > bestDistance && hasPaths){
                     bestDistance = distance;
                     bestNode = e.getValue();
                 }
@@ -69,6 +79,8 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
     }
 
     private void processLandmark(Node l){
+        System.out.println(l.getOutgoingPaths().size());
+        System.out.println(l.getId());
         pf.getShortestPath(l, l);
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
             e.getValue().addLandmarkDistance(e.getValue().getDistance(), e.getValue().getDistance2());
