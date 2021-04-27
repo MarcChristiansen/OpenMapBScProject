@@ -43,12 +43,6 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
-
-
-        if(source == destination){
-            return Collections.singletonList(source);
-        }
-
         if(source.getDistancesToLandmarks().size() == 0) {
             System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
             FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
@@ -58,22 +52,31 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         //Prepare for run
         landmarksForward.clear();
         landmarksBackward.clear();
-
-        FindLandmarkSubsetForward(source, destination);
-        FindLandmarkSubsetBackward(source, destination);
-
         clearDistanceAndPredecessor();
         priorityQueueForward.clear();
         priorityQueueBackward.clear();
 
         //Initial setup
         long start = System.currentTimeMillis();
+
+        if(source == destination){
+            return Collections.singletonList(source);
+        }
+
+        FindLandmarkSubsetForward(source, destination);
+        FindLandmarkSubsetBackward(source, destination);
+
+
         source.setDistance(0);
         destination.setDistance2(0);
         priorityQueueForward.add(new NodeWrapperImpl(source, 0));
         priorityQueueBackward.add(new NodeWrapperImpl(destination, 0));
 
-
+        for(Integer i : landmarksForward) {
+            if(source.getDistancesToLandmarks().get(i) == Double.MAX_VALUE && destination.getDistancesToLandmarks().get(i) < Double.MAX_VALUE){
+                return null; //No path exists.
+            }
+        }
 
         meet = null;
         shortestDistance = Double.MAX_VALUE;
@@ -305,21 +308,22 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
     }
 
     private double hForward(Node curr, Node target, int landmark) {
-        if(curr.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l for " + curr.getDistancesToLandmarks().get(landmark));}
-        if(target.getDistancesFromLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l for " + target.getDistancesFromLandmarks().get(landmark));}
+        //if(curr.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l for " + curr.getDistancesToLandmarks().get(landmark));}
+        //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l for " + target.getDistancesToLandmarks().get(landmark));}
 
 
-        return curr.getDistancesToLandmarks().get(landmark) - target.getDistancesFromLandmarks().get(landmark);
+        return curr.getDistancesToLandmarks().get(landmark) - target.getDistancesToLandmarks().get(landmark);
     }
 
     private double hBackward(Node curr, Node target, int landmark) {
         //System.out.println(landmark);
         //System.out.println(curr.getId());
         //System.out.println(curr.getDistancesFromLandmarks());
-        if(curr.getDistancesFromLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l back " + curr.getDistancesFromLandmarks().get(landmark));}
-        if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l back " + target.getDistancesToLandmarks().get(landmark));}
+        //if(curr.getDistancesFromLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l back " + curr.getDistancesFromLandmarks().get(landmark));}
+        //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l back " + target.getDistancesToLandmarks().get(landmark));}
 
-        return  curr.getDistancesFromLandmarks().get(landmark) - target.getDistancesToLandmarks().get(landmark);
+        return  curr.getDistancesFromLandmarks().get(landmark) - target.getDistancesFromLandmarks().get(landmark);
+                //curr.getDistancesFromLandmarks().get(landmark) - target.getDistancesToLandmarks().get(landmark);
     }
 
     private void clearDistanceAndPredecessor(){

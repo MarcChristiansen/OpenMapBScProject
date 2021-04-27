@@ -17,7 +17,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
     private Node currTarget;
     private long executionTime;
-    private int landmarkSubsetSize = 4;
+    private int landmarkSubsetSize = 2;
     private int defaultLandmarkAmount;
     private List<Integer> landmarks;
 
@@ -57,12 +57,16 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
         //pick best landmark to work from
         FindLandmarkSubset(source);
-
-        source.setDistance(0);
+        //Quick sanity check to ensure path actually exists by checking if they can both reach a chosen landmark.
+        for(Integer i : landmarks) {
+            if(source.getDistancesToLandmarks().get(i) == Double.MAX_VALUE && destination.getDistancesToLandmarks().get(i) < Double.MAX_VALUE){
+                return null; //No path exists.
+            }
+        }
 
         //find largest h
+        source.setDistance(0);
         double h = getLowerbound(source);
-
         priorityQueue.add(new NodeWrapperImpl(source, h));
 
         NodeWrapper currNodeW = null;
@@ -172,9 +176,13 @@ public class LandmarkPathfinderImpl implements PathFinder {
     }
 
     private double h(Node n, int landmark){
-        return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesFromLandmarks().get(landmark);
+        //return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark);
+        return Math.max(n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark), distance(n, currTarget) );
     }//-currTarget.getLandmarkDistancesFromLandmark().get(landmark) + n.getLandmarkDistancesFromLandmark().get(landmark);
 
+    private double distance(Node n1, Node n2){
+        return Math.sqrt(Math.pow(n1.getX()-n2.getX(), 2) + Math.pow(n1.getY()-n2.getY(), 2));
+    }
 
     private void clearDistanceAndPredecessor(){
         Map<Long, Node> nodeMap = graph.getNodeMap();

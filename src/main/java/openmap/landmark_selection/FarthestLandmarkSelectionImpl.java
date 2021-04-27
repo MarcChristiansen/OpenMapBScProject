@@ -20,6 +20,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
 
         Random random = new Random();
+        random.setSeed(1231231231); //Consistency //TODO possibly move this to somewhere else
         //add random landmark initially
         Node landmark = (Node)values[random.nextInt(values.length)];
 
