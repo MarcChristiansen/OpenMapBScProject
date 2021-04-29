@@ -1,6 +1,7 @@
 package openmap.landmark_selection;
 
-import openmap.alternative_pathfinders.LandmarkDijkstraImpl;
+import openmap.alternative_pathfinders.LandmarkDijkstraImplBackard;
+import openmap.alternative_pathfinders.LandmarkDijkstraImplForward;
 import openmap.framework.Graph;
 import openmap.framework.LandmarkSelection;
 import openmap.framework.Node;
@@ -15,19 +16,26 @@ public abstract class LandmarkSelectionAbstract implements LandmarkSelection {
 
 
     protected Graph graph;
-    protected List<Node> landmarks;
-    protected PathFinder pf;
+    protected List<Node> landmarksTo;
+    protected List<Node> landmarksFrom;
+    protected PathFinder pfForward;
+    protected PathFinder pfBackward;
 
     public LandmarkSelectionAbstract(Graph graph){
         this.graph = graph;
-        this.landmarks = new ArrayList<Node>();
-        this.pf = new LandmarkDijkstraImpl(graph);
+        this.landmarksTo = new ArrayList<Node>();
+        this.landmarksFrom = new ArrayList<Node>();
+        this.pfForward = new LandmarkDijkstraImplForward(graph);
+        this.pfBackward = new LandmarkDijkstraImplBackard(graph);
     }
 
     @Override
-    public List<Node> getLandmarks() {
-        return landmarks;
+    public List<Node> getLandmarksTo() {
+        return landmarksTo;
     }
+
+    @Override
+    public List<Node> getLandmarksFrom() { return landmarksFrom; }
 
     protected void clearPreviousLandmarksFromNodes(){
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){

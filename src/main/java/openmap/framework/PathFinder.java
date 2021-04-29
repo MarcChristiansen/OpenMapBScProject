@@ -37,8 +37,14 @@ public interface PathFinder {
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction();
 
     /**
-     * Function to return a List with the indices of landmarks used
+     * Function to return a List with the indices of "to" landmarks used
      * @return a list of indices of landmarks used
      */
-    public List<Integer> getLandmarksUsed();
+    public List<Integer> getLandmarksUsedTo();
+
+    /**
+     * Function to return a List with the indices of "from" landmarks used
+     * @return a list of indices of landmarks used
+     */
+    public List<Integer> getLandmarksUsedFrom();
 }

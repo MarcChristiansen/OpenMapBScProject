@@ -151,8 +151,13 @@ public class LandmarkPathfinderImpl implements PathFinder {
     }
 
     @Override
-    public List<Integer> getLandmarksUsed() {
+    public List<Integer> getLandmarksUsedTo() {
         return landmarks;
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsedFrom() {
+        return null;
     }
 
     private List<Node> retraceSteps(Node source){

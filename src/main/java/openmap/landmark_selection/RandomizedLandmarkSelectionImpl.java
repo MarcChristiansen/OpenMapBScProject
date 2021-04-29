@@ -15,11 +15,14 @@ public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
     @Override
     public void findLandmarks(int k) {
         Object[] values = graph.getNodeMap().values().toArray();
-        landmarks.clear();
+        landmarksTo.clear();
+        landmarksFrom.clear();
+
         Random random = new Random();
         for(int i = 0; i < k; i++){
             Node landmark = (Node)values[random.nextInt(values.length)];
-            landmarks.add(landmark);
+            landmarksTo.add(landmark);
+            landmarksFrom.add(landmark);
         }
 
         preProcessNodes();
@@ -30,11 +33,13 @@ public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
         this.clearPreviousLandmarksFromNodes();
 
         Object[] values = graph.getNodeMap().values().toArray();
-        for(Node L : landmarks){
+        for(Node L : landmarksTo){
             //run landmark Dijkstra
-            pf.getShortestPath(L, L);
+            pfForward.getShortestPath(L, L);
+            pfBackward.getShortestPath(L,L);
             for(Object n : values){
-                ((Node)n).addLandmarkDistance(((Node)n).getDistance(), ((Node)n).getDistance2());
+                ((Node)n).addLandmarkDistanceTo(((Node)n).getDistance2());
+                ((Node)n).addLandmarkDistanceFrom(((Node)n).getDistance());
                //System.out.println(((Node)n).getDistance2());
             }
         }

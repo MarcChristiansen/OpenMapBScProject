@@ -106,7 +106,8 @@ public interface Node {
 
     public List<Double> getDistancesToLandmarks();
 
-    public void addLandmarkDistance(double distFromLandmark, double distToLandmark);
+    public void addLandmarkDistanceTo(double distToLandmark);
+    public void addLandmarkDistanceFrom(double distFromLandmark);
 
     /**
      * Add an outgoing path out to the path list

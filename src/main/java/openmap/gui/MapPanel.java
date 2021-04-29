@@ -46,8 +46,10 @@ class MapPanel extends JPanel {
     private List<Node> highlightedNodeList;
 
     //Landmark stuff
-    private List<Node> landmarkList;
-    private List<Node> landmarksUsed;
+    private List<Node> landmarkListTo;
+    private List<Node> landmarksUsedTo;
+    private List<Node> landmarkListFrom;
+    private List<Node> landmarksUsedFrom;
     private int landmarksToUse = 20;
 
 
@@ -77,7 +79,8 @@ class MapPanel extends JPanel {
 
 
         this.graph = graph;
-        this.landmarksUsed = new ArrayList<>();
+        this.landmarksUsedTo = new ArrayList<>();
+        this.landmarksUsedFrom = new ArrayList<>();
         this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
         this.pathFinder = pathFinder;
@@ -173,7 +176,7 @@ class MapPanel extends JPanel {
             List<Node> pathIdList = pathFinder.getShortestPath(pathNode1, pathNode2);
             if(pathIdList != null) {
                 setHighlightedPath(pathIdList);
-                setLandmarksUsed(pathFinder.getLandmarksUsed());
+                setLandmarksUsedTo(pathFinder.getLandmarksUsedTo(), pathFinder.getLandmarksUsedFrom());
                 repaint();
             } else{
                 System.out.println("Path does not exist");
@@ -210,7 +213,7 @@ class MapPanel extends JPanel {
 
     public void runLandmarkSelector() {
         landmarkSelector.findLandmarks(landmarksToUse);
-        setLandmarks(landmarkSelector.getLandmarks());
+        setLandmarks(landmarkSelector.getLandmarksTo(), landmarkSelector.getLandmarksFrom());
         runPathFinder();
     }
 
@@ -218,17 +221,26 @@ class MapPanel extends JPanel {
         this.highlightedNodeList = nodeList;
     }
 
-    public void setLandmarks(List<Node> landmarks){
-        this.landmarkList = landmarks;
+    public void setLandmarks(List<Node> landmarksTo, List<Node> landmarksFrom){
+        this.landmarkListTo = landmarksTo;
+        this.landmarkListFrom = landmarksFrom;
         repaint();
     }
 
-    private void setLandmarksUsed(List<Integer> landmarksUsedIndex) {
-        this.landmarksUsed.clear();
+    private void setLandmarksUsedTo(List<Integer> landmarksUsedToIndex, List<Integer> landmarksUsedFromIndex) {
+        this.landmarksUsedTo.clear();
 
-        if(landmarksUsedIndex != null && this.landmarkList != null){
-            for(Integer i : landmarksUsedIndex){
-                this.landmarksUsed.add(this.landmarkList.get(i));
+        if(landmarksUsedToIndex != null && this.landmarkListTo != null){
+            for(Integer i : landmarksUsedToIndex){
+                this.landmarksUsedTo.add(this.landmarkListTo.get(i));
+            }
+        }
+
+        this.landmarksUsedFrom.clear();
+
+        if(landmarksUsedFromIndex != null && this.landmarkListFrom != null){
+            for(Integer i : landmarksUsedFromIndex){
+                this.landmarksUsedFrom.add(this.landmarkListFrom.get(i));
             }
         }
     }
@@ -270,7 +282,7 @@ class MapPanel extends JPanel {
 
         if(highlightedNodeList != null) { tileMap.drawHighlightedPath(panX, panY, zoomFactor,  g, highlightedNodeList); }
 
-        if(landmarkList != null && shouldVisualizeLandmark) { tileMap.drawLandmarks(panX, panY, zoomFactor,  g, landmarkList, landmarksUsed); }
+        if(landmarkListTo != null && shouldVisualizeLandmark) { tileMap.drawLandmarks(panX, panY, zoomFactor,  g, landmarkListTo, landmarksUsedTo, landmarkListFrom, landmarksUsedFrom); }
 
         g.setTransform(matrix); // Restore original transformation
 

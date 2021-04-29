@@ -148,9 +148,13 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
-    public void addLandmarkDistance(double distFromLandmark, double distToLandmark) {
-        landmarkDistancesFromLandmark.add(distFromLandmark);
+    public void addLandmarkDistanceTo( double distToLandmark) {
         landmarkDistancesToLandmark.add(distToLandmark);
+    }
+
+    @Override
+    public void addLandmarkDistanceFrom(double distFromLandmark) {
+        landmarkDistancesFromLandmark.add(distFromLandmark);
     }
 
     @Override

@@ -169,7 +169,12 @@ public class AStarImplBiDirImplWrong implements PathFinder {
     }
 
     @Override
-    public List<Integer> getLandmarksUsed() {
+    public List<Integer> getLandmarksUsedTo() {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsedFrom() {
         return null;
     }
 

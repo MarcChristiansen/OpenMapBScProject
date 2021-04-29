@@ -1,16 +1,16 @@
-package openmap.standard;
+package openmap.alternative_pathfinders;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 /**
  * Simple Dijkstra implementation using a nodeWrapper and storage in the nodes
@@ -19,13 +19,13 @@ import java.util.function.Predicate;
  * @version 1.0
  * @since 25-02-2021
  */
-public class DijkstraImpl implements PathFinder {
+public class LandmarkDijkstraImplBackard implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
     private long executionTime;
 
-    public DijkstraImpl(Graph graph){
+    public LandmarkDijkstraImplBackard(Graph graph){
         this.graph = graph;
         this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
@@ -41,7 +41,7 @@ public class DijkstraImpl implements PathFinder {
         clearDistanceAndPredecessor();
         //visited.clear();
         priorityQueue.clear();
-        runDijkstra(source, destination);
+        runDijkstra(source); //Runs both an incoming and a reverse one...
 
         List<Node> result = new ArrayList<>();
 
@@ -85,56 +85,58 @@ public class DijkstraImpl implements PathFinder {
         return null;
     }
 
-    private void runDijkstra(Node source, Node destination){
+    private void runDijkstra(Node source){
         //measureable values
         int visitcount = 0;
         long start = System.currentTimeMillis();
 
-        //add source to priority queue with distance 0
         Node firstNode = source;
-        firstNode.setDistance(0);
-        firstNode.setPredecessor(firstNode);
-        priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
+        firstNode.setDistance2(0);
+        firstNode.setPredecessor2(firstNode);
+        priorityQueue.clear();
+        priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance2()));
 
         while (true){
             NodeWrapper currNode = priorityQueue.poll();
-            if(currNode == null || currNode.getNode().getId() == destination.getId()){
-                break; //we obey whatever Gerth commands
+            if(currNode == null){ //if queue is empty
+                break;
             }
 
-            if(!currNode.getNode().getVisited()){
+            if(!currNode.getNode().getVisited2()){
                 visitcount++;
 
                 //give first node predecessor
-                currNode.getNode().setVisited(true);
+                currNode.getNode().setVisited2(true);
                 //Go through all paths
-                currNode.getNode().getOutgoingPaths().forEach(path -> {
-                    double newDistance = currNode.getNode().getDistance() + path.getWeight();
+                currNode.getNode().getIncomingPaths().forEach(path -> {
+                    double newDistance = currNode.getNode().getDistance2() + path.getWeight();
 
                     //check if new distance is lower
-                    if(newDistance < path.getDestination().getDistance()) {
-                        path.getDestination().setDistance(newDistance);
+                    if(newDistance < path.getSource().getDistance2()) {
+                        path.getSource().setDistance2(newDistance);
                         //add predecessor for the node
-                        path.getDestination().setPredecessor(currNode.getNode());
+                        path.getSource().setPredecessor2(currNode.getNode());
                     }
 
                     //add to priority queue
-                    priorityQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
+                    priorityQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
                 });
             }
         }
+
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
         //System.out.println("Dijkstra visited " + visitcount + " nodes");
         //System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
 
+
     private void clearDistanceAndPredecessor(){
         Map<Long, Node> nodeMap = graph.getNodeMap();
         nodeMap.values().forEach(node -> {
-           node.setDistance(Double.MAX_VALUE);
-           node.setPredecessor(null);
-           node.setVisited(false);
+           node.setDistance2(Double.MAX_VALUE);
+           node.setPredecessor2(null);
+           node.setVisited2(false);
         });
     }
 

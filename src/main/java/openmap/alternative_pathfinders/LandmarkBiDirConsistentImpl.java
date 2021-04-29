@@ -261,9 +261,13 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
     }
 
     @Override
-    public List<Integer> getLandmarksUsed() {
-        return Stream.concat(landmarksForward.stream(), landmarksBackward.stream())
-                .collect(Collectors.toList());
+    public List<Integer> getLandmarksUsedTo() {
+        return landmarksForward;
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsedFrom() {
+        return landmarksBackward;
     }
 
     private List<Node> retraceSteps(Node source, Node target, Node meet){

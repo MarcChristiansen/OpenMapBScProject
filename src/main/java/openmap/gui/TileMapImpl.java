@@ -218,7 +218,7 @@ public class TileMapImpl implements TileMap {
     }
 
     @Override
-    public void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkList, List<Node> landmarksUsed) {
+    public void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkListTo, List<Node> landmarksUsedTo, List<Node> landmarkListFrom, List<Node> landmarksUsedFrom) {
         throw new NotImplementedException("No landmarks yet in old map impl");
     }
 

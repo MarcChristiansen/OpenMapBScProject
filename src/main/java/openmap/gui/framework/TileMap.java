@@ -28,7 +28,7 @@ public interface TileMap {
 
     void drawHighlightedPath(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> highlightedNodeList);
 
-    void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkList , List<Node> landmarksUsed);
+    void drawLandmarks(double panX, double panY, double zoomFactor, Graphics2D g, List<Node> landmarkListTo , List<Node> landmarksUsedTo, List<Node> landmarkListFrom, List<Node> landmarksUsedFrom);
 
     void visualizePathFinderNodeUsage(double panX, double panY, double zoomFactor, Function<Node, NodeDrawingInfo> nodeCond , Graphics2D g);
 }

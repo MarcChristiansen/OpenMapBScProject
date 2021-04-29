@@ -19,13 +19,13 @@ import java.util.function.Function;
  * @version 1.0
  * @since 25-02-2021
  */
-public class LandmarkDijkstraImpl implements PathFinder {
+public class LandmarkDijkstraImplForward implements PathFinder {
 
     private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
     private long executionTime;
 
-    public LandmarkDijkstraImpl(Graph graph){
+    public LandmarkDijkstraImplForward(Graph graph){
         this.graph = graph;
         this.executionTime = 0;
         priorityQueue = new PriorityQueue<NodeWrapper>();
@@ -76,7 +76,12 @@ public class LandmarkDijkstraImpl implements PathFinder {
     }
 
     @Override
-    public List<Integer> getLandmarksUsed() {
+    public List<Integer> getLandmarksUsedTo() {
+        return null;
+    }
+
+    @Override
+    public List<Integer> getLandmarksUsedFrom() {
         return null;
     }
 
@@ -115,40 +120,6 @@ public class LandmarkDijkstraImpl implements PathFinder {
 
                     //add to priority queue
                     priorityQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
-                });
-            }
-        }
-
-        firstNode = source;
-        firstNode.setDistance2(0);
-        firstNode.setPredecessor2(firstNode);
-        priorityQueue.clear();
-        priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance2()));
-
-        while (true){
-            NodeWrapper currNode = priorityQueue.poll();
-            if(currNode == null){ //if queue is empty
-                break;
-            }
-
-            if(!currNode.getNode().getVisited2()){
-                visitcount++;
-
-                //give first node predecessor
-                currNode.getNode().setVisited2(true);
-                //Go through all paths
-                currNode.getNode().getIncomingPaths().forEach(path -> {
-                    double newDistance = currNode.getNode().getDistance2() + path.getWeight();
-
-                    //check if new distance is lower
-                    if(newDistance < path.getSource().getDistance2()) {
-                        path.getSource().setDistance2(newDistance);
-                        //add predecessor for the node
-                        path.getSource().setPredecessor2(currNode.getNode());
-                    }
-
-                    //add to priority queue
-                    priorityQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
                 });
             }
         }
