@@ -105,7 +105,7 @@ public class TestLandmarks {
                         }
                     }
 
-                    System.out.println("Landmarks: " + k + " Subset size: " + i);
+                    System.out.println(ls + " Landmarks count: " + k + " Subset size: " + i);
                     for(String ps : PathfinderStrings){
                         //System.out.println("times " + ps + " agreed with Dijkstra: " + agreeWithDijkstraTimes.getOrDefault(ps, 0));
                         //System.out.println("times " + ps + " found no path: " + pathNotExistTimes.getOrDefault(ps, 0));
