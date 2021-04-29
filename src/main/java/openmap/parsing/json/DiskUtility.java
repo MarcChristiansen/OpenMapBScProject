@@ -10,7 +10,12 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 
-
+/**
+ * Simple static utility class with utilities related to loading and saving JSON graph representations
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-02-2021
+ */
 public class DiskUtility {
 
     /***

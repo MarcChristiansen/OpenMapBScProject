@@ -13,6 +13,13 @@ import openmap.standard.NodeImpl;
 import org.json.simple.parser.ContentHandler;
 import org.json.simple.parser.ParseException;
 
+/**
+ * Custom decoder for JSON for decoding the intermediate graph representation
+ * Acts like a stream-parser to ensure memory usage is limited.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class GraphContentHandler implements ContentHandler {
     Bounds bounds;
     List<Node> nodeList;

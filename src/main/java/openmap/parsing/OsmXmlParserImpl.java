@@ -18,7 +18,11 @@ import java.util.*;
 import java.util.function.Consumer;
 
 /**
- * Implementation of the OSM xml parser
+ * OSM file parser implemented using an XML reader.
+ * Reads XML .osm files.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-02-2021
  */
 public class OsmXmlParserImpl implements OsmParser {
 

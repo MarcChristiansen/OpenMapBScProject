@@ -16,7 +16,10 @@ import java.util.List;
 import static openmap.parsing.json.DiskUtility.createJsonGraphJGen;
 
 /**
- * Simple class to help create xml files from snippets we use
+ * Entry point class that allows for the creation of JSON graphs through the console or command line arguments
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-02-2021
  */
 public class CompileMapFile {
     /**

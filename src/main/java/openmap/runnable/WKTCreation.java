@@ -7,6 +7,14 @@ import org.opengis.referencing.operation.MathTransform;
 
 import java.io.IOException;
 
+/**
+ * Simple utility that allows for the creation of WKT's to facilitate coordinate conversions.
+ *
+ * The primary usage of this is to generate these WKT strings to avoid having to load the database.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-02-2021
+ */
 public class WKTCreation {
     public static void main(String[] args) throws FactoryException {
         CoordinateReferenceSystem source = CRS.decode("EPSG:4326");

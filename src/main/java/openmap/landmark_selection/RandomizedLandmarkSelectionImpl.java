@@ -5,6 +5,13 @@ import openmap.framework.Node;
 
 import java.util.Random;
 
+/**
+ * Base implementation for a randomized landmark selection
+ * Note: forward and backward landmarks are the same in this selection
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
 
 

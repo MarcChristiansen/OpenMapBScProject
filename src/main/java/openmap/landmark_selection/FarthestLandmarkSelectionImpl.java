@@ -6,6 +6,13 @@ import openmap.framework.Node;
 import java.util.Map;
 import java.util.Random;
 
+/**
+ * Implementation that tries to select the farthest landmark from all other landmarks
+ * The primary focus is on maximizing the min distance for any new possible landmark.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
     public FarthestLandmarkSelectionImpl(Graph graph){

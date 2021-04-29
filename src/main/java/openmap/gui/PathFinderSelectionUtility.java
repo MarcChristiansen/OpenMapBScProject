@@ -12,7 +12,7 @@ import openmap.standard.DijkstraImpl;
  *
  * @author Kristoffer Villadsen and Marc Christiansen
  * @version 1.0
- * @since 013-04-2021
+ * @since 13-04-2021
  */
 public class PathFinderSelectionUtility {
 

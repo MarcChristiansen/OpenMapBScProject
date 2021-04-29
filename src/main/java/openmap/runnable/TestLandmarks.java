@@ -10,6 +10,12 @@ import openmap.utility.ConsoleUtils;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Test class related to testing what the optimal choice of landmarks numbers and subset for algorithms are.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class TestLandmarks {
 
     public static void main(String args[]) throws IOException {

@@ -10,6 +10,14 @@ import openmap.utility.ConsoleUtils;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * Allows for testing one or all pathfinding algorithms against dijkstra
+ *
+ * Uses the PathFinderSelectionUtility to gain access to pathfinders.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-02-2021
+ */
 public class TestPathfinders {
 
     public static void main(String args[]) throws IOException {
