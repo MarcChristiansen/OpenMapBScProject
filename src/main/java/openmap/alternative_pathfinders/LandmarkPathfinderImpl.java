@@ -46,7 +46,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
         landmarks.clear();
 
-        if(source.getDistancesToLandmarks().size() == 0) {
+        if(source.getDistancesToLandmarks().length == 0) {
             System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
             FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
             fls.findLandmarks(this.defaultLandmarkAmount);
@@ -65,7 +65,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         FindLandmarkSubset(source);
         //Quick sanity check to ensure path actually exists by checking if they can both reach a chosen landmark.
         for(Integer i : landmarks) {
-            if(source.getDistancesToLandmarks().get(i) == Double.MAX_VALUE && destination.getDistancesToLandmarks().get(i) < Double.MAX_VALUE){
+            if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
                 return null; //No path exists.
             }
         }
@@ -127,7 +127,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         for(int j = 0; j < landmarkSubsetSize; j++){
             bestLandmark = 0;
             h = 0;
-            for(int i = 0; i < source.getDistancesFromLandmarks().size(); i++){
+            for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
                 if(!landmarks.contains(i)){
                     landmark = i;
                     if(h < h(source, landmark)){
@@ -188,7 +188,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
     private double h(Node n, int landmark){
         //return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark);
-        return Math.max(n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark), distance(n, currTarget) );
+        return Math.max(n.getDistancesToLandmarks()[landmark] - currTarget.getDistancesToLandmarks()[landmark], distance(n, currTarget) );
     }//-currTarget.getLandmarkDistancesFromLandmark().get(landmark) + n.getLandmarkDistancesFromLandmark().get(landmark);
 
     private double distance(Node n1, Node n2){

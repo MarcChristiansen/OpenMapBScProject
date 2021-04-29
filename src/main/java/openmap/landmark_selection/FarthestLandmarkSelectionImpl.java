@@ -3,8 +3,6 @@ package openmap.landmark_selection;
 import openmap.framework.Graph;
 import openmap.framework.Node;
 
-import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -19,7 +17,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
         Object[] values = graph.getNodeMap().values().toArray();
         landmarksTo.clear();
         landmarksFrom.clear();
-        this.clearPreviousLandmarksFromNodes();
+        this.clearAndCreateNewArrays(k);
 
 
         Random random = new Random();
@@ -45,8 +43,8 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                 bestNodeFrom = e.getValue();
             }
         }
-        processLandmarkTo(bestNodeTo);
-        processLandmarkFrom(bestNodeFrom);
+        processLandmarkTo(bestNodeTo, 0);
+        processLandmarkFrom(bestNodeFrom, 0);
         landmarksFrom.add(bestNodeFrom);
         landmarksTo.add(bestNodeTo);
 
@@ -60,7 +58,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
             bestNodeFrom = null;
             bestNodeTo = null;
             for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-                distanceFrom = minFromDoubleList(e.getValue().getDistancesFromLandmarks());
+                distanceFrom = minFromDoubleListKFirstEntries(e.getValue().getDistancesFromLandmarks(), i-1);
 
                 if(distanceFrom == Double.MAX_VALUE){ //don't select islands
                     distanceFrom = 0;
@@ -72,7 +70,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                 }
 
 
-                distanceTo = minFromDoubleList(e.getValue().getDistancesToLandmarks());
+                distanceTo = minFromDoubleListKFirstEntries(e.getValue().getDistancesToLandmarks(), i-1);
                 if(distanceTo == Double.MAX_VALUE){ //don't select islands
                     distanceTo = 0;
                 }
@@ -82,32 +80,37 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                     bestNodeTo = e.getValue();
                 }
             }
-            processLandmarkFrom(bestNodeFrom);
+            processLandmarkFrom(bestNodeFrom, i);
             landmarksFrom.add(bestNodeFrom);
 
-            processLandmarkTo(bestNodeTo);
+            processLandmarkTo(bestNodeTo, i);
             landmarksTo.add(bestNodeTo);
         }
 
     }
 
-    private void processLandmarkFrom(Node l){
+    private void processLandmarkFrom(Node l, int i){
         pfForward.getShortestPath(l, l);
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-            e.getValue().addLandmarkDistanceFrom(e.getValue().getDistance());
+            e.getValue().setLandmarkDistanceFrom(e.getValue().getDistance(), i);
         }
     }
 
-    private void processLandmarkTo(Node l){
+    private void processLandmarkTo(Node l, int i){
         pfBackward.getShortestPath(l, l);
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-            e.getValue().addLandmarkDistanceTo(e.getValue().getDistance2());
+            e.getValue().setLandmarkDistanceTo(e.getValue().getDistance2(), i);
         }
     }
 
-    private double minFromDoubleList(List<Double> l) {
+    private double minFromDoubleListKFirstEntries(double[] arr, int k) {
         double res = Double.MAX_VALUE;
-        for(Double d : l){
+
+        if(k > arr.length) { k = arr.length;}
+
+        for(int i = 0; i <= k; i++){
+            Double d = arr[i];
+
             if(res > d){
                 res = d;
             }

@@ -24,8 +24,8 @@ public class NodeImpl extends BaseLineNodeImpl {
     private boolean visited;
     private boolean visited2;
     private List<Path> incomingPaths;
-    private List<Double> landmarkDistancesFromLandmark;
-    private List<Double> landmarkDistancesToLandmark;
+    private double[] landmarkDistancesFromLandmark;
+    private double[] landmarkDistancesToLandmark;
 
 
     /**
@@ -61,14 +61,13 @@ public class NodeImpl extends BaseLineNodeImpl {
 
     private void init() {
         incomingPaths = new ArrayList<>();
-        landmarkDistancesFromLandmark = new ArrayList<>();
-        landmarkDistancesToLandmark = new ArrayList<>();
+        landmarkDistancesFromLandmark = new double[1];
+        landmarkDistancesToLandmark = new double[1];
     }
 
     @Override
     public void addOutgoingPath(Path p){
         super.addOutgoingPath(p);
-        //p.getSource().addIncomingPath(p);
         p.getDestination().addIncomingPath(p);
     }
 
@@ -138,23 +137,29 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
-    public List<Double> getDistancesFromLandmarks() {
+    public double[] getDistancesFromLandmarks() {
         return landmarkDistancesFromLandmark;
     }
 
     @Override
-    public List<Double> getDistancesToLandmarks() {
+    public double[] getDistancesToLandmarks() {
         return landmarkDistancesToLandmark;
     }
 
     @Override
-    public void addLandmarkDistanceTo( double distToLandmark) {
-        landmarkDistancesToLandmark.add(distToLandmark);
+    public void setLandmarkDistanceTo(double distToLandmarkArr, int i) {
+        landmarkDistancesToLandmark[i] = distToLandmarkArr;
     }
 
     @Override
-    public void addLandmarkDistanceFrom(double distFromLandmark) {
-        landmarkDistancesFromLandmark.add(distFromLandmark);
+    public void setLandmarkDistanceFrom(double distFromLandmarkArr, int i) {
+        landmarkDistancesFromLandmark[i] = distFromLandmarkArr;
+    }
+
+    @Override
+    public void createNewLandmarkArrays(int k) {
+        landmarkDistancesToLandmark = new double[k];
+        landmarkDistancesFromLandmark = new double[k];
     }
 
     @Override

@@ -100,21 +100,26 @@ public class ParsingNodeImpl extends BaseLineNodeImpl {
     }
 
     @Override
-    public List<Double> getDistancesFromLandmarks() {
+    public double[] getDistancesFromLandmarks() {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 
     @Override
-    public List<Double> getDistancesToLandmarks() {
+    public double[] getDistancesToLandmarks() {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 
     @Override
-    public void addLandmarkDistanceTo(double dist) {
+    public void setLandmarkDistanceTo(double dist, int i) {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 
-    public void addLandmarkDistanceFrom(double dist) {
+    public void setLandmarkDistanceFrom(double dist, int i) {
+        throw new NotImplementedException("Not intended to be used in parsing");
+    }
+
+    @Override
+    public void createNewLandmarkArrays(int k) {
         throw new NotImplementedException("Not intended to be used in parsing");
     }
 

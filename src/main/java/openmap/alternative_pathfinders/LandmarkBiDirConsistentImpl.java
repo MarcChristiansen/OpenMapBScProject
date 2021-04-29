@@ -49,7 +49,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
-        if(source.getDistancesToLandmarks().size() == 0) {
+        if(source.getDistancesToLandmarks().length == 0) {
             System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
             FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
             fls.findLandmarks(this.defaultLandmarkAmount);
@@ -79,7 +79,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         priorityQueueBackward.add(new NodeWrapperImpl(destination, 0));
 
         for(Integer i : landmarksForward) {
-            if(source.getDistancesToLandmarks().get(i) == Double.MAX_VALUE && destination.getDistancesToLandmarks().get(i) < Double.MAX_VALUE){
+            if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
                 return null; //No path exists.
             }
         }
@@ -123,7 +123,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         for(int j = 0; j < landmarkSubsetSize; j++){
             bestLandmark = 0;
             h = 0;
-            for(int i = 0; i < source.getDistancesFromLandmarks().size(); i++){
+            for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
                 if(!landmarksForward.contains(i)){
                     landmark = i;
                     double next = hForward(source, destination, landmark);
@@ -149,7 +149,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         for(int j = 0; j < landmarkSubsetSize; j++){
             bestLandmark = 0;
             h = 0;
-            for(int i = 0; i < destination.getDistancesFromLandmarks().size(); i++){
+            for(int i = 0; i < destination.getDistancesFromLandmarks().length; i++){
                 if(!landmarksBackward.contains(i)){
                     landmark = i;
                     double next = hBackward(destination, source, landmark);
@@ -322,7 +322,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l for " + target.getDistancesToLandmarks().get(landmark));}
 
 
-        return curr.getDistancesToLandmarks().get(landmark) - target.getDistancesToLandmarks().get(landmark);
+        return curr.getDistancesToLandmarks()[landmark] - target.getDistancesToLandmarks()[landmark];
     }
 
     private double hBackward(Node curr, Node target, int landmark) {
@@ -332,7 +332,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         //if(curr.getDistancesFromLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l back " + curr.getDistancesFromLandmarks().get(landmark));}
         //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l back " + target.getDistancesToLandmarks().get(landmark));}
 
-        return  curr.getDistancesFromLandmarks().get(landmark) - target.getDistancesFromLandmarks().get(landmark);
+        return  curr.getDistancesFromLandmarks()[landmark] - target.getDistancesFromLandmarks()[landmark];
                 //curr.getDistancesFromLandmarks().get(landmark) - target.getDistancesToLandmarks().get(landmark);
     }
 

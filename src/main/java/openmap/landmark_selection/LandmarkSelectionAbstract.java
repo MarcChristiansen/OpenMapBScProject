@@ -37,10 +37,9 @@ public abstract class LandmarkSelectionAbstract implements LandmarkSelection {
     @Override
     public List<Node> getLandmarksFrom() { return landmarksFrom; }
 
-    protected void clearPreviousLandmarksFromNodes(){
+    protected void clearAndCreateNewArrays(int k){
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-            e.getValue().getDistancesFromLandmarks().clear();
-            e.getValue().getDistancesToLandmarks().clear();
+            e.getValue().createNewLandmarkArrays(k);
         }
     }
 
