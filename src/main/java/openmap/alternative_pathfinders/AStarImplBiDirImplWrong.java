@@ -178,6 +178,9 @@ public class AStarImplBiDirImplWrong implements PathFinder {
         return null;
     }
 
+    @Override
+    public void SetLandmarkSubsetSize(int i) { }
+
     private List<Node> retraceSteps(Node source, Node target, Node meet){
         List<Node> stom = new ArrayList<>();
         List<Node> mtot = new ArrayList<>();

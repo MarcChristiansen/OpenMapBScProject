@@ -85,6 +85,11 @@ public class LandmarkDijkstraImplBackard implements PathFinder {
         return null;
     }
 
+    @Override
+    public void SetLandmarkSubsetSize(int i) {
+
+    }
+
     private void runDijkstra(Node source){
         //measureable values
         int visitcount = 0;

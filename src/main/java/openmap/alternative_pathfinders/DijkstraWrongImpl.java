@@ -87,6 +87,9 @@ public class DijkstraWrongImpl implements PathFinder {
         return null;
     }
 
+    @Override
+    public void SetLandmarkSubsetSize(int i) { }
+
     private void runDijkstra(Node source, Node destination){
         //measureable values
         int visitcount = 0;
