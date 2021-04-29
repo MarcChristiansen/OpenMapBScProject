@@ -13,6 +13,12 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Implementation of a bidirectional Dijkstra algorithm
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class DijkstraBiDirImpl implements PathFinder {
 
     private Graph graph;

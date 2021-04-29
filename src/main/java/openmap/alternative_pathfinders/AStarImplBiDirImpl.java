@@ -11,6 +11,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Implementation of a consistent bidirectional A* algorithm
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class AStarImplBiDirImpl implements PathFinder {
 
     private Graph graph;

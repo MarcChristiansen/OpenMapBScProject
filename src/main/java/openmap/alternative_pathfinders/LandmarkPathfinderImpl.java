@@ -10,6 +10,12 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Landmark based pathfinding. Works in a similar way to A* but with a modified heuristic.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class LandmarkPathfinderImpl implements PathFinder {
 
     private Graph graph;

@@ -9,6 +9,12 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * Implementation of the standard A* algorithm
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class AStarImpl implements PathFinder {
 
     private Graph graph;

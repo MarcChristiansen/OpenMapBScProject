@@ -12,6 +12,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Consistent bidirectional implementation of landmarks. Quite fast in most circumstances.
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class LandmarkBiDirConsistentImpl implements PathFinder {
 
     private Graph graph;

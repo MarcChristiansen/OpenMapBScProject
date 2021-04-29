@@ -9,6 +9,12 @@ import java.util.*;
 import java.util.List;
 import java.util.function.Function;
 
+/**
+ * A funny Implementation of a bidirectional Dijkstra algorithm that really does not do what is intended
+ * @author Kristoffer Villadsen and Marc Christiansen
+ * @version 1.0
+ * @since 29-04-2021
+ */
 public class DijkstraBiDirVeryWrongImpl implements PathFinder {
 
     private Graph graph;
