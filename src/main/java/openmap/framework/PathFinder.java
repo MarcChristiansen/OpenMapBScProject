@@ -47,4 +47,6 @@ public interface PathFinder {
      * @return a list of indices of landmarks used
      */
     public List<Integer> getLandmarksUsedFrom();
+
+    public void SetLandmarkSubsetSize(int i);
 }

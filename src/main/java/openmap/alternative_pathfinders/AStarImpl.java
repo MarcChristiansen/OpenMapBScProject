@@ -66,7 +66,7 @@ public class AStarImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("A* took " + (this.executionTime) + " ms");
+        //System.out.println("A* took " + (this.executionTime) + " ms");
 
         return path;
     }
@@ -96,6 +96,9 @@ public class AStarImpl implements PathFinder {
     public List<Integer> getLandmarksUsedFrom() {
         return null;
     }
+
+    @Override
+    public void SetLandmarkSubsetSize(int i) { }
 
     private List<Node> retraceSteps(Node source){
         List<Node> res = new ArrayList<>();

@@ -276,6 +276,11 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         return landmarksBackward;
     }
 
+    @Override
+    public void SetLandmarkSubsetSize(int i) {
+        this.landmarkSubsetSize = i;
+    }
+
     private List<Node> retraceSteps(Node source, Node target, Node meet){
         List<Node> sTom = new ArrayList<>();
         List<Node> mTot = new ArrayList<>();

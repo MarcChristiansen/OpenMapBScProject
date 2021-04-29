@@ -94,6 +94,9 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
         return null;
     }
 
+    @Override
+    public void SetLandmarkSubsetSize(int i) { }
+
     private void runBiDir(Node source, Node destination) {
         //measureable values
         long start = System.currentTimeMillis();

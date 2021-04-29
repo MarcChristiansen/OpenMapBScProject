@@ -101,7 +101,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("Landmark took " + (this.executionTime) + " ms");
+        //System.out.println("Landmark took " + (this.executionTime) + " ms");
 
         return path;
     }
@@ -164,6 +164,11 @@ public class LandmarkPathfinderImpl implements PathFinder {
     @Override
     public List<Integer> getLandmarksUsedFrom() {
         return null;
+    }
+
+    @Override
+    public void SetLandmarkSubsetSize(int i) {
+        this.landmarkSubsetSize = i;
     }
 
     private List<Node> retraceSteps(Node source){

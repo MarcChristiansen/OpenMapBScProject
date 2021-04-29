@@ -48,11 +48,11 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
         landmarksFrom.add(bestNodeFrom);
         landmarksTo.add(bestNodeTo);
 
-        System.out.println("Landmark number " + 1 + " Processed");
+        //System.out.println("Landmark number " + 1 + " Processed");
 
         //find node farthest from all known landmarks
         for(int i = 1; i < k; i++){
-            System.out.println("Landmark number " + (i+1) + " Processed");
+            //System.out.println("Landmark number " + (i+1) + " Processed");
             double bestDistanceFrom= 0;
             double bestDistanceTo= 0;
             bestNodeFrom = null;
