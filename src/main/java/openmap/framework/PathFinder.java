@@ -48,5 +48,9 @@ public interface PathFinder {
      */
     public List<Integer> getLandmarksUsedFrom();
 
+    /**
+     * Set the amount of landmarks to be used on passes.
+     * @param i
+     */
     public void SetLandmarkSubsetSize(int i);
 }

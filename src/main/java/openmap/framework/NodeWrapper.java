@@ -9,6 +9,16 @@ package openmap.framework;
  * @since 017-02-2021
  */
 public interface NodeWrapper {
+
+    /**
+     * Get the node contained in this wrapper
+     * @return Node in wrapper
+     */
     public Node getNode();
+
+    /**
+     * Get the distance associated with the node in the wrapper
+     * @return Distance associated with the node in the wrapper
+     */
     public double getDist();
 }

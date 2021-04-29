@@ -86,8 +86,16 @@ public interface Node {
      */
     public void setVisited(boolean b);
 
+
+    /** Check if this was visited in a pathfinding run backwards if applicable
+     * @return Boolean indicating if this was visited
+     */
     public boolean getVisited2();
 
+    /**
+     * Set if this was visited during a pathfinding run dual pass
+     * @param b True or False depending on if this was visited.
+     */
     public void setVisited2(boolean b);
 
     /**
@@ -102,13 +110,37 @@ public interface Node {
      */
     public List<Path> getIncomingPaths();
 
+    /**
+     * Get all distances from landmark to this node
+     * @return Array of distances from landmarks
+     */
     public double[] getDistancesFromLandmarks();
 
+    /**
+     * Get all distances to landmark from this node
+     * @return Array of distances to landmarks
+     */
     public double[] getDistancesToLandmarks();
 
+    /**
+     * Set an entry for a distance to a landmark
+     * @param distToLandmarkArr The distance to set
+     * @param i The index of the landmark
+     */
     public void setLandmarkDistanceTo(double distToLandmarkArr, int i);
+
+    /**
+     * Set an entry for a distance from a landmark
+     * @param distFromLandmarkArr The distance to set
+     * @param i The index of the landmark
+     */
     public void setLandmarkDistanceFrom(double distFromLandmarkArr, int i);
 
+    /**
+     * Create new arrays for containing landmark info
+     * Useful to reset landmarks or if the amount of landmarks changed
+     * @param k The amount of landmarks to use
+     */
     public void createNewLandmarkArrays(int k);
 
     /**
