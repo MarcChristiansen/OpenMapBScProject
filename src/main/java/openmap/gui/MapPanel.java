@@ -284,6 +284,7 @@ class MapPanel extends JPanel {
 
         if(landmarkListTo != null && shouldVisualizeLandmark) { tileMap.drawLandmarks(panX, panY, zoomFactor,  g, landmarkListTo, landmarksUsedTo, landmarkListFrom, landmarksUsedFrom); }
 
+
         g.setTransform(matrix); // Restore original transformation
 
     }

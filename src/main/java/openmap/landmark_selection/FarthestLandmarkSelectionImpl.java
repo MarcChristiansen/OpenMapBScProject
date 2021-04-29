@@ -47,19 +47,20 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
         }
         processLandmarkTo(bestNodeTo);
         processLandmarkFrom(bestNodeFrom);
-        landmarksTo.add(bestNodeTo);
         landmarksFrom.add(bestNodeFrom);
+        landmarksTo.add(bestNodeTo);
+
         System.out.println("Landmark number " + 1 + " Processed");
 
         //find node farthest from all known landmarks
         for(int i = 1; i < k; i++){
             System.out.println("Landmark number " + (i+1) + " Processed");
-            distanceFrom = 0;
             double bestDistanceFrom= 0;
             double bestDistanceTo= 0;
             bestNodeFrom = null;
+            bestNodeTo = null;
             for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-                distanceFrom += minFromDoubleList(e.getValue().getDistancesFromLandmarks());
+                distanceFrom = minFromDoubleList(e.getValue().getDistancesFromLandmarks());
 
                 if(distanceFrom == Double.MAX_VALUE){ //don't select islands
                     distanceFrom = 0;
@@ -71,7 +72,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                 }
 
 
-                distanceTo= minFromDoubleList(e.getValue().getDistancesToLandmarks());
+                distanceTo = minFromDoubleList(e.getValue().getDistancesToLandmarks());
                 if(distanceTo == Double.MAX_VALUE){ //don't select islands
                     distanceTo = 0;
                 }

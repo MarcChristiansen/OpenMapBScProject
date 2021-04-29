@@ -130,7 +130,7 @@ public class QuadTileMapImpl implements TileMap {
 
         if (landmarkListFrom != null) {
 
-            for (Node currentNode : landmarkListTo) {
+            for (Node currentNode : landmarkListFrom) {
                 g.setColor(Color.ORANGE);
                 g.fillRect((int) (currentNode.getX()-5/zoomFactor),
                         (int) (currentNode.getY()-5/zoomFactor),
@@ -143,7 +143,7 @@ public class QuadTileMapImpl implements TileMap {
 
         for (Node currentNode : landmarksUsedTo) {
 
-            g.setColor(Color.RED);
+            g.setColor(Color.BLUE);
             g.fillRect((int) (currentNode.getX()-3/zoomFactor),
                     (int) (currentNode.getY()-3/zoomFactor),
                     (int)(6/zoomFactor),
