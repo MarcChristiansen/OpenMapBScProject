@@ -61,8 +61,8 @@ public class NodeImpl extends BaseLineNodeImpl {
 
     private void init() {
         incomingPaths = new ArrayList<>();
-        landmarkDistancesFromLandmark = new double[1];
-        landmarkDistancesToLandmark = new double[1];
+        landmarkDistancesFromLandmark = new double[0];
+        landmarkDistancesToLandmark = new double[0];
     }
 
     @Override

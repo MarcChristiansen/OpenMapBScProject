@@ -58,7 +58,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
             bestNodeFrom = null;
             bestNodeTo = null;
             for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-                distanceFrom = minFromDoubleListKFirstEntries(e.getValue().getDistancesFromLandmarks(), i-1);
+                distanceFrom = minFromDoubleListKFirstEntries(e.getValue().getDistancesFromLandmarks(), i);
 
                 if(distanceFrom == Double.MAX_VALUE){ //don't select islands
                     distanceFrom = 0;
@@ -70,7 +70,8 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                 }
 
 
-                distanceTo = minFromDoubleListKFirstEntries(e.getValue().getDistancesToLandmarks(), i-1);
+                distanceTo = minFromDoubleListKFirstEntries(e.getValue().getDistancesToLandmarks(), i);
+
                 if(distanceTo == Double.MAX_VALUE){ //don't select islands
                     distanceTo = 0;
                 }
@@ -80,11 +81,15 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
                     bestNodeTo = e.getValue();
                 }
             }
+            System.out.println(i);
+
             processLandmarkFrom(bestNodeFrom, i);
             landmarksFrom.add(bestNodeFrom);
 
             processLandmarkTo(bestNodeTo, i);
             landmarksTo.add(bestNodeTo);
+            System.out.println(((Node)(values[random.nextInt(values.length)])).getDistancesFromLandmarks()[i]);
+            System.out.println(((Node)(values[random.nextInt(values.length)])).getDistancesToLandmarks()[i]);
         }
 
     }
@@ -108,7 +113,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
         if(k > arr.length) { k = arr.length;}
 
-        for(int i = 0; i <= k; i++){
+        for(int i = 0; i < k; i++){
             Double d = arr[i];
 
             if(res > d){
