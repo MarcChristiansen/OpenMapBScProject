@@ -23,12 +23,12 @@ public class StandardPathImpl implements Path, Serializable {
 
     Node destination;
     Node source;
-    double weight;
+    float weight;
 
 
-    public StandardPathImpl(Node destination, Node source, Double weight){
+    public StandardPathImpl(Node destination, Node source, double weight){
         this.destination = destination;
-        this.weight = weight;
+        this.weight = (float)weight;
         this.source = source;
 
     }
