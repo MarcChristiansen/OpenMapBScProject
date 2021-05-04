@@ -1,4 +1,4 @@
-package openmap.runnable;
+package openmap.benchmarks;
 
 import crosby.binary.osmosis.OsmosisReader;
 import openmap.parsing.ParsingUtil;
