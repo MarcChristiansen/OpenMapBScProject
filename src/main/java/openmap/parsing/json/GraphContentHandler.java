@@ -3,6 +3,7 @@ package openmap.parsing.json;
 
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import openmap.framework.Bounds;
 import openmap.framework.Node;
@@ -34,7 +35,7 @@ public class GraphContentHandler implements ContentHandler {
         nodeList = new ArrayList<>();
         objectMap = new HashMap<>();
         objectStack = new ArrayDeque<>();
-        pathList = new ArrayList<>();
+        pathList = new CopyOnWriteArrayList<>();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class GraphContentHandler implements ContentHandler {
 
             case JsonGraphConstants.GraphNodes:
                 nodeList.add(new NodeImpl((Long)objectMap.get(JsonGraphConstants.NodeId), (double)objectMap.get(JsonGraphConstants.NodeX), (double)objectMap.get(JsonGraphConstants.NodeY), pathList));
-                pathList = new ArrayList<>();
+                pathList = new CopyOnWriteArrayList<>();
                 break;
 
             case JsonGraphConstants.NodePath:

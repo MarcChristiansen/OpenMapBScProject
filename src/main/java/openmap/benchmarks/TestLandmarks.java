@@ -1,4 +1,4 @@
-package openmap.runnable;
+package openmap.benchmarks;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;

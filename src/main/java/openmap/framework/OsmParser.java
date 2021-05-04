@@ -48,6 +48,4 @@ public interface OsmParser {
      */
     public void CacheWays(boolean shouldCacheWays);
 
-
-
 }
