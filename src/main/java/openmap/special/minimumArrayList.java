@@ -60,7 +60,6 @@ import java.util.function.UnaryOperator;
  * @param <E> the type of elements held in this list
  */
 public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializable {
-    private static final long serialVersionUID = 8673264195747942595L;
 
     /** The array, accessed only via getArray/setArray. */
     private transient volatile Object[] array;

@@ -36,8 +36,10 @@ public class QuadTileMapImpl implements TileMap {
         for (Map.Entry<Long, Node> entry: graph.getNodeMap().entrySet()) {
             rootTile.addNode(entry.getValue());
         }
-        rootTile.preRenderCacheImages();
 
+        rootTile.trimListsToSize();
+
+        rootTile.preRenderCacheImages();
     }
 
     @Override
