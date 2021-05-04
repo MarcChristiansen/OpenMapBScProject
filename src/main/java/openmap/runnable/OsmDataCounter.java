@@ -1,9 +1,7 @@
 package openmap.runnable;
 
 import crosby.binary.osmosis.OsmosisReader;
-import openmap.framework.Node;
 import openmap.parsing.ParsingUtil;
-import openmap.special.ParsingNodeImpl;
 import openmap.utility.ConsoleUtils;
 import openmap.utility.LatexUtility;
 import org.openstreetmap.osmosis.core.container.v0_6.EntityContainer;
@@ -19,25 +17,48 @@ import java.util.*;
 
 public class OsmDataCounter {
     public static void main(String[] args) throws IOException {
-        String fileIn;
+        String fileIn = "";
         String wayTypeListSelection;
-        if(args != null && args.length == 2){
-            fileIn = args[0];
+        boolean single = false;
+        if(args != null && args.length > 1){
             wayTypeListSelection = args[1];
-
         }
         else{
+            single = true;
+
             fileIn = ConsoleUtils.readLine(
                     "Enter pbf path : ");
 
             wayTypeListSelection = ConsoleUtils.readLine(
                     "Enter path type set (normal or mini) : ");
+
+
         }
 
-        OsmiumCounter counter = new OsmiumCounter(ParsingUtil.getAllowedValues(wayTypeListSelection));
-        runReaderWithSink(counter, fileIn);
 
-        System.out.println("###### Counts recorded for file: " +fileIn+ " ######");
+        List<List<String>> tableRows = new ArrayList<>();
+        String[] names = {"Kort", "\\# Elementer", /*"Antal knuder", "Antal veje", "Antal relationer",*/ "\\# Vejelementer", /* "\\# Knuder", "\\# Veje",*/ "Vejrelateret (\\%)"};
+        tableRows.add(Arrays.asList(names));
+
+        if(single){
+            OsmiumCounter counter = getFinishedOsmiumCounter(fileIn, wayTypeListSelection);
+            tableRows.add(getEntry(fileIn , counter));
+            printFinishedCounter(fileIn, counter);
+        }
+        else{
+            for (int i = 1; i < args.length; i++) {
+                OsmiumCounter counter = getFinishedOsmiumCounter(args[i], wayTypeListSelection);
+                tableRows.add(getEntry(args[i], counter));
+            }
+        }
+
+        System.out.println("\n###### Latex full table ######");
+        System.out.println(LatexUtility.generateStandardTable(tableRows));
+
+    }
+
+    private static void printFinishedCounter(String fileIn, OsmiumCounter counter) {
+        System.out.println("###### Counts recorded for file: " + fileIn + " ######");
         System.out.println("Total:     " + counter.getTotalCount());
         System.out.println("Nodes:     " + counter.getNodeCount());
         System.out.println("Ways:      " + counter.getWayCount());
@@ -49,32 +70,34 @@ public class OsmDataCounter {
         System.out.println("Relevant ways:  " + counter.getRelevantWayCount());
 
         System.out.println("\n###### Percentages ######");
-        double totalPercentage = (double)(counter.getTotalRelevantCount())/(double)counter.getTotalCount()*100;
-        System.out.println("Total relevant percentage: " + totalPercentage);
+
+        System.out.println("Total relevant percentage: " + (double)(counter.getTotalRelevantCount())/(double) counter.getTotalCount()*100);
 
         System.out.println("\n###### Latex row ######");
+    }
 
-        String[] names = {"Elementer", /*"Antal knuder", "Antal veje", "Antal relationer",*/ "Relevante elementer", "Relevante knuder", "Relevante veje", "Relevant (\\%)"};
+    private static List<String> getEntry(String name, OsmiumCounter counter) {
+        double totalPercentage = (double)(counter.getTotalRelevantCount())/(double) counter.getTotalCount()*100;
 
-        String[] entries = {Long.toString(counter.getTotalCount()),
-                            //Long.toString(counter.getNodeCount()),
-                            //Long.toString(counter.getWayCount()),
-                            //Long.toString(counter.getRelationCount()),
-                            Long.toString(counter.getTotalRelevantCount()),
-                            Long.toString(counter.getRelevantNodeCount()),
-                            Long.toString(counter.getRelevantWayCount()),
-                            String.format(Locale.GERMANY,"%.2f", totalPercentage)+"\\%"};
+        String[] nameArr = name.split("\\\\");
+        String finalName = nameArr[nameArr.length-1];
 
-        System.out.println(LatexUtility.generateTableRow(Arrays.asList(names)));
-        System.out.println(LatexUtility.generateTableRow(Arrays.asList(entries)));
+        String[] entries = {finalName,
+                Long.toString(counter.getTotalCount()),
+                //Long.toString(counter.getNodeCount()),
+                //Long.toString(counter.getWayCount()),
+                //Long.toString(counter.getRelationCount()),
+                Long.toString(counter.getTotalRelevantCount()),
+                //Long.toString(counter.getRelevantNodeCount()),
+                //Long.toString(counter.getRelevantWayCount()),
+                String.format(Locale.GERMANY,"%.2f", totalPercentage)+"\\%"};
+        return Arrays.asList(entries);
+    }
 
-        System.out.println("\n###### Latex full table ######");
-        List<List<String>> tableRows = new ArrayList<>();
-        tableRows.add(Arrays.asList(names));
-        tableRows.add(Arrays.asList(entries));
-
-        System.out.println(LatexUtility.generateStandardTable(tableRows));
-
+    private static OsmiumCounter getFinishedOsmiumCounter(String fileIn, String wayTypeListSelection) {
+        OsmiumCounter counter = new OsmiumCounter(ParsingUtil.getAllowedValues(wayTypeListSelection));
+        runReaderWithSink(counter, fileIn);
+        return counter;
     }
 
     private static void runReaderWithSink(Sink sink, String fileIn) {
