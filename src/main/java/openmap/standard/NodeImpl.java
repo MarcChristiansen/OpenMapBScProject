@@ -6,6 +6,7 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Standard node implementation extending baseline node.
@@ -60,7 +61,7 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     private void init() {
-        incomingPaths = new ArrayList<>();
+        incomingPaths = new CopyOnWriteArrayList<>();
         landmarkDistancesFromLandmark = new double[0];
         landmarkDistancesToLandmark = new double[0];
     }
