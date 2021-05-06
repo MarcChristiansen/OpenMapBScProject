@@ -278,9 +278,10 @@ class MapPanel extends JPanel {
 
         tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor,  g);
 
+        if(highlightedNodeList != null) { tileMap.drawHighlightedPath(panX, panY, zoomFactor,  g, highlightedNodeList); }
+
         if(shouldVisualizePathfinder){ tileMap.visualizePathFinderNodeUsage(panX, panY, zoomFactor, pathFinder.getVisitedCheckFunction(), g); }
 
-        if(highlightedNodeList != null) { tileMap.drawHighlightedPath(panX, panY, zoomFactor,  g, highlightedNodeList); }
 
         if(landmarkListTo != null && shouldVisualizeLandmark) { tileMap.drawLandmarks(panX, panY, zoomFactor,  g, landmarkListTo, landmarksUsedTo, landmarkListFrom, landmarksUsedFrom); }
 
