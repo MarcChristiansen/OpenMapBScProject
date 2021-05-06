@@ -2,6 +2,7 @@ package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -15,12 +16,10 @@ import java.util.function.Function;
  * @version 1.0
  * @since 29-04-2021
  */
-public class DijkstraBiDirVeryWrongImpl implements PathFinder {
+public class DijkstraBiDirVeryWrongImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> forwardQueue;
     private PriorityQueue<NodeWrapper> backwardQueue;
-    private int visitCount;
     private double shortestDistance = Double.MAX_VALUE;
     private Node midNode = null;
     //private Map<Long, Long> predecessor;
@@ -30,11 +29,9 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
     private long executionTime;
 
     public DijkstraBiDirVeryWrongImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         forwardQueue = new PriorityQueue<NodeWrapper>();
         backwardQueue = new PriorityQueue<NodeWrapper>();
-        visitCount = 0;
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
         //visited = new HashSet<Node>();
@@ -48,7 +45,8 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
         backwardQueue.clear();
         midNode = null;
         shortestDistance = Double.MAX_VALUE;
-        visitCount = 0;
+        nodesVisited = 0;
+        nodesScanned = 0;
         runBiDir(source, destination);
         List<Node> result = new ArrayList<>();
 
@@ -67,11 +65,6 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
     }
 
     @Override
-    public long getLastExecutionTime() {
-        return executionTime;
-    }
-
-    @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
         return ((Node n) -> {
             if(n.getDistance() < Double.MAX_VALUE){
@@ -83,19 +76,6 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
             return new NodeDrawingInfo(false, null);
         });
     }
-
-    @Override
-    public List<Integer> getLandmarksUsedTo() {
-        return null;
-    }
-
-    @Override
-    public List<Integer> getLandmarksUsedFrom() {
-        return null;
-    }
-
-    @Override
-    public void SetLandmarkSubsetSize(int i) { }
 
     private void runBiDir(Node source, Node destination) {
         //measureable values
@@ -149,7 +129,7 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
             }
 
             if (!forNode.getNode().getVisited() || forNode.getNode().getPredecessor() == null) {
-                visitCount++;
+                nodesVisited++;
                 forNode.getNode().setVisited(true);
 
                 //Go through all paths
@@ -164,10 +144,13 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
                         //add predecessor for the node
                         path.getDestination().setPredecessor(forNode.getNode());
                         path.getDestination().setDistance(newDistance);
+
+                        //add to priority queue
+                        nodesScanned++;
+                        forwardQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
                     }
 
-                    //add to priority queue
-                    forwardQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
+
                 }
             }
 
@@ -205,7 +188,7 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
             }
 
             if (!backNode.getNode().getVisited() || backNode.getNode().getPredecessor2() == null) {
-                visitCount++;
+                nodesVisited++;
                 backNode.getNode().setVisited(true);
 
                 //Go through all incoming paths
@@ -250,8 +233,8 @@ public class DijkstraBiDirVeryWrongImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("Dijkstra visited " + visitCount + " nodes");
-        System.out.println("Dijkstra took " + (finish - start) + " ms");
+        //System.out.println("Dijkstra visited " + visitCount + " nodes");
+        //System.out.println("Dijkstra took " + (finish - start) + " ms");
     }
 
 

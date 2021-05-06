@@ -31,6 +31,18 @@ public interface PathFinder {
     public long getLastExecutionTime();
 
     /**
+     * Get the amount nodes visited during the last execution of the algorithm
+     * @return an integer representing the nodes visited during the last execution of the algorithm
+     */
+    public int getNodesVisited();
+
+    /**
+     * Get the amount nodes which were added to the priorityqueue during last execution of the algorithm
+     * @return an integer representing the nodes added to the priorityqueue during the last execution of the algorithm
+     */
+    public int getNodesScanned();
+
+    /**
      * Function to test if given node was visited during run of this pathfinder.
      * @return Function to be used to see if node should be drawn and what color
      */

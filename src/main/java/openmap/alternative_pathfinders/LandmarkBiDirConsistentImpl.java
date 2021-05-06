@@ -3,6 +3,7 @@ package openmap.alternative_pathfinders;
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
 import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -18,13 +19,11 @@ import java.util.stream.Stream;
  * @version 1.0
  * @since 29-04-2021
  */
-public class LandmarkBiDirConsistentImpl implements PathFinder {
+public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueueForward;
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
-    private long executionTime;
     private int landmarkSubsetSize = 2;
     private int defaultLandmarkAmount = 20;
     private List<Integer> landmarksForward;
@@ -38,8 +37,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
     }
 
     public LandmarkBiDirConsistentImpl(Graph graph, int defaultLandmarkAmount){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueueForward = new PriorityQueue<>();
         priorityQueueBackward = new PriorityQueue<>();
         landmarksForward = new ArrayList<>();
@@ -64,6 +62,8 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
 
         //Initial setup
         long start = System.currentTimeMillis();
+        nodesVisited = 0;
+        nodesScanned = 0;
 
         if(source == destination){
             return Collections.singletonList(source);
@@ -90,6 +90,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
+            nodesVisited += 2;
 
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
                 break;
@@ -174,6 +175,7 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
                 pathDest.setDistance(totalWeight);
                 pathDest.setPredecessor(currNodeW.getNode());
 
+                nodesScanned++;
                 priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight + pForward(source, destination, pathDest))); //Pt + Ps should be zero
             }
 
@@ -194,6 +196,8 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
             if(totalWeight < pathDest.getDistance2()) {
                 pathDest.setDistance2(totalWeight);
                 pathDest.setPredecessor2(currNodeW.getNode());
+
+                nodesScanned++;
                 priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + pBackward(source, destination, pathDest))); //Pt + Ps should be zero
             }
 
@@ -246,11 +250,6 @@ public class LandmarkBiDirConsistentImpl implements PathFinder {
             }
         }
         return h;
-    }
-
-    @Override
-    public long getLastExecutionTime() {
-        return executionTime;
     }
 
     @Override

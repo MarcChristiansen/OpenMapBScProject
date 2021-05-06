@@ -6,6 +6,7 @@ import openmap.framework.Path;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -19,26 +20,19 @@ import java.util.function.Function;
  * @version 1.0
  * @since 29-04-2021
  */
-public class DijkstraBiDirImpl implements PathFinder {
+public class DijkstraBiDirImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> forwardQueue;
     private PriorityQueue<NodeWrapper> backwardQueue;
-    private int visitCount;
     private double shortestDistance = Double.MAX_VALUE;
     private Node midNode = null;
-    //private Map<Long, Long> predecessor;
-    //private Map<Long, Double> distance;
-    //private Set<Node> visited;
     private Long source = null;
     private long executionTime;
 
     public DijkstraBiDirImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         forwardQueue = new PriorityQueue<NodeWrapper>();
         backwardQueue = new PriorityQueue<NodeWrapper>();
-        visitCount = 0;
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
         //visited = new HashSet<Node>();
@@ -52,7 +46,8 @@ public class DijkstraBiDirImpl implements PathFinder {
         backwardQueue.clear();
         midNode = null;
         shortestDistance = Double.MAX_VALUE;
-        visitCount = 0;
+        nodesScanned = 0;
+        nodesVisited = 0;
         runBiDir(source, destination);
         List<Node> result = new ArrayList<>();
 
@@ -134,7 +129,7 @@ public class DijkstraBiDirImpl implements PathFinder {
 
             Node currNode = forNode.getNode();
             if (!currNode.getVisited()) {
-                visitCount++;
+                nodesVisited++;
                 currNode.setVisited(true);
 
                 //Go through all paths
@@ -153,18 +148,17 @@ public class DijkstraBiDirImpl implements PathFinder {
                                 midNode = path.getDestination();
                             }
                         }
+
+                        //add to priority queue
+                        nodesScanned++;
+                        forwardQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
                     }
-
-
-
-                    //add to priority queue
-                    forwardQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
                 }
             }
 
             currNode = backNode.getNode();
             if (!currNode.getVisited2()) {
-                visitCount++;
+                nodesVisited++;
                 currNode.setVisited2(true);
 
                 //Go through all incoming paths
@@ -184,12 +178,15 @@ public class DijkstraBiDirImpl implements PathFinder {
                                 midNode = path.getSource();
                             }
                         }
+
+                        //add to priority queue
+                        nodesScanned++;
+                        backwardQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
                     }
 
 
 
-                    //add to priority queue
-                    backwardQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
+
                 }
             }
         }
@@ -215,8 +212,8 @@ public class DijkstraBiDirImpl implements PathFinder {
 
         long finish = System.currentTimeMillis();
         executionTime = finish - start;
-        System.out.println("Bidirectional Dijkstra visited " + visitCount + " nodes");
-        System.out.println("Bidirectional Dijkstra took " + (finish - start) + " ms");
+        //System.out.println("Bidirectional Dijkstra visited " + visitCount + " nodes");
+        //System.out.println("Bidirectional Dijkstra took " + (finish - start) + " ms");
     }
 
     private void clearDistanceAndPredecessor(){

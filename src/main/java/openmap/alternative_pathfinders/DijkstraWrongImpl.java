@@ -4,6 +4,7 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.AbstractPathfinder;
 
 import java.awt.*;
 import java.util.*;
@@ -19,19 +20,14 @@ import java.util.function.Function;
  * @version 1.0
  * @since 25-02-2021
  */
-public class DijkstraWrongImpl implements PathFinder {
+public class DijkstraWrongImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<Node> priorityQueue;
-    //private Map<Long, Long> predecessor;
-    //private Map<Long, Double> distance;
     private Set<Node> visited;
     private Node source = null;
-    private long executionTime;
 
     public DijkstraWrongImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueue = new PriorityQueue<Node>();
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
@@ -44,6 +40,8 @@ public class DijkstraWrongImpl implements PathFinder {
         clearDistanceAndPredecessor();
         visited.clear();
         priorityQueue.clear();
+        nodesVisited = 0;
+        nodesScanned = 0;
         runDijkstra(source, destination);
 
         List<Node> result = new ArrayList<>();
@@ -62,11 +60,6 @@ public class DijkstraWrongImpl implements PathFinder {
     }
 
     @Override
-    public long getLastExecutionTime() {
-        return executionTime;
-    }
-
-    @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
         return ((Node n) -> {
             if(n.getDistance() < Double.MAX_VALUE){
@@ -77,22 +70,8 @@ public class DijkstraWrongImpl implements PathFinder {
         });
     }
 
-    @Override
-    public List<Integer> getLandmarksUsedTo() {
-        return null;
-    }
-
-    @Override
-    public List<Integer> getLandmarksUsedFrom() {
-        return null;
-    }
-
-    @Override
-    public void SetLandmarkSubsetSize(int i) { }
-
     private void runDijkstra(Node source, Node destination){
         //measureable values
-        int visitcount = 0;
         long start = System.currentTimeMillis();
 
         //add source to priority queue with distance 0
@@ -111,7 +90,7 @@ public class DijkstraWrongImpl implements PathFinder {
                 finished = true;
             }
             else if(!visited.contains(currNode)){
-                visitcount++;
+                nodesVisited++;
                 //Add node to visited
                 visited.add(currNode);
 
@@ -124,17 +103,20 @@ public class DijkstraWrongImpl implements PathFinder {
                         path.getDestination().setDistance(newDistance);
                         //add predecessor for the node
                         path.getDestination().setPredecessor(currNode);
+
+                        //add to priority queue
+                        nodesScanned++;
+                        priorityQueue.add(path.getDestination());
                     }
 
-                    //add to priority queue
-                    priorityQueue.add(path.getDestination());
+
                 });
             }
         }
         long finish = System.currentTimeMillis();
         this.executionTime = finish - start;
-        System.out.println("Dijkstra wrong visited " + visitcount + " nodes");
-        System.out.println("Dijkstra wrong took " + (finish - start) + " ms");
+        //System.out.println("Dijkstra wrong visited " + visitcount + " nodes");
+        //System.out.println("Dijkstra wrong took " + (finish - start) + " ms");
     }
 
     private void clearDistanceAndPredecessor(){

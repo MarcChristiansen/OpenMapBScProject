@@ -3,6 +3,7 @@ package openmap.alternative_pathfinders;
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
 import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -16,13 +17,11 @@ import java.util.function.Function;
  * @version 1.0
  * @since 29-04-2021
  */
-public class LandmarkPathfinderImpl implements PathFinder {
+public class LandmarkPathfinderImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
 
     private Node currTarget;
-    private long executionTime;
     private int landmarkSubsetSize = 2;
     private int defaultLandmarkAmount;
     private List<Integer> landmarks;
@@ -34,8 +33,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
     }
 
     public LandmarkPathfinderImpl(Graph graph, int defaultLandmarkAmount){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueue = new PriorityQueue<NodeWrapper>();
         landmarks = new ArrayList<Integer>();
         this.defaultLandmarkAmount = defaultLandmarkAmount;
@@ -58,6 +56,8 @@ public class LandmarkPathfinderImpl implements PathFinder {
 
         //Initial setup
         long start = System.currentTimeMillis();
+        nodesVisited = 0;
+        nodesScanned = 0;
         List<Node> path = null;
         currTarget = destination;
 
@@ -78,7 +78,7 @@ public class LandmarkPathfinderImpl implements PathFinder {
         NodeWrapper currNodeW = null;
         while (!priorityQueue.isEmpty()){
             currNodeW = priorityQueue.poll();
-
+            nodesVisited++;
 
             if(currNodeW.getNode() == currTarget){
                 path = retraceSteps(source);
@@ -94,6 +94,8 @@ public class LandmarkPathfinderImpl implements PathFinder {
                     pathDest.setDistance(totalWeight);
                     pathDest.setPredecessor(currNodeW.getNode());
                     h = getLowerbound(pathDest);
+
+                    nodesScanned++;
                     priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h));
                 }
             }
@@ -138,11 +140,6 @@ public class LandmarkPathfinderImpl implements PathFinder {
             }
             landmarks.add(bestLandmark);
         }
-    }
-
-    @Override
-    public long getLastExecutionTime() {
-        return executionTime;
     }
 
     @Override

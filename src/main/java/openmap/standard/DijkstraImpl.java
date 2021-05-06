@@ -19,20 +19,13 @@ import java.util.function.Predicate;
  * @version 1.0
  * @since 25-02-2021
  */
-public class DijkstraImpl implements PathFinder {
+public class DijkstraImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
-    private long executionTime;
 
     public DijkstraImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueue = new PriorityQueue<NodeWrapper>();
-        //predecessor = new HashMap<Long, Long>();
-        //distance = new HashMap<Long, Double>();
-        //visited = new HashSet<Node>();
-
     }
 
     @Override
@@ -60,11 +53,6 @@ public class DijkstraImpl implements PathFinder {
     }
 
     @Override
-    public long getLastExecutionTime() {
-        return executionTime;
-    }
-
-    @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
         return ((Node n) -> {
             if(n.getDistance() < Double.MAX_VALUE){
@@ -75,22 +63,10 @@ public class DijkstraImpl implements PathFinder {
         });
     }
 
-    @Override
-    public List<Integer> getLandmarksUsedTo() {
-        return null;
-    }
-
-    @Override
-    public List<Integer> getLandmarksUsedFrom() {
-        return null;
-    }
-
-    @Override
-    public void SetLandmarkSubsetSize(int i) { }
-
     private void runDijkstra(Node source, Node destination){
         //measureable values
-        int visitcount = 0;
+        nodesVisited = 0;
+        nodesScanned = 0;
         long start = System.currentTimeMillis();
 
         //add source to priority queue with distance 0
@@ -106,7 +82,7 @@ public class DijkstraImpl implements PathFinder {
             }
 
             if(!currNode.getNode().getVisited()){
-                visitcount++;
+                nodesVisited++; //update visited nodes
 
                 //give first node predecessor
                 currNode.getNode().setVisited(true);
@@ -119,10 +95,13 @@ public class DijkstraImpl implements PathFinder {
                         path.getDestination().setDistance(newDistance);
                         //add predecessor for the node
                         path.getDestination().setPredecessor(currNode.getNode());
+
+                        //add to priority queue
+                        nodesScanned++; //update scanned nodes
+                        priorityQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
                     }
 
-                    //add to priority queue
-                    priorityQueue.add(new NodeWrapperImpl(path.getDestination(), path.getDestination().getDistance()));
+
                 });
             }
         }

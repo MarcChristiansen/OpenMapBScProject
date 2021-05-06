@@ -2,6 +2,7 @@ package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -15,17 +16,14 @@ import java.util.function.Function;
  * @version 1.0
  * @since 29-04-2021
  */
-public class AStarImpl implements PathFinder {
+public class AStarImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
 
     private Node currTarget;
-    private long executionTime;
 
     public AStarImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueue = new PriorityQueue<NodeWrapper>();
     }
 
@@ -36,6 +34,8 @@ public class AStarImpl implements PathFinder {
         priorityQueue.clear();
 
         //Initial setup
+        nodesVisited = 0;
+        nodesScanned = 0;
         long start = System.currentTimeMillis();
         List<Node> path = null;
         currTarget = destination;
@@ -45,6 +45,7 @@ public class AStarImpl implements PathFinder {
         NodeWrapper currNodeW = null;
         while (!priorityQueue.isEmpty()){
             currNodeW = priorityQueue.poll();
+            nodesVisited++;
 
             if(currNodeW.getNode() == currTarget){
                 path = retraceSteps(source);
@@ -59,6 +60,8 @@ public class AStarImpl implements PathFinder {
                 if(totalWeight < pathDest.getDistance()) {
                     pathDest.setDistance(totalWeight);
                     pathDest.setPredecessor(currNodeW.getNode());
+
+                    nodesScanned++;
                     priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h(pathDest)));
                 }
             }
@@ -72,11 +75,6 @@ public class AStarImpl implements PathFinder {
     }
 
     @Override
-    public long getLastExecutionTime() {
-        return executionTime;
-    }
-
-    @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
         return ((Node n) -> {
             if(n.getDistance() < Double.MAX_VALUE){
@@ -86,19 +84,6 @@ public class AStarImpl implements PathFinder {
             return new NodeDrawingInfo(false, null);
         });
     }
-
-    @Override
-    public List<Integer> getLandmarksUsedTo() {
-        return null;
-    }
-
-    @Override
-    public List<Integer> getLandmarksUsedFrom() {
-        return null;
-    }
-
-    @Override
-    public void SetLandmarkSubsetSize(int i) { }
 
     private List<Node> retraceSteps(Node source){
         List<Node> res = new ArrayList<>();
