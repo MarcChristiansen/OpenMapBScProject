@@ -5,6 +5,7 @@ import openmap.framework.Node;
 import openmap.framework.Path;
 import openmap.gui.framework.MapTile;
 import openmap.standard.BoundsImpl;
+import org.w3c.dom.NodeList;
 
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
@@ -26,8 +27,8 @@ import java.awt.*;
 public class QuadTile implements MapTile {
     QuadTile[] children = new QuadTile[4]; //Quadtile has 4 children, given the name this fits...
     Image cacheImage;
-    List<Node> nodeList;
-    List<Node> overlappingNodeList;
+    ArrayList<Node> nodeList;
+    ArrayList<Node> overlappingNodeList;
     double zoomFactor;
     byte layer;
     byte maxLayer;
@@ -533,5 +534,23 @@ public class QuadTile implements MapTile {
 
     public void setCheckOverlap(boolean flag){
         checkOverlap = flag;
+    }
+
+    public void trimListsToSize(){
+        nodeList.trimToSize();
+        overlappingNodeList.trimToSize();
+
+        if(children[0] != null ){
+            children[0].trimListsToSize();
+        }
+        if(children[1] != null){
+            children[1].trimListsToSize();
+        }
+        if(children[2] != null){
+            children[2].trimListsToSize();
+        }
+        if(children[3] != null){
+            children[3].trimListsToSize();
+        }
     }
 }

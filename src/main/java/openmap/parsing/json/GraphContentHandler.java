@@ -8,6 +8,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import openmap.framework.Bounds;
 import openmap.framework.Node;
 import openmap.framework.Path;
+import openmap.special.minimumArrayList;
 import openmap.standard.BoundsImpl;
 import openmap.special.DecodingPathImpl;
 import openmap.standard.NodeImpl;
@@ -61,7 +62,7 @@ public class GraphContentHandler implements ContentHandler {
 
             case JsonGraphConstants.GraphNodes:
                 nodeList.add(new NodeImpl((Long)objectMap.get(JsonGraphConstants.NodeId), (double)objectMap.get(JsonGraphConstants.NodeX), (double)objectMap.get(JsonGraphConstants.NodeY), pathList));
-                pathList = new CopyOnWriteArrayList<>();
+                pathList = new minimumArrayList<>();
                 break;
 
             case JsonGraphConstants.NodePath:
