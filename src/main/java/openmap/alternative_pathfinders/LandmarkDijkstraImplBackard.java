@@ -22,7 +22,6 @@ import java.util.function.Function;
  */
 public class LandmarkDijkstraImplBackard extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
     private long executionTime;
 

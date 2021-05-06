@@ -204,9 +204,12 @@ public class DijkstraBiDirVeryWrongImpl extends AbstractPathfinder {
                         //add predecessor for the node
                         path.getSource().setPredecessor2(backNode.getNode());
                         path.getSource().setDistance2(newDistance);
+
+
                     }
 
                     //add to priority queue
+                    nodesScanned++;
                     backwardQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance()));
                 }
             }
