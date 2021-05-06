@@ -5,6 +5,7 @@ import openmap.framework.Node;
 import openmap.framework.NodeWrapper;
 import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -19,15 +20,13 @@ import java.util.function.Function;
  * @version 1.0
  * @since 25-02-2021
  */
-public class LandmarkDijkstraImplBackard implements PathFinder {
+public class LandmarkDijkstraImplBackard extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueue;
     private long executionTime;
 
     public LandmarkDijkstraImplBackard(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueue = new PriorityQueue<NodeWrapper>();
         //predecessor = new HashMap<Long, Long>();
         //distance = new HashMap<Long, Double>();
@@ -41,6 +40,8 @@ public class LandmarkDijkstraImplBackard implements PathFinder {
         clearDistanceAndPredecessor();
         //visited.clear();
         priorityQueue.clear();
+        nodesVisited = 0;
+        nodesScanned = 0;
         runDijkstra(source); //Runs both an incoming and a reverse one...
 
         List<Node> result = new ArrayList<>();
@@ -57,11 +58,6 @@ public class LandmarkDijkstraImplBackard implements PathFinder {
         result.add(source);
         Collections.reverse(result);
         return result;
-    }
-
-    @Override
-    public long getLastExecutionTime() {
-        return executionTime;
     }
 
     @Override
@@ -92,7 +88,6 @@ public class LandmarkDijkstraImplBackard implements PathFinder {
 
     private void runDijkstra(Node source){
         //measureable values
-        int visitcount = 0;
         long start = System.currentTimeMillis();
 
         Node firstNode = source;
@@ -108,7 +103,7 @@ public class LandmarkDijkstraImplBackard implements PathFinder {
             }
 
             if(!currNode.getNode().getVisited2()){
-                visitcount++;
+                nodesVisited++;
 
                 //give first node predecessor
                 currNode.getNode().setVisited2(true);
@@ -121,10 +116,13 @@ public class LandmarkDijkstraImplBackard implements PathFinder {
                         path.getSource().setDistance2(newDistance);
                         //add predecessor for the node
                         path.getSource().setPredecessor2(currNode.getNode());
+
+                        //add to priority queue
+                        nodesScanned++;
+                        priorityQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
                     }
 
-                    //add to priority queue
-                    priorityQueue.add(new NodeWrapperImpl(path.getSource(), path.getSource().getDistance2()));
+
                 });
             }
         }

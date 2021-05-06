@@ -2,6 +2,7 @@ package openmap.alternative_pathfinders;
 
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
+import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 
 import java.awt.*;
@@ -17,19 +18,16 @@ import java.util.stream.Stream;
  * @version 1.0
  * @since 29-04-2021
  */
-public class AStarImplBiDirImpl implements PathFinder {
+public class AStarImplBiDirImpl extends AbstractPathfinder {
 
-    private Graph graph;
     private PriorityQueue<NodeWrapper> priorityQueueForward;
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
-    private long executionTime;
     private double shortestDistance;
     private Node meet = null;
 
     public AStarImplBiDirImpl(Graph graph){
-        this.graph = graph;
-        this.executionTime = 0;
+        super(graph);
         priorityQueueForward = new PriorityQueue<NodeWrapper>();
         priorityQueueBackward = new PriorityQueue<NodeWrapper>();
     }
@@ -47,6 +45,8 @@ public class AStarImplBiDirImpl implements PathFinder {
         priorityQueueBackward.clear();
 
         //Initial setup
+        nodesVisited = 0;
+        nodesScanned = 0;
         long start = System.currentTimeMillis();
         source.setDistance(0);
         destination.setDistance2(0);
@@ -59,6 +59,7 @@ public class AStarImplBiDirImpl implements PathFinder {
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
+            nodesVisited += 2;
 
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
                 break;
@@ -90,6 +91,7 @@ public class AStarImplBiDirImpl implements PathFinder {
                 pathDest.setDistance(totalWeight);
                 pathDest.setPredecessor(currNodeW.getNode());
 
+                nodesScanned++;
                 priorityQueueForward.add(new NodeWrapperImpl(pathDest, totalWeight + pForward(source, destination, pathDest))); //Pt + Ps should be zero
             }
 
@@ -110,6 +112,8 @@ public class AStarImplBiDirImpl implements PathFinder {
             if(totalWeight < pathDest.getDistance2()) {
                 pathDest.setDistance2(totalWeight);
                 pathDest.setPredecessor2(currNodeW.getNode());
+
+                nodesScanned++;
                 priorityQueueBackward.add(new NodeWrapperImpl(pathDest, totalWeight + pBackward(source, destination, pathDest))); //Pt + Ps should be zero
             }
 
@@ -141,11 +145,6 @@ public class AStarImplBiDirImpl implements PathFinder {
     }
 
     @Override
-    public long getLastExecutionTime() {
-        return executionTime;
-    }
-
-    @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
         return ((Node n) -> {
             if(n.getDistance() < Double.MAX_VALUE){
@@ -157,19 +156,6 @@ public class AStarImplBiDirImpl implements PathFinder {
             return new NodeDrawingInfo(false, null);
         });
     }
-
-    @Override
-    public List<Integer> getLandmarksUsedTo() {
-        return null;
-    }
-
-    @Override
-    public List<Integer> getLandmarksUsedFrom() {
-        return null;
-    }
-
-    @Override
-    public void SetLandmarkSubsetSize(int i) { }
 
     private List<Node> retraceSteps(Node source, Node target, Node meet){
         List<Node> sTom = new ArrayList<>();
