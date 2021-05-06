@@ -40,6 +40,7 @@ public class CompileMapFile {
             outPath = args[1];
             optimLevel = Integer.parseInt(args[2]);
             wayTypeListSelection = args[3];
+            shouldUseTriplePass = Boolean.parseBoolean(args[4]);
         }
         else{
             path = readLine(
