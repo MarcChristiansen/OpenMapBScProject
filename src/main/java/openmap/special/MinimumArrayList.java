@@ -1,10 +1,6 @@
 package openmap.special;
 
-import java.util.AbstractList;
-import java.util.concurrent.CopyOnWriteArrayList;
-
 import java.lang.invoke.VarHandle;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -59,7 +55,7 @@ import java.util.function.UnaryOperator;
  * @author Doug Lea
  * @param <E> the type of elements held in this list
  */
-public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializable {
+public class MinimumArrayList<E> implements List<E>, Cloneable, java.io.Serializable {
 
     /** The array, accessed only via getArray/setArray. */
     private transient volatile Object[] array;
@@ -82,7 +78,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
     /**
      * Creates an empty list.
      */
-    public minimumArrayList() {
+    public MinimumArrayList() {
         setArray(new Object[0]);
     }
 
@@ -94,10 +90,10 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
      * @param c the collection of initially held elements
      * @throws NullPointerException if the specified collection is null
      */
-    public minimumArrayList(Collection<? extends E> c) {
+    public MinimumArrayList(Collection<? extends E> c) {
         Object[] es;
-        if (c.getClass() == minimumArrayList.class)
-            es = ((minimumArrayList<?>)c).getArray();
+        if (c.getClass() == MinimumArrayList.class)
+            es = ((MinimumArrayList<?>)c).getArray();
         else {
             es = c.toArray();
             // defend against c.toArray (incorrectly) not returning Object[]
@@ -115,7 +111,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
      *        internal array)
      * @throws NullPointerException if the specified array is null
      */
-    public minimumArrayList(E[] toCopyIn) {
+    public MinimumArrayList(E[] toCopyIn) {
         setArray(Arrays.copyOf(toCopyIn, toCopyIn.length, Object[].class));
     }
 
@@ -258,7 +254,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
     public Object clone() {
         try {
             @SuppressWarnings("unchecked")
-            minimumArrayList<E> clone = (minimumArrayList<E>) super.clone();
+            MinimumArrayList<E> clone = (MinimumArrayList<E>) super.clone();
             // Unlike in readObject, here we cannot visibility-piggyback on the
             // volatile write in setArray().
             VarHandle.releaseFence();
@@ -673,8 +669,8 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
      * @see #add(Object)
      */
     public boolean addAll(Collection<? extends E> c) {
-        Object[] cs = (c.getClass() == minimumArrayList.class) ?
-                ((minimumArrayList<?>)c).getArray() : c.toArray();
+        Object[] cs = (c.getClass() == MinimumArrayList.class) ?
+                ((MinimumArrayList<?>)c).getArray() : c.toArray();
         if (cs.length == 0)
             return false;
         Object[] es = getArray();
@@ -945,7 +941,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
      * @return an iterator over the elements in this list in proper sequence
      */
     public Iterator<E> iterator() {
-        return new minimumArrayList.COWIterator<E>(getArray(), 0);
+        return new MinimumArrayList.COWIterator<E>(getArray(), 0);
     }
 
     /**
@@ -957,7 +953,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
      * {@code remove}, {@code set} or {@code add} methods.
      */
     public ListIterator<E> listIterator() {
-        return new minimumArrayList.COWIterator<E>(getArray(), 0);
+        return new MinimumArrayList.COWIterator<E>(getArray(), 0);
     }
 
     /**
@@ -976,7 +972,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         if (index < 0 || index > len)
             throw new IndexOutOfBoundsException(outOfBounds(index, len));
 
-        return new minimumArrayList.COWIterator<E>(es, index);
+        return new MinimumArrayList.COWIterator<E>(es, index);
     }
 
     /**
@@ -1098,7 +1094,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         int size = toIndex - fromIndex;
         if (fromIndex < 0 || toIndex > len || size < 0)
             throw new IndexOutOfBoundsException();
-        return new minimumArrayList.COWSubList(es, fromIndex, size);
+        return new MinimumArrayList.COWSubList(es, fromIndex, size);
     }
 
     /**
@@ -1251,7 +1247,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         public E set(int index, E element) {
             rangeCheck(index);
             checkForComodification();
-            E x = minimumArrayList.this.set(offset + index, element);
+            E x = MinimumArrayList.this.set(offset + index, element);
             expectedArray = getArray();
             return x;
         }
@@ -1259,7 +1255,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         public E get(int index) {
             rangeCheck(index);
             checkForComodification();
-            return minimumArrayList.this.get(offset + index);
+            return MinimumArrayList.this.get(offset + index);
         }
 
         public int size() {
@@ -1269,7 +1265,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
 
         public boolean add(E element) {
             checkForComodification();
-            minimumArrayList.this.add(offset + size, element);
+            MinimumArrayList.this.add(offset + size, element);
             expectedArray = getArray();
             size++;
             return true;
@@ -1278,7 +1274,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         public void add(int index, E element) {
             checkForComodification();
             rangeCheckForAdd(index);
-            minimumArrayList.this.add(offset + index, element);
+            MinimumArrayList.this.add(offset + index, element);
             expectedArray = getArray();
             size++;
         }
@@ -1286,7 +1282,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         public boolean addAll(Collection<? extends E> c) {
             final Object[] oldArray = getArrayChecked();
             boolean modified =
-                    minimumArrayList.this.addAll(offset + size, c);
+                    MinimumArrayList.this.addAll(offset + size, c);
             size += (expectedArray = getArray()).length - oldArray.length;
             return modified;
         }
@@ -1295,7 +1291,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
             rangeCheckForAdd(index);
             final Object[] oldArray = getArrayChecked();
             boolean modified =
-                    minimumArrayList.this.addAll(offset + index, c);
+                    MinimumArrayList.this.addAll(offset + index, c);
             size += (expectedArray = getArray()).length - oldArray.length;
             return modified;
         }
@@ -1310,7 +1306,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         public E remove(int index) {
             rangeCheck(index);
             checkForComodification();
-            E result = minimumArrayList.this.remove(offset + index);
+            E result = MinimumArrayList.this.remove(offset + index);
             expectedArray = getArray();
             size--;
             return result;
@@ -1336,15 +1332,15 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
         public ListIterator<E> listIterator(int index) {
             checkForComodification();
             rangeCheckForAdd(index);
-            return new minimumArrayList.COWSubListIterator<E>(
-                    minimumArrayList.this, index, offset, size);
+            return new MinimumArrayList.COWSubListIterator<E>(
+                    MinimumArrayList.this, index, offset, size);
         }
 
         public List<E> subList(int fromIndex, int toIndex) {
             checkForComodification();
             if (fromIndex < 0 || toIndex > size || fromIndex > toIndex)
                 throw new IndexOutOfBoundsException();
-            return new minimumArrayList.COWSubList(expectedArray, fromIndex + offset, toIndex - fromIndex);
+            return new MinimumArrayList.COWSubList(expectedArray, fromIndex + offset, toIndex - fromIndex);
         }
 
         public void forEach(Consumer<? super E> action) {
@@ -1386,7 +1382,7 @@ public class minimumArrayList<E> implements List<E>, Cloneable, java.io.Serializ
 
         private boolean bulkRemove(Predicate<? super E> filter) {
             final Object[] oldArray = getArrayChecked();
-            boolean modified = minimumArrayList.this.bulkRemove(
+            boolean modified = MinimumArrayList.this.bulkRemove(
                     filter, offset, offset + size);
             size += (expectedArray = getArray()).length - oldArray.length;
             return modified;

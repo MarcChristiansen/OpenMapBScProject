@@ -2,7 +2,7 @@ package openmap.standard;
 
 import openmap.framework.Node;
 import openmap.framework.Path;
-import openmap.special.minimumArrayList;
+import openmap.special.MinimumArrayList;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class NodeImpl extends BaseLineNodeImpl {
     }
 
     private void init() {
-        incomingPaths = new minimumArrayList<>();
+        incomingPaths = new MinimumArrayList<>();
         landmarkDistancesFromLandmark = new double[0];
         landmarkDistancesToLandmark = new double[0];
     }
