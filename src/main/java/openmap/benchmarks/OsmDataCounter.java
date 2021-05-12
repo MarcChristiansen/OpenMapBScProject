@@ -32,7 +32,6 @@ public class OsmDataCounter {
             wayTypeListSelection = ConsoleUtils.readLine(
                     "Enter path type set (normal or mini) : ");
 
-
         }
 
 

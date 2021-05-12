@@ -53,7 +53,7 @@ public class QuadTile implements MapTile {
         setupFields((byte)1, maxLayer, bounds, null, zoomFactor, 0, height, 0,0);
 
         this.zoomFactor = (double)(height)/(getBounds().getMaxY() - getBounds().getMinY());
-        this.width = (int)(zoomFactor*(getBounds().getMaxX() - getBounds().getMinX()));
+        this.width = (int)Math.round((zoomFactor*(getBounds().getMaxX() - getBounds().getMinX())));
 
     }
 
