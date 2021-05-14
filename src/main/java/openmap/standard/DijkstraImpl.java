@@ -77,7 +77,7 @@ public class DijkstraImpl extends AbstractPathfinder {
 
         while (!priorityQueue.isEmpty()){
             NodeWrapper currNode = priorityQueue.poll();
-            if(currNode == null || currNode.getNode().getId() == destination.getId()){
+            if(currNode.getNode().getId() == destination.getId()){
                 break;
             }
 
