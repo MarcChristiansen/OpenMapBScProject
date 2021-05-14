@@ -75,10 +75,10 @@ public class DijkstraImpl extends AbstractPathfinder {
         firstNode.setPredecessor(firstNode);
         priorityQueue.add(new NodeWrapperImpl(firstNode, firstNode.getDistance()));
 
-        while (true){
+        while (!priorityQueue.isEmpty()){
             NodeWrapper currNode = priorityQueue.poll();
             if(currNode == null || currNode.getNode().getId() == destination.getId()){
-                break; //we obey whatever Gerth commands
+                break;
             }
 
             if(!currNode.getNode().getVisited()){
