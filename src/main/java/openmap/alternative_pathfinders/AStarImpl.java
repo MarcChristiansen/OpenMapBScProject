@@ -52,17 +52,21 @@ public class AStarImpl extends AbstractPathfinder {
                 break;
             }
 
-            for (Path p: currNodeW.getNode().getOutgoingPaths()) {
-                double totalWeight = currNodeW.getNode().getDistance()+p.getWeight();
-                Node pathDest = p.getDestination();
+            if(!currNodeW.getNode().getVisited() ){
+                currNodeW.getNode().setVisited(true);
 
-                //If the newly discovered node has not been handled before or we found a shorter path to it
-                if(totalWeight < pathDest.getDistance()) {
-                    pathDest.setDistance(totalWeight);
-                    pathDest.setPredecessor(currNodeW.getNode());
+                for (Path p: currNodeW.getNode().getOutgoingPaths()) {
+                    double totalWeight = currNodeW.getNode().getDistance()+p.getWeight();
+                    Node pathDest = p.getDestination();
 
-                    nodesScanned++;
-                    priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h(pathDest)));
+                    //If the newly discovered node has not been handled before or we found a shorter path to it
+                    if(totalWeight < pathDest.getDistance()) {
+                        pathDest.setDistance(totalWeight);
+                        pathDest.setPredecessor(currNodeW.getNode());
+
+                        nodesScanned++;
+                        priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h(pathDest)));
+                    }
                 }
             }
         }

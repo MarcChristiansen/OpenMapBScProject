@@ -78,8 +78,13 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         priorityQueueForward.add(new NodeWrapperImpl(source, 0));
         priorityQueueBackward.add(new NodeWrapperImpl(destination, 0));
 
+        //Sanity checks
         for(Integer i : landmarksForward) {
             if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
+                return null; //No path exists.
+            }
+
+            if(destination.getDistancesFromLandmarks()[i] == Double.MAX_VALUE && source.getDistancesFromLandmarks()[i] < Double.MAX_VALUE){
                 return null; //No path exists.
             }
         }
