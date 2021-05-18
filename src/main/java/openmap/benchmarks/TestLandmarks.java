@@ -56,7 +56,6 @@ public class TestLandmarks {
         }
 
         Object[] values = graph.getNodeMap().values().toArray();
-        Random random = new Random(12315341231L);
 
         Map<String, List<Node>> shortestPathMap = new HashMap<>();
         Map<String, List<Long>> executionTimesMap = new HashMap<>();
@@ -68,9 +67,11 @@ public class TestLandmarks {
 
 
         for(int k = 1; k <= 32; k = k*2){ //number of landmarks, 1, 2, 4, 8, 16, 32
+
             for(String ls : LandmarkStrings){
                 lfsu.getLandmarkSelector(ls).findLandmarks(k);
                 for(int i = 1; i <= 8; i = i*2){ //subset size for landmark pathfinder
+                    Random random = new Random(12315341231L);
                     if(i > k){
                         break; //break if subset is bigger than landmark count
                     }

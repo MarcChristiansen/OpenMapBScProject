@@ -85,18 +85,21 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
                 break;
             }
 
-            for (Path p: currNodeW.getNode().getOutgoingPaths()) {
-                double totalWeight = currNodeW.getNode().getDistance()+p.getWeight();
-                Node pathDest = p.getDestination();
+            if(!currNodeW.getNode().getVisited()){
+                currNodeW.getNode().setVisited(true);
+                for (Path p: currNodeW.getNode().getOutgoingPaths()) {
+                    double totalWeight = currNodeW.getNode().getDistance()+p.getWeight();
+                    Node pathDest = p.getDestination();
 
-                //If the newly discovered node has not been handled before or we found a shorter path to it
-                if(totalWeight < pathDest.getDistance()) {
-                    pathDest.setDistance(totalWeight);
-                    pathDest.setPredecessor(currNodeW.getNode());
-                    h = getLowerbound(pathDest);
+                    //If the newly discovered node has not been handled before or we found a shorter path to it
+                    if(totalWeight < pathDest.getDistance()) {
+                        pathDest.setDistance(totalWeight);
+                        pathDest.setPredecessor(currNodeW.getNode());
+                        h = getLowerbound(pathDest);
 
-                    nodesScanned++;
-                    priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h));
+                        nodesScanned++;
+                        priorityQueue.add(new NodeWrapperImpl(pathDest, totalWeight+h));
+                    }
                 }
             }
         }

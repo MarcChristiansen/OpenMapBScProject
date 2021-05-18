@@ -29,12 +29,16 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
         Random random = new Random();
         random.setSeed(1231231231); //Consistency //TODO possibly move this to somewhere else
-        //add random landmark initially
-        Node landmark = (Node)values[random.nextInt(values.length)];
+        //add random verificationNode initially
+        Node verificationNode = (Node)values[random.nextInt(values.length)];
 
         //find node farthest from the random node and add to landmarks
-        pfForward.getShortestPath(landmark, landmark);
-        pfBackward.getShortestPath(landmark, landmark);
+
+
+
+        processLandmarkFrom(verificationNode, k-1);
+        processLandmarkTo(verificationNode, k-1);
+
         double distanceFrom = 0;
         double distanceTo = 0;
         Node bestNodeFrom = null;
@@ -67,7 +71,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
             for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
                 distanceFrom = minFromDoubleListKFirstEntries(e.getValue().getDistancesFromLandmarks(), i);
 
-                if(distanceFrom == Double.MAX_VALUE){ //don't select islands
+                if(distanceFrom == Double.MAX_VALUE || e.getValue().getDistancesToLandmarks()[k-1] == Double.MAX_VALUE){ //don't select islands
                     distanceFrom = 0;
                 }
 
@@ -79,7 +83,7 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
                 distanceTo = minFromDoubleListKFirstEntries(e.getValue().getDistancesToLandmarks(), i);
 
-                if(distanceTo == Double.MAX_VALUE){ //don't select islands
+                if(distanceTo == Double.MAX_VALUE || e.getValue().getDistancesFromLandmarks()[k-1] == Double.MAX_VALUE){ //don't select islands
                     distanceTo = 0;
                 }
 
