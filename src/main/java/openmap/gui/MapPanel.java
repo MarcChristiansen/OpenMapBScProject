@@ -5,6 +5,7 @@ import openmap.framework.LandmarkSelection;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.framework.TileMap;
+import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
 import java.awt.*;
@@ -25,6 +26,7 @@ import java.util.Map;
  */
 class MapPanel extends JPanel {
 
+    private static JFrame statFrame;
     private final int nodeRadius = 5; //Node radius at default zoom or below
     private final double panSpeed = 1;
     private double zoomFactor = 1;
@@ -278,15 +280,58 @@ class MapPanel extends JPanel {
 
         tileMap.drawMapView(panX, panY, getWidth(), getHeight(), zoomFactor,  g);
 
-        if(highlightedNodeList != null) { tileMap.drawHighlightedPath(panX, panY, zoomFactor,  g, highlightedNodeList); }
+
 
         if(shouldVisualizePathfinder){ tileMap.visualizePathFinderNodeUsage(panX, panY, zoomFactor, pathFinder.getVisitedCheckFunction(), g); }
 
+        if(highlightedNodeList != null) { tileMap.drawHighlightedPath(panX, panY, zoomFactor,  g, highlightedNodeList); }
 
         if(landmarkListTo != null && shouldVisualizeLandmark) { tileMap.drawLandmarks(panX, panY, zoomFactor,  g, landmarkListTo, landmarksUsedTo, landmarkListFrom, landmarksUsedFrom); }
 
-
         g.setTransform(matrix); // Restore original transformation
 
+    }
+
+    public void showStatistics() {
+        //Create and set up the window.
+        JFrame frame = new JFrame("Table");
+        JTable j;
+        statFrame = frame;
+        frame.setPreferredSize(new Dimension(800, 400));
+
+        // Data to be displayed in the JTable
+
+        PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
+        String[] pathFinderStrings = pfsu.getPathFinderStrings();
+        String[][] data = new String[pathFinderStrings.length][6];
+
+        int i = 0;
+        for(String s : pathFinderStrings){
+            pfsu.getPathFinder(s).getShortestPath(pathNode1, pathNode2);
+            String[] dataRow = {s,
+                                pfsu.getPathFinder(s).getLastExecutionTime()+" ms",
+                                ""+pfsu.getPathFinder(s).getNodesVisited(),
+                                ""+pfsu.getPathFinder(s).getNodesScanned(),
+                                (float)(pfsu.getPathFinder(s).getNodesVisited())/(float)(pfsu.getPathFinder(pathFinderStrings[0]).getNodesVisited())*100+"%",
+                                (float)(pfsu.getPathFinder(s).getNodesScanned())/(float)(pfsu.getPathFinder(pathFinderStrings[0]).getNodesScanned())*100+"%"};
+            data[i] = dataRow;
+            i++;
+        }
+
+
+        // Column Names
+        String[] columnNames = { "Pathfinder", "Execution time", "Nodes Visited", "Nodes scanned", "Visited Compared to Dijkstra", "Scanned Compared to Dijkstra" };
+
+        // Initializing the JTable
+        j = new JTable(data, columnNames);
+        j.setBounds(30, 40, 300, 300);
+
+        // adding it to JScrollPane
+        JScrollPane sp = new JScrollPane(j);
+
+        frame.add(sp);
+
+        frame.pack();
+        frame.setVisible(true);
     }
 }

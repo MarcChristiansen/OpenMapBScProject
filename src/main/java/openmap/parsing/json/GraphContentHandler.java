@@ -51,18 +51,20 @@ public class GraphContentHandler implements ContentHandler {
     public boolean endObject() throws ParseException, IOException {
         if(objectStack.isEmpty()) { return true; }
         switch (objectStack.peek()) {
-            case JsonGraphConstants.GraphBounds -> {
+            case JsonGraphConstants.GraphBounds :
                 bounds = new BoundsImpl();
                 bounds.setMinX((Double) objectMap.get(JsonGraphConstants.BoundsMinX));
                 bounds.setMinY((Double) objectMap.get(JsonGraphConstants.BoundsMinY));
                 bounds.setMaxX((Double) objectMap.get(JsonGraphConstants.BoundsMaxX));
                 bounds.setMaxY((Double) objectMap.get(JsonGraphConstants.BoundsMaxY));
-            }
-            case JsonGraphConstants.GraphNodes -> {
+                break;
+            case JsonGraphConstants.GraphNodes :
                 nodeList.add(new NodeImpl((Long) objectMap.get(JsonGraphConstants.NodeId), (double) objectMap.get(JsonGraphConstants.NodeX), (double) objectMap.get(JsonGraphConstants.NodeY), pathList));
                 pathList = new MinimumArrayList<>();
-            }
-            case JsonGraphConstants.NodePath -> pathList.add(new DecodingPathImpl((long) objectMap.get(JsonGraphConstants.PathDestId), (double) objectMap.get(JsonGraphConstants.PathWeight)));
+                break;
+            case JsonGraphConstants.NodePath :
+                pathList.add(new DecodingPathImpl((long) objectMap.get(JsonGraphConstants.PathDestId), (double) objectMap.get(JsonGraphConstants.PathWeight)));
+                break;
         }
         return true;
     }

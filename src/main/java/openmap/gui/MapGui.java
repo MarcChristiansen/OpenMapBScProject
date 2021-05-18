@@ -88,6 +88,15 @@ class MapGui{
         landmarkControls.add(getLandmarkNumberSpinner(myPanel, graph));
         landmarkControls.add(bRecomputeLandmarks);
 
+        JPanel statControls = new JPanel(new GridLayout(0, 1, 10, 10));
+        statControls.setBorder(new TitledBorder("statistics controls"));
+
+        Controls.add(statControls);
+        JButton bShowStats = new JButton("Show statistics" );
+        bShowStats.addActionListener(e -> myPanel.showStatistics());
+        statControls.add(bShowStats);
+
+
         gbl.add(Controls);
 
     }

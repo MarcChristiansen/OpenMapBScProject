@@ -7,7 +7,6 @@ import openmap.framework.PathFinder;
 import openmap.gui.NodeDrawingInfo;
 
 import java.util.List;
-import java.util.PriorityQueue;
 import java.util.function.Function;
 
 abstract public class AbstractPathfinder implements PathFinder {

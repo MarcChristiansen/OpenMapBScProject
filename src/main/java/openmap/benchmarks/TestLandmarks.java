@@ -6,8 +6,9 @@ import openmap.gui.LandmarkSelectionUtility;
 import openmap.gui.PathFinderSelectionUtility;
 import openmap.parsing.json.DiskUtility;
 import openmap.utility.ConsoleUtils;
+import openmap.utility.LatexUtility;
 
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -31,7 +32,7 @@ public class TestLandmarks {
             path = ConsoleUtils.readLine(
                     "Enter json path : ");
             target = Integer.parseInt(ConsoleUtils.readLine(
-                    "Enter target fun index... (-1) for all : "));
+                    "Enter target landmark selector index... (-1) for all : "));
         }
 
         repetitions = Integer.parseInt(ConsoleUtils.readLine("Enter number of repetitions: "));
@@ -50,7 +51,7 @@ public class TestLandmarks {
         PathfinderStrings[2] = "Landmark bi dir";
 
         if(target > -1){
-            LandmarkStrings = new String[0];
+            LandmarkStrings = new String[2];
             LandmarkStrings[0] = lfsu.getLandmarkSelectionStrings()[0];
             LandmarkStrings[1] = lfsu.getLandmarkSelectionStrings()[target];
         }
@@ -62,15 +63,44 @@ public class TestLandmarks {
         Map<String, Integer> agreeWithDijkstraTimes = new HashMap<>();
         Map<String, Integer> pathNotExistTimes = new HashMap<>();
 
+        List<List<String>> dataLandmark = new ArrayList<>();
+        List<String> header = new ArrayList<>();
+        header.add("Landmark");
+        header.add("Landmarks");
+        header.add("Subset 1");
+        header.add("Subset 2");
+        header.add("Subset 4");
+        header.add("Subset 8");
+        dataLandmark.add(header);
 
+        List<List<String>> dataLandmarkBiDir = new ArrayList<>();
+        List<String> headerBi = new ArrayList<>();
+        headerBi.add("Landmark bi Dir");
+        headerBi.add("Landmarks");
+        headerBi.add("Subset 1");
+        headerBi.add("Subset 2");
+        headerBi.add("Subset 4");
+        headerBi.add("Subset 8");
+        dataLandmarkBiDir.add(headerBi);
 
-
+        List<String> rowLandmark = new ArrayList<>();
+        List<String> rowLandmarkBiDir = new ArrayList<>();
 
         for(int k = 1; k <= 32; k = k*2){ //number of landmarks, 1, 2, 4, 8, 16, 32
 
             for(String ls : LandmarkStrings){
+                rowLandmark = new ArrayList<>(Arrays.asList("", "", "", "", "", ""));
+                rowLandmarkBiDir = new ArrayList<>(Arrays.asList("", "", "", "", "", ""));
+                System.out.println(ls+", " + k);
+                rowLandmark.set(0, ls);
+                rowLandmark.set(1, k+"");
+                rowLandmarkBiDir.set(0, ls);
+                rowLandmarkBiDir.set(1, k+"");
+
                 lfsu.getLandmarkSelector(ls).findLandmarks(k);
+                int i0 = 0;
                 for(int i = 1; i <= 8; i = i*2){ //subset size for landmark pathfinder
+                    i0++;
                     Random random = new Random(12315341231L);
                     if(i > k){
                         break; //break if subset is bigger than landmark count
@@ -121,12 +151,31 @@ public class TestLandmarks {
                             avgExecutionTime = avgExecutionTime+l;
                         }
                         avgExecutionTime = avgExecutionTime/executionTimesMap.get(ps).size();
+                        if(ps.equals(PathfinderStrings[1])){
+                            rowLandmark.set(i0 + 1, avgExecutionTime+" ms");
+                        }
+                        else if(ps.equals(PathfinderStrings[2])){
+                            rowLandmarkBiDir.set(i0 + 1, avgExecutionTime+" ms");
+                        }
                         System.out.println("Average execution time for " + ps +": " + avgExecutionTime);
                     }
 
                 }
+                dataLandmark.add(rowLandmark);
+                dataLandmarkBiDir.add(rowLandmarkBiDir);
             }
 
         }
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("TestLandmarksLandmark.txt"), "utf-8"))) {
+            writer.write(LatexUtility.generateStandardTable(dataLandmark));
+        }
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("TestLandmarksLandmarkBiDir.txt"), "utf-8"))) {
+            writer.write(LatexUtility.generateStandardTable(dataLandmarkBiDir));
+        }
+
     }
 }
