@@ -88,7 +88,7 @@ public class TestLandmarks {
         List<String> rowLandmark = new ArrayList<>();
         List<String> rowLandmarkBiDir = new ArrayList<>();
 
-        for(int k = 1; k <= 128; k = k*2){ //number of landmarks, 1, 2, 4, 8, 16, 32
+        for(int k = 1; k <= 64; k = k*2){ //number of landmarks, 1, 2, 4, 8, 16, 32
 
             for(String ls : LandmarkStrings){
                 rowLandmark = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
