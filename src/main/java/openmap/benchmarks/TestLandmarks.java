@@ -71,6 +71,7 @@ public class TestLandmarks {
         header.add("Subset 2");
         header.add("Subset 4");
         header.add("Subset 8");
+        header.add("Subset 16");
         dataLandmark.add(header);
 
         List<List<String>> dataLandmarkBiDir = new ArrayList<>();
@@ -81,6 +82,7 @@ public class TestLandmarks {
         headerBi.add("Subset 2");
         headerBi.add("Subset 4");
         headerBi.add("Subset 8");
+        headerBi.add("Subset 16");
         dataLandmarkBiDir.add(headerBi);
 
         List<String> rowLandmark = new ArrayList<>();
@@ -89,8 +91,8 @@ public class TestLandmarks {
         for(int k = 1; k <= 128; k = k*2){ //number of landmarks, 1, 2, 4, 8, 16, 32
 
             for(String ls : LandmarkStrings){
-                rowLandmark = new ArrayList<>(Arrays.asList("", "", "", "", "", ""));
-                rowLandmarkBiDir = new ArrayList<>(Arrays.asList("", "", "", "", "", ""));
+                rowLandmark = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
+                rowLandmarkBiDir = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
                 System.out.println(ls+", " + k);
                 rowLandmark.set(0, ls);
                 rowLandmark.set(1, k+"");
