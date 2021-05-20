@@ -303,15 +303,18 @@ class MapPanel extends JPanel {
 
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
         String[] pathFinderStrings = pfsu.getPathFinderStrings();
-        String[][] data = new String[pathFinderStrings.length][6];
+        String[][] data = new String[pathFinderStrings.length][8];
+        List<Node> path;
 
         int i = 0;
         for(String s : pathFinderStrings){
-            pfsu.getPathFinder(s).getShortestPath(pathNode1, pathNode2);
+            path = pfsu.getPathFinder(s).getShortestPath(pathNode1, pathNode2);
             String[] dataRow = {s,
                                 pfsu.getPathFinder(s).getLastExecutionTime()+" ms",
                                 ""+pfsu.getPathFinder(s).getNodesVisited(),
                                 ""+pfsu.getPathFinder(s).getNodesScanned(),
+                                ""+path.size(),
+                                (float)(path.size())/(float)(pfsu.getPathFinder(s).getNodesVisited())*100+"%",
                                 (float)(pfsu.getPathFinder(s).getNodesVisited())/(float)(pfsu.getPathFinder(pathFinderStrings[0]).getNodesVisited())*100+"%",
                                 (float)(pfsu.getPathFinder(s).getNodesScanned())/(float)(pfsu.getPathFinder(pathFinderStrings[0]).getNodesScanned())*100+"%"};
             data[i] = dataRow;
@@ -320,7 +323,7 @@ class MapPanel extends JPanel {
 
 
         // Column Names
-        String[] columnNames = { "Pathfinder", "Execution time", "Nodes Visited", "Nodes scanned", "Visited Compared to Dijkstra", "Scanned Compared to Dijkstra" };
+        String[] columnNames = { "Pathfinder", "Execution time", "Nodes Visited", "Nodes scanned", "Nodes in Path", "Efficiency","Visited Compared to Dijkstra", "Scanned Compared to Dijkstra" };
 
         // Initializing the JTable
         j = new JTable(data, columnNames);
