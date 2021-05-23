@@ -95,15 +95,21 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
-            nodesVisited += 2;
+
 
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
                 break;
             }
 
-            handleForwardPass(source, destination, currNodeWFor);
+            if(!currNodeWFor.getNode().getVisited()){
+                nodesVisited += 1;
+                handleForwardPass(source, destination, currNodeWFor);
+            }
 
-            handleBackwardsPass(source, destination, currNodeWBack);
+            if(!currNodeWFor.getNode().getVisited2()) {
+                nodesVisited += 1;
+                handleBackwardsPass(source, destination, currNodeWBack);
+            }
 
         }
 

@@ -78,7 +78,7 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
         NodeWrapper currNodeW = null;
         while (!priorityQueue.isEmpty()){
             currNodeW = priorityQueue.poll();
-            nodesVisited++;
+
 
             if(currNodeW.getNode() == currTarget){
                 path = retraceSteps(source);
@@ -86,6 +86,7 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
             }
 
             if(!currNodeW.getNode().getVisited()){
+                nodesVisited++;
                 currNodeW.getNode().setVisited(true);
                 for (Path p: currNodeW.getNode().getOutgoingPaths()) {
                     double totalWeight = currNodeW.getNode().getDistance()+p.getWeight();

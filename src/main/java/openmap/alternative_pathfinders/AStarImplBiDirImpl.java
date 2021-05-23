@@ -65,9 +65,16 @@ public class AStarImplBiDirImpl extends AbstractPathfinder {
                 break;
             }
 
-            handleForwardPass(source, destination, currNodeWFor);
 
-            handleBackwardsPass(source, destination, currNodeWBack);
+            if(!currNodeWFor.getNode().getVisited()){
+                nodesVisited += 1;
+                handleForwardPass(source, destination, currNodeWFor);
+            }
+
+            if(!currNodeWFor.getNode().getVisited2()) {
+                nodesVisited += 1;
+                handleBackwardsPass(source, destination, currNodeWBack);
+            }
 
         }
 

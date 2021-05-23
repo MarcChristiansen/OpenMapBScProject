@@ -33,9 +33,9 @@ public class FileWriter {
             for(List<String> l : data){
                 String line = "";
                 for(String s : l){
-                    line = line + s + ",";
+                    line = line + s + "; ";
                 }
-                writer.write(line.subSequence(0, line.length()-1)+"\n");
+                writer.write(line.subSequence(0, line.length()-2)+"\n");
             }
 
         } catch (UnsupportedEncodingException e) {
