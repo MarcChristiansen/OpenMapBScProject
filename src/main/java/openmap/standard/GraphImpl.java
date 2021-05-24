@@ -107,4 +107,19 @@ public class GraphImpl implements Graph, Serializable {
         jGenerator.writeEndObject();
 
     }
+
+    @Override
+    public int getNodeCount() {
+        return nodeMap.size();
+    }
+
+    @Override
+    public int getEdgeCount() {
+        int count = 0;
+        for(Node n : nodeMap.values()){
+            count = count + n.getOutgoingPaths().size();
+        }
+
+        return count;
+    }
 }

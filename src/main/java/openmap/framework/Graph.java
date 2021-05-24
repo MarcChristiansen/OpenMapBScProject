@@ -44,4 +44,16 @@ public interface Graph {
      */
     public void WriteToJsonGenerator(JsonGenerator jGenerator) throws IOException;
 
+    /**
+     * Get the number of nodes in the graph
+     * @return the number of nodes in the graph
+     */
+    public int getNodeCount();
+
+    /**
+     * Get the number of edges in the graph
+     * @return the number of edges in the graph
+     */
+    public int getEdgeCount();
+
 }
