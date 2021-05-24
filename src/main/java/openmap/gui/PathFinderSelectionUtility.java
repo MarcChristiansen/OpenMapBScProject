@@ -5,6 +5,9 @@ import openmap.framework.Graph;
 import openmap.framework.PathFinder;
 import openmap.standard.DijkstraImpl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  * Simple utility that only uses one instance of each pathfinder for the GUI.
@@ -15,6 +18,8 @@ import openmap.standard.DijkstraImpl;
  * @since 13-04-2021
  */
 public class PathFinderSelectionUtility {
+
+    private static int[] relevantTestRefs = {0, 2, 3, 5, 6, 7};
 
     /**
      * Create a selection utility with a given graph
@@ -87,5 +92,22 @@ public class PathFinderSelectionUtility {
         return null; //Todo Possibly make exception...
     }
 
+    public List<PathFinder> getRelevantPathFinder(){
+        List<PathFinder> res = new ArrayList<>();
+
+        for (String s: getRelevantPathfinderNames()) {
+            res.add(getPathFinder(s));
+        }
+        return res;
+    }
+
+    public List<String> getRelevantPathfinderNames() {
+        List<String> res = new ArrayList<>();
+
+        for (int i: relevantTestRefs) {
+            res.add(pathFinderStrings[i]);
+        }
+        return res;
+    }
 
 }
