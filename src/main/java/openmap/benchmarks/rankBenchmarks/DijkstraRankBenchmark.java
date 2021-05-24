@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 public class DijkstraRankBenchmark {
 
-    public static int dijkstraRankIterations = 50 ;
+    public static int dijkstraRankIterations = 5 ;
     public static int maxRank = 25;
 
     public static void main(String[] args) throws IOException {
@@ -31,6 +31,9 @@ public class DijkstraRankBenchmark {
         int actualRank = Math.min(maxRank, testIterRanks.get(0).getRanks().size());
 
         long[][] accRes = new long[pfsu.getRelevantPathfinderNames().size()][actualRank];
+
+        System.out.println(testIterRanks.get(0).getStart().getId());
+        System.out.println(testIterRanks.get(0).getRanks().get(0).getId());
 
 
         for (int i = 0; i < pfsu.getRelevantPathfinderNames().size(); i++) {

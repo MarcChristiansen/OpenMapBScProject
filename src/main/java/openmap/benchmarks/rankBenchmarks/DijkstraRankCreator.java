@@ -83,7 +83,7 @@ public class DijkstraRankCreator extends AbstractPathfinder {
                 nodesVisited++; //update visited nodes
 
                 if(powerOfTwo(nodesVisited)){
-                    nodeRanks.add(currNode.getNode()); //Add node to rank list making 0 = 1
+                    nodeRanks.add(currNode.getNode()); //Add node to rank list
                 }
 
                 //give first node predecessor
