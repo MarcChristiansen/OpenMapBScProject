@@ -1,6 +1,7 @@
 package openmap.benchmarks;
 
 import openmap.framework.OsmParser;
+import openmap.parsing.OsmXmlParserImpl;
 import openmap.parsing.OsmiumPbfParserImpl;
 import openmap.parsing.ParsingUtil;
 import openmap.standard.GraphBuilderImpl;
@@ -11,15 +12,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class BenchmarkParsing {
+public class BenchmarkStaxVsOsmosis {
     public static void main(String[] args) throws IOException {
         List<List<String>> tableRows = new ArrayList<>();
-        String[] names = {"Kort", "To passes (ms)", "Tre passes (ms)", "Forskel (\\%)"};
+        String[] names = {"Kort", "StAX tid (s)", "Osmosis tid (s)", "Forskel (\\%)"};
         tableRows.add(Arrays.asList(names));
 
         for (int i = 0; i < args.length; i++) {
             System.out.println(args[i]);
-            tableRows.add(BenchmarkDualVsTriplePass(args[i]));
+            tableRows.add(Benchmark(args[i]));
         }
 
         System.out.println("\n###### Latex full table ######");
@@ -27,18 +28,21 @@ public class BenchmarkParsing {
 
     }
 
-    public static List<String> BenchmarkDualVsTriplePass(String path){
+    public static List<String> Benchmark(String path){
         int testAmount = 3; //Number of tests to run
 
-        long accTimeDualPass = 0;
-        long accTimeTriplePass = 0;
+        String osmPath = path + ".osm";
+        String pbfPath = path + ".osm.pbf";
+
+        long accTimeStAX = 0;
+        long accTimeOsmosis = 0;
 
 
         for (int i = 0; i < testAmount; i++) {
             long start = System.currentTimeMillis();
 
-            OsmParser parser = new OsmiumPbfParserImpl(path, ParsingUtil.getDefaultAllowedValues());
-            parser.CacheWays(true);
+            OsmParser parser = new OsmXmlParserImpl(osmPath, ParsingUtil.getDefaultAllowedValues());
+            parser.CacheWays(false);
 
             //GraphBuilder creation
             GraphBuilderImpl graphBuilder = new GraphBuilderImpl(parser);
@@ -46,14 +50,14 @@ public class BenchmarkParsing {
             graphBuilder.createGraph();
 
             long finish = System.currentTimeMillis();
-            accTimeDualPass += finish - start;
+            accTimeStAX += finish - start;
         }
         //If we want a triple pass we do not want to cache ways.
 
         for (int i = 0; i < testAmount; i++) {
             long start = System.currentTimeMillis();
 
-            OsmParser parser = new OsmiumPbfParserImpl(path, ParsingUtil.getDefaultAllowedValues());
+            OsmParser parser = new OsmiumPbfParserImpl(pbfPath, ParsingUtil.getDefaultAllowedValues());
             parser.CacheWays(false);
 
             GraphBuilderImpl graphBuilder = new GraphBuilderImpl(parser);
@@ -61,16 +65,16 @@ public class BenchmarkParsing {
             graphBuilder.createGraph();
 
             long finish = System.currentTimeMillis();
-            accTimeTriplePass += finish - start;
+            accTimeOsmosis += finish - start;
         }
 
         System.out.println(path);
-        System.out.println(accTimeDualPass/testAmount);
-        System.out.println(accTimeTriplePass/testAmount);
+        System.out.println(accTimeStAX/testAmount);
+        System.out.println(accTimeOsmosis/testAmount);
         System.out.println();
 
-        double dualtime = (double)(accTimeDualPass)/(double)(testAmount)/1000;
-        double tripletime = (double)(accTimeTriplePass)/(double)(testAmount)/1000;
+        double dualtime = (double)(accTimeStAX)/(double)(testAmount)/1000;
+        double tripletime = (double)(accTimeOsmosis)/(double)(testAmount)/1000;
         double percentDiff = (((double)(tripletime-dualtime))/((double)(dualtime)))*100 ;
 
         List<String> res = new ArrayList<>();

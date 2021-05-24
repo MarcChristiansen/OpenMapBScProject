@@ -45,7 +45,7 @@ public class AStarImpl extends AbstractPathfinder {
         NodeWrapper currNodeW = null;
         while (!priorityQueue.isEmpty()){
             currNodeW = priorityQueue.poll();
-            nodesVisited++;
+
 
             if(currNodeW.getNode() == currTarget){
                 path = retraceSteps(source);
@@ -53,6 +53,7 @@ public class AStarImpl extends AbstractPathfinder {
             }
 
             if(!currNodeW.getNode().getVisited() ){
+                nodesVisited++;
                 currNodeW.getNode().setVisited(true);
 
                 for (Path p: currNodeW.getNode().getOutgoingPaths()) {

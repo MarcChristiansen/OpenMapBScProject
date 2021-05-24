@@ -66,6 +66,7 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         nodesScanned = 0;
 
         if(source == destination){
+            setExecutionTimeFromStart(start);
             return Collections.singletonList(source);
         }
 
@@ -81,10 +82,12 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         //Sanity checks
         for(Integer i : landmarksForward) {
             if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
+                setExecutionTimeFromStart(start);
                 return null; //No path exists.
             }
 
             if(destination.getDistancesFromLandmarks()[i] == Double.MAX_VALUE && source.getDistancesFromLandmarks()[i] < Double.MAX_VALUE){
+                setExecutionTimeFromStart(start);
                 return null; //No path exists.
             }
         }
@@ -95,26 +98,36 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
-            nodesVisited += 2;
+
 
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
                 break;
             }
 
-            handleForwardPass(source, destination, currNodeWFor);
+            if(!currNodeWFor.getNode().getVisited()){
+                nodesVisited += 1;
+                handleForwardPass(source, destination, currNodeWFor);
+            }
 
-            handleBackwardsPass(source, destination, currNodeWBack);
+            if(!currNodeWFor.getNode().getVisited2()) {
+                nodesVisited += 1;
+                handleBackwardsPass(source, destination, currNodeWBack);
+            }
 
         }
 
-        long finish = System.currentTimeMillis();
-        this.executionTime = finish - start;
+        setExecutionTimeFromStart(start);
         //System.out.println("A* Bidirectional took " + (this.executionTime) + " ms");
 
         if(meet != null) {
             return retraceSteps(source, destination, meet);
         }
         return null; //Meet never found, return null
+    }
+
+    private void setExecutionTimeFromStart(long start) {
+        long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
     }
 
 

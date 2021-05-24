@@ -35,10 +35,6 @@ public class AStarImplBiDirImpl extends AbstractPathfinder {
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
 
-        if(source == destination){
-            return Collections.singletonList(source);
-        }
-
         //Prepare for A* run
         clearDistanceAndPredecessor();
         priorityQueueForward.clear();
@@ -53,6 +49,11 @@ public class AStarImplBiDirImpl extends AbstractPathfinder {
         priorityQueueForward.add(new NodeWrapperImpl(source, pForward(source, destination, destination)));
         priorityQueueBackward.add(new NodeWrapperImpl(destination, pBackward(source, destination, source)));
 
+        if(source == destination){
+            setExecutionTimeFromStart(start);
+            return Collections.singletonList(source);
+        }
+
         meet = null;
         shortestDistance = Double.MAX_VALUE;
         NodeWrapper currNodeWFor, currNodeWBack;
@@ -65,20 +66,31 @@ public class AStarImplBiDirImpl extends AbstractPathfinder {
                 break;
             }
 
-            handleForwardPass(source, destination, currNodeWFor);
 
-            handleBackwardsPass(source, destination, currNodeWBack);
+            if(!currNodeWFor.getNode().getVisited()){
+                nodesVisited += 1;
+                handleForwardPass(source, destination, currNodeWFor);
+            }
+
+            if(!currNodeWFor.getNode().getVisited2()) {
+                nodesVisited += 1;
+                handleBackwardsPass(source, destination, currNodeWBack);
+            }
 
         }
 
-        long finish = System.currentTimeMillis();
-        this.executionTime = finish - start;
+        setExecutionTimeFromStart(start);
         //System.out.println("A* Bidirectional took " + (this.executionTime) + " ms");
 
         if(meet != null) {
             return retraceSteps(source, destination, meet);
         }
         return null; //Meet never found, return null
+    }
+
+    private void setExecutionTimeFromStart(long start) {
+        long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
     }
 
     private void handleForwardPass(Node source, Node destination, NodeWrapper currNodeW) {
