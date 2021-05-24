@@ -66,6 +66,7 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
         //Quick sanity check to ensure path actually exists by checking if they can both reach a chosen landmark.
         for(Integer i : landmarks) {
             if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
+                setExecutionTimeFromStart(start);
                 return null; //No path exists.
             }
         }
@@ -104,11 +105,15 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
             }
         }
 
-        long finish = System.currentTimeMillis();
-        this.executionTime = finish - start;
+        setExecutionTimeFromStart(start);
         //System.out.println("Landmark took " + (this.executionTime) + " ms");
 
         return path;
+    }
+
+    private void setExecutionTimeFromStart(long start) {
+        long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
     }
 
     private double getLowerbound(Node currNode) {
