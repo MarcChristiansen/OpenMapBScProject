@@ -60,7 +60,6 @@ public class AStarImplBiDirImpl extends AbstractPathfinder {
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
-            nodesVisited += 2;
 
             if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
                 break;
