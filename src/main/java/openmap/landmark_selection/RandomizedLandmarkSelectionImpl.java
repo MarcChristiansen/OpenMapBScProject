@@ -21,6 +21,9 @@ public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
 
     @Override
     public void findLandmarks(int k) {
+
+        long start = System.currentTimeMillis();
+
         Object[] values = graph.getNodeMap().values().toArray();
         landmarksTo.clear();
         landmarksFrom.clear();
@@ -33,6 +36,8 @@ public class RandomizedLandmarkSelectionImpl extends LandmarkSelectionAbstract {
         }
 
         preProcessNodes();
+
+        executionTime = System.currentTimeMillis() - start;
     }
 
     private void preProcessNodes() {

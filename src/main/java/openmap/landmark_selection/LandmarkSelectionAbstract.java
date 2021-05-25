@@ -24,6 +24,7 @@ public abstract class LandmarkSelectionAbstract implements LandmarkSelection {
     protected List<Node> landmarksFrom;
     protected PathFinder pfForward;
     protected PathFinder pfBackward;
+    protected long executionTime;
 
     public LandmarkSelectionAbstract(Graph graph){
         this.graph = graph;
@@ -45,6 +46,11 @@ public abstract class LandmarkSelectionAbstract implements LandmarkSelection {
         for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
             e.getValue().createNewLandmarkArrays(k);
         }
+    }
+
+    @Override
+    public long getExecutionTime() {
+        return executionTime;
     }
 
 }

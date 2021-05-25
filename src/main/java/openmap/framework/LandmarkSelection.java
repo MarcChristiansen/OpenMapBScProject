@@ -27,4 +27,11 @@ public interface LandmarkSelection {
      * @return List of nodes that are landmarks
      */
     public List<Node> getLandmarksFrom();
+
+    /**
+     * get the execution time for setting up landmarks
+     * @return the execution time for setting up landmarks
+     */
+    public long getExecutionTime();
+
 }
