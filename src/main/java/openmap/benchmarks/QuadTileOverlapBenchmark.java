@@ -30,9 +30,11 @@ public class QuadTileOverlapBenchmark {
             row.add(BenchmarkSpecificMap(args[i]));
         }
 
+        data.add(header);
+        data.add(row);
 
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("BenchmarkLandmarkSelection.txt"), "utf-8"))) {
+                new FileOutputStream("BenchmarkQuadtileOverlap.txt"), "utf-8"))) {
             writer.write(LatexUtility.generateStandardTable(data));
         }
     }
