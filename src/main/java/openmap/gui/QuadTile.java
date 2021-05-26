@@ -255,8 +255,6 @@ public class QuadTile implements MapTile {
                     boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
                     if(xInBounds){
                         curr_y = curr_y + 1;
-                        System.out.println(curr_y);
-                        System.out.println(dest_y);
                         mat[curr_x][curr_y] = true;
                     }
                 }
