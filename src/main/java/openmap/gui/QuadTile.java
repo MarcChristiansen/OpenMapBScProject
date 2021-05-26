@@ -40,8 +40,6 @@ public class QuadTile implements MapTile {
 
     int drawX, drawY;
 
-    int overlapCounter;
-
     /**
      * Top level QuadTile constructor
      * @param maxLayer The max amount of layers to create
@@ -49,7 +47,6 @@ public class QuadTile implements MapTile {
      */
     public QuadTile(byte maxLayer, Bounds bounds){
         name = "";
-        overlapCounter = 0;
 
         int height = 1080;
 
@@ -182,10 +179,6 @@ public class QuadTile implements MapTile {
         if(dest_y > 31){
             //System.out.println("dest y bigger than 31");
             dest_y = 31;
-        }
-
-        if(orig_x != dest_x && orig_y != dest_y){
-            overlapCounter++;
         }
 
         int curr_x = orig_x;
