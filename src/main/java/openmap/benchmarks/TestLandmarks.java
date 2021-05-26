@@ -45,10 +45,10 @@ public class TestLandmarks {
         LandmarkSelectionUtility lfsu = new LandmarkSelectionUtility(graph);
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
         String[] LandmarkStrings = lfsu.getLandmarkSelectionStrings();
-        String[] PathfinderStrings = new String[3];
-        PathfinderStrings[0] = "A*";
-        PathfinderStrings[1] = "Landmark";
-        PathfinderStrings[2] = "Landmark bi dir";
+        String[] PathfinderStrings = new String[2];
+        //PathfinderStrings[0] = "A*";
+        PathfinderStrings[0] = "Landmark";
+        PathfinderStrings[1] = "Landmark bi dir";
 
         if(target > -1){
             LandmarkStrings = new String[2];
@@ -144,7 +144,7 @@ public class TestLandmarks {
                         //compare path with dijkstra
                         for(String ps : PathfinderStrings){
                             List<Node> shortestPath = shortestPathMap.getOrDefault(ps, null);
-                            List<Node> spDijkstra = shortestPathMap.getOrDefault("A*", null);
+                            List<Node> spDijkstra = shortestPath;
 
                             if((spDijkstra == null && shortestPath == null) || (spDijkstra != null && spDijkstra.equals(shortestPath))){
                                 //update counter by 1
@@ -180,12 +180,12 @@ public class TestLandmarks {
                             avgExecutionTime = avgExecutionTime+l;
                         }
                         avgExecutionTime = avgExecutionTime/executionTimesMap.get(ps).size();
-                        if(ps.equals(PathfinderStrings[1])){
+                        if(ps.equals(PathfinderStrings[0])){
                             rowLandmark.set(i0 + 1, avgExecutionTime+" ms");
                             rowLandmarkEff.set(i0 + 1, (accEffLandmark/repetitions)+"\\%");
                             System.out.println("Average efficiency for " + ps +": " + (accEffLandmark/repetitions)+"%");
                         }
-                        else if(ps.equals(PathfinderStrings[2])){
+                        else if(ps.equals(PathfinderStrings[1])){
                             rowLandmarkBiDir.set(i0 + 1, avgExecutionTime+" ms");
                             rowLandmarkBiDirEff.set(i0 + 1, (accEffLandmarkBidir/repetitions)+"\\%");
                             System.out.println("Average efficiency for " + ps +": " + (accEffLandmarkBidir/repetitions)+"%");
