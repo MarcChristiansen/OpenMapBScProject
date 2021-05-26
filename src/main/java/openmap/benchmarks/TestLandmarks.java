@@ -182,12 +182,12 @@ public class TestLandmarks {
                         avgExecutionTime = avgExecutionTime/executionTimesMap.get(ps).size();
                         if(ps.equals(PathfinderStrings[1])){
                             rowLandmark.set(i0 + 1, avgExecutionTime+" ms");
-                            rowLandmarkEff.set(i0 + 1, (accEffLandmark/repetitions)+"%");
+                            rowLandmarkEff.set(i0 + 1, (accEffLandmark/repetitions)+"\\%");
                             System.out.println("Average efficiency for " + ps +": " + (accEffLandmark/repetitions)+"%");
                         }
                         else if(ps.equals(PathfinderStrings[2])){
                             rowLandmarkBiDir.set(i0 + 1, avgExecutionTime+" ms");
-                            rowLandmarkBiDirEff.set(i0 + 1, (accEffLandmarkBidir/repetitions)+"%");
+                            rowLandmarkBiDirEff.set(i0 + 1, (accEffLandmarkBidir/repetitions)+"\\%");
                             System.out.println("Average efficiency for " + ps +": " + (accEffLandmarkBidir/repetitions)+"%");
                         }
                         System.out.println("Average execution time for " + ps +": " + avgExecutionTime);
