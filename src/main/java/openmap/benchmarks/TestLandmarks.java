@@ -75,7 +75,7 @@ public class TestLandmarks {
         dataLandmark.add(header);
 
         List<List<String>> dataLandmarkEff = new ArrayList<>();
-        dataLandmark.add(header);
+        dataLandmarkEff.add(header);
 
         List<List<String>> dataLandmarkBiDir = new ArrayList<>();
         List<String> headerBi = new ArrayList<>();
