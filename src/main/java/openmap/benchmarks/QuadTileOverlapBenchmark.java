@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class QuadTileOverlapBenchmark {
+
     public static void main(String[] args) throws IOException {
 
 
@@ -91,7 +92,7 @@ public class QuadTileOverlapBenchmark {
             dest_y = 31;
         }
 
-        if(orig_x != dest_x && orig_y != dest_y){
+        if(orig_x != dest_x || orig_y != dest_y){
             overlap = true;
         }
 

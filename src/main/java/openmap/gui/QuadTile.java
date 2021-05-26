@@ -199,7 +199,7 @@ public class QuadTile implements MapTile {
         mat[curr_x][curr_y] = true;
         mat[dest_x][dest_y] = true;
 
-        while(curr_x != dest_x && curr_y != dest_y) {
+        while(curr_x != dest_x || curr_y != dest_y) {
             /*
             System.out.println("orig x: " + orig_x);
             System.out.println("orig y: " + orig_y);
@@ -210,44 +210,55 @@ public class QuadTile implements MapTile {
              */
             //check left and right
             if(isLeft){
-                //System.out.println("checking left");
-                double x = bounds.getMinX() + curr_x * tileWidth;
-                double y = a*x+b;
-                boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
-                if(yInBounds){
-                    curr_x = curr_x - 1;
-                    mat[curr_x][curr_y] = true;
+                if(curr_x != dest_x){
+                    //System.out.println("checking left");
+                    double x = bounds.getMinX() + curr_x * tileWidth;
+                    double y = a*x+b;
+                    boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
+                    if(yInBounds){
+                        curr_x = curr_x - 1;
+                        mat[curr_x][curr_y] = true;
+                    }
                 }
+
             }
             else { //assume right
-                double x = bounds.getMinX() + (curr_x+1) * tileWidth;
-                double y = a*x+b;
-                boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
-                if(yInBounds){
-                    curr_x = curr_x + 1;
-                    mat[curr_x][curr_y] = true;
+                if(curr_x != dest_x){
+                    double x = bounds.getMinX() + (curr_x+1) * tileWidth;
+                    double y = a*x+b;
+                    boolean yInBounds = bounds.getMaxY() - curr_y * tileHeight >= y && bounds.getMaxY() - (curr_y+1) * tileHeight <= y;
+                    if(yInBounds){
+                        curr_x = curr_x + 1;
+                        mat[curr_x][curr_y] = true;
+                    }
                 }
             }
 
             //check up and down
             if(isAbove){
-                double y = bounds.getMaxY() - curr_y * tileHeight;
-                double x = (y-b)/a;
-                //check if it is within y values for current tile
-                boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
-                if(xInBounds){
-                    curr_y = curr_y - 1;
-                    mat[curr_x][curr_y] = true;
+                if(curr_y != dest_y){
+                    double y = bounds.getMaxY() - curr_y * tileHeight;
+                    double x = (y-b)/a;
+                    //check if it is within y values for current tile
+                    boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
+                    if(xInBounds){
+                        curr_y = curr_y - 1;
+                        mat[curr_x][curr_y] = true;
+                    }
                 }
             }
             else { //assume below
-                double y = bounds.getMaxY() - (curr_y+1) * tileHeight;
-                double x = (y-b)/a;
-                //check if it is within y values for current tile
-                boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
-                if(xInBounds){
-                    curr_y = curr_y + 1;
-                    mat[curr_x][curr_y] = true;
+                if(curr_y != dest_y){
+                    double y = bounds.getMaxY() - (curr_y+1) * tileHeight;
+                    double x = (y-b)/a;
+                    //check if it is within y values for current tile
+                    boolean xInBounds = bounds.getMinX() + curr_x * tileWidth <= x && bounds.getMinX() + (curr_x+1) * tileWidth >= x;
+                    if(xInBounds){
+                        curr_y = curr_y + 1;
+                        System.out.println(curr_y);
+                        System.out.println(dest_y);
+                        mat[curr_x][curr_y] = true;
+                    }
                 }
             }
         }
