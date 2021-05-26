@@ -117,14 +117,18 @@ public class QuadTileMapImpl implements TileMap {
         AffineTransform at = getMapDrawingAffineTransform(panX, panY, zoomFactor);
         g.transform(at);
 
+        //Use even numbers as they give better results
+        int size = 20; //10
+        int innerSize = 12; //6
+
         if (landmarkListTo != null) {
             for (Node currentNode : landmarkListTo) {
 
                 g.setColor(Color.YELLOW);
-                g.fillRect((int) (currentNode.getX()-5/zoomFactor),
-                        (int) (currentNode.getY()-5/zoomFactor),
-                        (int)(10/zoomFactor),
-                        (int)(10/zoomFactor));
+                g.fillRect((int) (currentNode.getX()-size/2/zoomFactor),
+                        (int) (currentNode.getY()-size/2/zoomFactor),
+                        (int)(size/zoomFactor),
+                        (int)(size/zoomFactor));
             }
 
 
@@ -134,10 +138,10 @@ public class QuadTileMapImpl implements TileMap {
 
             for (Node currentNode : landmarkListFrom) {
                 g.setColor(Color.ORANGE);
-                g.fillRect((int) (currentNode.getX()-5/zoomFactor),
-                        (int) (currentNode.getY()-5/zoomFactor),
-                        (int)(10/zoomFactor),
-                        (int)(10/zoomFactor));
+                g.fillRect((int) (currentNode.getX()-size/2/zoomFactor),
+                        (int) (currentNode.getY()-size/2/zoomFactor),
+                        (int)(size/zoomFactor),
+                        (int)(size/zoomFactor));
             }
 
 
@@ -146,18 +150,18 @@ public class QuadTileMapImpl implements TileMap {
         for (Node currentNode : landmarksUsedTo) {
 
             g.setColor(Color.BLUE);
-            g.fillRect((int) (currentNode.getX()-3/zoomFactor),
-                    (int) (currentNode.getY()-3/zoomFactor),
-                    (int)(6/zoomFactor),
-                    (int)(6/zoomFactor));
+            g.fillRect((int) (currentNode.getX()-innerSize/2/zoomFactor),
+                    (int) (currentNode.getY()-innerSize/2/zoomFactor),
+                    (int)(innerSize/zoomFactor),
+                    (int)(innerSize/zoomFactor));
         }
 
         for (Node currentNode : landmarksUsedFrom) {
             g.setColor(Color.RED);
-            g.fillRect((int) (currentNode.getX()-3/zoomFactor),
-                    (int) (currentNode.getY()-3/zoomFactor),
-                    (int)(6/zoomFactor),
-                    (int)(6/zoomFactor));
+            g.fillRect((int) (currentNode.getX()-innerSize/2/zoomFactor),
+                    (int) (currentNode.getY()-innerSize/2/zoomFactor),
+                    (int)(innerSize/zoomFactor),
+                    (int)(innerSize/zoomFactor));
         }
 
         g.setTransform(oldTransform);
