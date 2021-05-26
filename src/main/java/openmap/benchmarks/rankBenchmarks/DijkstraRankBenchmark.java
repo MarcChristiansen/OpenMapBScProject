@@ -15,7 +15,7 @@ import java.util.stream.IntStream;
 
 public class DijkstraRankBenchmark {
 
-    public static int dijkstraRankIterations = 5 ;
+    public static int dijkstraRankIterations = 100 ;
     public static int maxRank = 25;
 
     public static void main(String[] args) throws IOException {
