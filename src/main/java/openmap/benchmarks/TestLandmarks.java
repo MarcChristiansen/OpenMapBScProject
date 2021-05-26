@@ -153,10 +153,10 @@ public class TestLandmarks {
                                 if(shortestPath != null){
                                     //add acc Eff
                                     if(ps.equals("Landmark")){
-                                        accEffLandmark = accEffLandmark + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited());
+                                        accEffLandmark = accEffLandmark + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited())*100;
                                     }
                                     else if(ps.equals("Landmark bi dir")){
-                                        accEffLandmarkBidir = accEffLandmarkBidir + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited());
+                                        accEffLandmarkBidir = accEffLandmarkBidir + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited())*100;
                                     }
                                 }
                             }
@@ -182,11 +182,13 @@ public class TestLandmarks {
                         avgExecutionTime = avgExecutionTime/executionTimesMap.get(ps).size();
                         if(ps.equals(PathfinderStrings[1])){
                             rowLandmark.set(i0 + 1, avgExecutionTime+" ms");
-                            rowLandmarkEff.set(i0 + 1, accEffLandmark/repetitions*100+"%");
+                            rowLandmarkEff.set(i0 + 1, (accEffLandmark/repetitions)+"%");
+                            System.out.println("Average efficiency for " + ps +": " + (accEffLandmark/repetitions)+"%");
                         }
                         else if(ps.equals(PathfinderStrings[2])){
                             rowLandmarkBiDir.set(i0 + 1, avgExecutionTime+" ms");
-                            rowLandmarkBiDirEff.set(i0 + 1, accEffLandmarkBidir/repetitions*100+"%");
+                            rowLandmarkBiDirEff.set(i0 + 1, (accEffLandmarkBidir/repetitions)+"%");
+                            System.out.println("Average efficiency for " + ps +": " + (accEffLandmarkBidir/repetitions)+"%");
                         }
                         System.out.println("Average execution time for " + ps +": " + avgExecutionTime);
                     }
@@ -194,6 +196,8 @@ public class TestLandmarks {
                 }
                 dataLandmark.add(rowLandmark);
                 dataLandmarkBiDir.add(rowLandmarkBiDir);
+                dataLandmarkEff.add(rowLandmarkEff);
+                dataLandmarkBiDirEff.add(rowLandmarkBiDirEff);
             }
 
         }
