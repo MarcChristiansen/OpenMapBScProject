@@ -74,6 +74,9 @@ public class TestLandmarks {
         header.add("Subset 16");
         dataLandmark.add(header);
 
+        List<List<String>> dataLandmarkEff = new ArrayList<>();
+        dataLandmark.add(header);
+
         List<List<String>> dataLandmarkBiDir = new ArrayList<>();
         List<String> headerBi = new ArrayList<>();
         headerBi.add("Landmark bi Dir");
@@ -85,19 +88,30 @@ public class TestLandmarks {
         headerBi.add("Subset 16");
         dataLandmarkBiDir.add(headerBi);
 
+        List<List<String>> dataLandmarkBiDirEff = new ArrayList<>();
+        dataLandmarkBiDirEff.add(headerBi);
+
         List<String> rowLandmark = new ArrayList<>();
         List<String> rowLandmarkBiDir = new ArrayList<>();
+        List<String> rowLandmarkEff = new ArrayList<>();
+        List<String> rowLandmarkBiDirEff = new ArrayList<>();
 
         for(int k = 1; k <= 64; k = k*2){ //number of landmarks, 1, 2, 4, 8, 16, 32
 
             for(String ls : LandmarkStrings){
                 rowLandmark = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
                 rowLandmarkBiDir = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
-                System.out.println(ls+", " + k);
                 rowLandmark.set(0, ls);
                 rowLandmark.set(1, k+"");
                 rowLandmarkBiDir.set(0, ls);
                 rowLandmarkBiDir.set(1, k+"");
+
+                rowLandmarkEff = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
+                rowLandmarkBiDirEff = new ArrayList<>(Arrays.asList("", "", "", "", "", "", ""));
+                rowLandmarkEff.set(0, ls);
+                rowLandmarkEff.set(1, k+"");
+                rowLandmarkBiDirEff.set(0, ls);
+                rowLandmarkBiDirEff.set(1, k+"");
 
                 lfsu.getLandmarkSelector(ls).findLandmarks(k);
                 int i0 = 0;
@@ -112,6 +126,9 @@ public class TestLandmarks {
                         executionTimesMap.put(s, new ArrayList<Long>());
                         pfsu.getPathFinder(s).SetLandmarkSubsetSize(i);
                     }
+
+                    float accEffLandmark = 0;
+                    float accEffLandmarkBidir = 0;
 
                     for(int j = 0; j < repetitions; j++){
                         shortestPathMap.clear();
@@ -132,6 +149,16 @@ public class TestLandmarks {
                             if((spDijkstra == null && shortestPath == null) || (spDijkstra != null && spDijkstra.equals(shortestPath))){
                                 //update counter by 1
                                 agreeWithDijkstraTimes.put(ps, agreeWithDijkstraTimes.getOrDefault(ps, 0)+1);
+
+                                if(shortestPath != null){
+                                    //add acc Eff
+                                    if(ps.equals("Landmark")){
+                                        accEffLandmark = accEffLandmark + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited());
+                                    }
+                                    else if(ps.equals("Landmark bi dir")){
+                                        accEffLandmarkBidir = accEffLandmarkBidir + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited());
+                                    }
+                                }
                             }
                             else{
                                 System.out.println(source.getId());
@@ -155,9 +182,11 @@ public class TestLandmarks {
                         avgExecutionTime = avgExecutionTime/executionTimesMap.get(ps).size();
                         if(ps.equals(PathfinderStrings[1])){
                             rowLandmark.set(i0 + 1, avgExecutionTime+" ms");
+                            rowLandmarkEff.set(i0 + 1, accEffLandmark/repetitions*100+"%");
                         }
                         else if(ps.equals(PathfinderStrings[2])){
                             rowLandmarkBiDir.set(i0 + 1, avgExecutionTime+" ms");
+                            rowLandmarkBiDirEff.set(i0 + 1, accEffLandmarkBidir/repetitions*100+"%");
                         }
                         System.out.println("Average execution time for " + ps +": " + avgExecutionTime);
                     }
@@ -177,6 +206,16 @@ public class TestLandmarks {
         try (Writer writer = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream("TestLandmarksLandmarkBiDir.txt"), "utf-8"))) {
             writer.write(LatexUtility.generateStandardTable(dataLandmarkBiDir));
+        }
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("TestLandmarksLandmarkEff.txt"), "utf-8"))) {
+            writer.write(LatexUtility.generateStandardTable(dataLandmarkEff));
+        }
+
+        try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+                new FileOutputStream("TestLandmarksLandmarkBiDirEff.txt"), "utf-8"))) {
+            writer.write(LatexUtility.generateStandardTable(dataLandmarkBiDirEff));
         }
 
     }
