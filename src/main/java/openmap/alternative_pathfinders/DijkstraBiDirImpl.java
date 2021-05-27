@@ -48,6 +48,9 @@ public class DijkstraBiDirImpl extends AbstractPathfinder {
         shortestDistance = Double.MAX_VALUE;
         nodesScanned = 0;
         nodesVisited = 0;
+
+        //measureable values
+        long start = System.currentTimeMillis();
         runBiDir(source, destination);
         List<Node> result = new ArrayList<>();
 
@@ -62,6 +65,9 @@ public class DijkstraBiDirImpl extends AbstractPathfinder {
         }
         result.add(source);
         Collections.reverse(result);
+        long finish = System.currentTimeMillis();
+        executionTime = finish - start;
+
         return result;
     }
 
@@ -97,8 +103,7 @@ public class DijkstraBiDirImpl extends AbstractPathfinder {
     public void SetLandmarkSubsetSize(int i) { }
 
     private void runBiDir(Node source, Node destination) {
-        //measureable values
-        long start = System.currentTimeMillis();
+
 
         //add source to forward queue with distance 0
         source.setDistance(0);
@@ -210,8 +215,7 @@ public class DijkstraBiDirImpl extends AbstractPathfinder {
         }
          */
 
-        long finish = System.currentTimeMillis();
-        executionTime = finish - start;
+
         //System.out.println("Bidirectional Dijkstra visited " + visitCount + " nodes");
         //System.out.println("Bidirectional Dijkstra took " + (finish - start) + " ms");
     }

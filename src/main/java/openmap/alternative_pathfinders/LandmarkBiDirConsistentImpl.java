@@ -116,13 +116,17 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
 
         }
 
-        setExecutionTimeFromStart(start);
+
         //System.out.println("A* Bidirectional took " + (this.executionTime) + " ms");
 
+        List<Node> path = null;
         if(meet != null) {
-            return retraceSteps(source, destination, meet);
+            path = retraceSteps(source, destination, meet);
         }
-        return null; //Meet never found, return null
+
+        setExecutionTimeFromStart(start);
+
+        return path; //Meet never found, return null
     }
 
     private void setExecutionTimeFromStart(long start) {

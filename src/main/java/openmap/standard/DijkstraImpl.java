@@ -34,6 +34,8 @@ public class DijkstraImpl extends AbstractPathfinder {
         clearDistanceAndPredecessor();
         //visited.clear();
         priorityQueue.clear();
+
+        long start = System.currentTimeMillis();
         runDijkstra(source, destination);
 
         List<Node> result = new ArrayList<>();
@@ -49,6 +51,11 @@ public class DijkstraImpl extends AbstractPathfinder {
         }
         result.add(source);
         Collections.reverse(result);
+
+        long finish = System.currentTimeMillis();
+        this.executionTime = finish - start;
+        System.out.println("Dijkstra took " + (finish - start) + " ms");
+
         return result;
     }
 
@@ -67,7 +74,6 @@ public class DijkstraImpl extends AbstractPathfinder {
         //measureable values
         nodesVisited = 0;
         nodesScanned = 0;
-        long start = System.currentTimeMillis();
 
         //add source to priority queue with distance 0
         Node firstNode = source;
@@ -105,10 +111,9 @@ public class DijkstraImpl extends AbstractPathfinder {
                 });
             }
         }
-        long finish = System.currentTimeMillis();
-        this.executionTime = finish - start;
+
         //System.out.println("Dijkstra visited " + visitcount + " nodes");
-        System.out.println("Dijkstra took " + (finish - start) + " ms");
+
     }
 
     private void clearDistanceAndPredecessor(){

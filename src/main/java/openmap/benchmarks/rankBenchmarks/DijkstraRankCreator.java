@@ -57,6 +57,8 @@ public class DijkstraRankCreator extends AbstractPathfinder {
 
     public boolean powerOfTwo(int n)
     {
+        if(n == 0) return false;
+
         return (int)(Math.ceil((Math.log(n) / Math.log(2))))
                 == (int)(Math.floor(((Math.log(n) / Math.log(2)))));
     }
@@ -80,11 +82,13 @@ public class DijkstraRankCreator extends AbstractPathfinder {
             NodeWrapper currNode = priorityQueue.poll();
 
             if(!currNode.getNode().getVisited()){
-                nodesVisited++; //update visited nodes
-
                 if(powerOfTwo(nodesVisited)){
                     nodeRanks.add(currNode.getNode()); //Add node to rank list
                 }
+
+                nodesVisited++; //update visited nodes
+
+
 
                 //give first node predecessor
                 currNode.getNode().setVisited(true);
