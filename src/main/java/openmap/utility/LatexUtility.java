@@ -10,7 +10,7 @@ public  class LatexUtility {
 
         res = String.join(" & ", entries);
 
-        res = res + " \\\\ \\hline";
+        res = res + " \\\\";
 
         return res;
     }
@@ -27,13 +27,13 @@ public  class LatexUtility {
 
 
         res = res + "\\begin{table}[H] \n";
-        res = res + "\\begin{tabular} {|"+ String.join("|", r)+"|} \n";
-        res = res + "\\hline \n";
+        res = res + "\\begin{tabular} {"+ String.join("", r)+"} \n";
+        res = res + "\\toprule \n";
 
         for(List<String> ls : rows){
             res = res + generateTableRow(ls) + "\n";
         }
-
+        res = res + "\\bottomrule \n";
         res = res + "\\end{tabular} \n";
         res = res + "\\end{table}";
         return res;
