@@ -24,7 +24,7 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
     private PriorityQueue<NodeWrapper> priorityQueueForward;
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
-    private int landmarkSubsetSize = 2;
+    private int landmarkSubsetSize = 1;
     private int defaultLandmarkAmount = 20;
     private List<Integer> landmarksForward;
     private List<Integer> landmarksBackward;
