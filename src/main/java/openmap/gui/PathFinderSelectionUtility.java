@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PathFinderSelectionUtility {
 
-    private static int[] relevantTestRefs = {0, 3, 2, 5, 6, 7};
+    private static int[] relevantTestRefs = {0, 3, 2, 5, 6, 8};
 
     /**
      * Create a selection utility with a given graph
@@ -35,7 +35,7 @@ public class PathFinderSelectionUtility {
     private final Graph graph;
     private final PathFinder[] pathfinders;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir", "Landmard bi dir opti"};
 
     /**
      * Get pathfinder string names.
@@ -87,6 +87,11 @@ public class PathFinderSelectionUtility {
         if(pathFinderStrings[7].equals(finderId)){
             if(pathfinders[7] == null){ pathfinders[7] = new LandmarkBiDirConsistentImpl(graph); }
             return pathfinders[7];
+        }
+
+        if(pathFinderStrings[8].equals(finderId)){
+            if(pathfinders[8] == null){ pathfinders[8] = new LandmarkBiDirOpti(graph); }
+            return pathfinders[8];
         }
 
         return null; //Todo Possibly make exception...

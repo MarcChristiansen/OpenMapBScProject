@@ -22,8 +22,8 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
     private PriorityQueue<NodeWrapper> priorityQueue;
 
     private Node currTarget;
-    private int landmarkSubsetSize = 20;
-    private int defaultLandmarkAmount;
+    private int landmarkSubsetSize = 2;
+    private int defaultLandmarkAmount = 20;
     private List<Integer> landmarks;
 
     private boolean preProcessDone;

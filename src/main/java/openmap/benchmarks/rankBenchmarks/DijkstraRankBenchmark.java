@@ -4,6 +4,7 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.PathFinderSelectionUtility;
+import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
 import openmap.parsing.json.DiskUtility;
 import openmap.utility.FileWriter;
 import openmap.utility.LatexUtility;
@@ -15,13 +16,16 @@ import java.util.stream.IntStream;
 
 public class DijkstraRankBenchmark {
 
-    public static int dijkstraRankIterations = 100 ;
+    public static int dijkstraRankIterations = 50 ;
     public static int maxRank = 25;
 
     public static void main(String[] args) throws IOException {
         Graph graph = null;
         try { graph = DiskUtility.loadJsonGraph(args[0]); } //Load graph
         catch (Exception e){ e.printStackTrace(); }
+
+        FarthestLandmarkSelectionImpl landmarkSelection = new FarthestLandmarkSelectionImpl(graph);
+        landmarkSelection.findLandmarks(32);
 
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
 
@@ -31,6 +35,7 @@ public class DijkstraRankBenchmark {
         int actualRank = Math.min(maxRank, testIterRanks.get(0).getRanks().size());
 
         long[][] accRes = new long[pfsu.getRelevantPathfinderNames().size()][actualRank];
+        long[][] accVis = new long[pfsu.getRelevantPathfinderNames().size()][actualRank];
 
         System.out.println(testIterRanks.get(0).getStart().getId());
         System.out.println(testIterRanks.get(0).getRanks().get(0).getId());
@@ -43,29 +48,38 @@ public class DijkstraRankBenchmark {
                     Node target = sdr.getRanks().get(j);
                     pf.getShortestPath(sdr.getStart(), target);
                     accRes[i][j] += pf.getLastExecutionTime();
+                    accVis[i][j] += pf.getNodesVisited();
                 }
             }
         }
 
         List<List<String>> tableRows = new ArrayList<>();
+        List<List<String>> tableRowsVis = new ArrayList<>();
 
         //Add top row with rank numbers
         tableRows.add(new ArrayList<>());
         tableRows.get(0).add("Pathfinder");
+        tableRowsVis.add(new ArrayList<>());
+        tableRowsVis.get(0).add("Pathfinder");
         List<String> range = IntStream.rangeClosed(0, actualRank-1)
                 .mapToObj(Integer::toString)
                 .collect(Collectors.toList());
         tableRows.get(0).addAll(range);
+        tableRowsVis.get(0).addAll(range);
 
         for (int i = 0; i < accRes.length; i++) {
             tableRows.add(new ArrayList<>());
             tableRows.get(i+1).add(pfsu.getRelevantPathfinderNames().get(i));
+            tableRowsVis.add(new ArrayList<>());
+            tableRowsVis.get(i+1).add(pfsu.getRelevantPathfinderNames().get(i));
             for (int j = 0; j < accRes[0].length; j++) {
                 tableRows.get(i+1).add(String.format(Locale.GERMANY,"%.2f", (double)accRes[i][j]/(double)dijkstraRankIterations));
+                tableRowsVis.get(i+1).add(String.format(Locale.GERMANY,"%.2f", (double)accVis[i][j]/(double)dijkstraRankIterations));
             }
         }
 
         FileWriter.writeCSV(tableRows,  args[0] + "-dijkstraRank");
+        FileWriter.writeCSV(tableRowsVis,  args[0] + "-dijkstraRankVis");
     }
 
     private static List<SingleDijkstraRank> getRanks(Graph graph, Random random) {

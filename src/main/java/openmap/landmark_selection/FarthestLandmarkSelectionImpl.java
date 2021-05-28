@@ -2,7 +2,9 @@ package openmap.landmark_selection;
 
 import openmap.framework.Graph;
 import openmap.framework.Node;
+import openmap.framework.Path;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Random;
 
@@ -64,6 +66,14 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
         //System.out.println("Landmark number " + 1 + " Processed");
 
+        ArrayList<Node> usableNodes = new ArrayList<>();
+        for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
+            if(!shouldBanNode(e.getValue())){
+                usableNodes.add(e.getValue());
+            }
+        }
+        usableNodes.trimToSize(); //Might not be needed, but won't hurt.
+
         //find node farthest from all known landmarks
         for(int i = 1; i < k; i++){
             //System.out.println("Landmark number " + (i+1) + " Processed");
@@ -71,28 +81,29 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
             double bestDistanceTo= 0;
             bestNodeFrom = null;
             bestNodeTo = null;
-            for(Map.Entry<Long, Node> e : graph.getNodeMap().entrySet()){
-                distanceFrom = minFromDoubleListKFirstEntries(e.getValue().getDistancesFromLandmarks(), i);
+            for(Node n : usableNodes){
 
-                if(distanceFrom == Double.MAX_VALUE || e.getValue().getDistancesToLandmarks()[k-1] == Double.MAX_VALUE){ //don't select islands
+                distanceFrom = minFromDoubleListKFirstEntries(n.getDistancesFromLandmarks(), i);
+
+                if(distanceFrom == Double.MAX_VALUE || n.getDistancesToLandmarks()[k-1] == Double.MAX_VALUE){ //don't select islands
                     distanceFrom = 0;
                 }
 
                 if(distanceFrom > bestDistanceFrom){
                     bestDistanceFrom = distanceFrom;
-                    bestNodeFrom = e.getValue();
+                    bestNodeFrom = n;
                 }
 
 
-                distanceTo = minFromDoubleListKFirstEntries(e.getValue().getDistancesToLandmarks(), i);
+                distanceTo = minFromDoubleListKFirstEntries(n.getDistancesToLandmarks(), i);
 
-                if(distanceTo == Double.MAX_VALUE || e.getValue().getDistancesFromLandmarks()[k-1] == Double.MAX_VALUE){ //don't select islands
+                if(distanceTo == Double.MAX_VALUE || n.getDistancesFromLandmarks()[k-1] == Double.MAX_VALUE){ //don't select islands
                     distanceTo = 0;
                 }
 
                 if(distanceTo > bestDistanceTo){
                     bestDistanceTo = distanceTo;
-                    bestNodeTo = e.getValue();
+                    bestNodeTo = n;
                 }
             }
             System.out.println(i);
@@ -108,6 +119,25 @@ public class FarthestLandmarkSelectionImpl extends LandmarkSelectionAbstract{
 
         executionTime = System.currentTimeMillis() - start;
 
+    }
+
+    private boolean shouldBanNode(Node e) {
+        boolean isFine = false;
+
+        for (Path p : e.getOutgoingPaths()) {
+            isFine = false;
+            for(Path pe : p.getDestination().getOutgoingPaths()){
+                if(pe.getDestination() == e){
+                    isFine = true;
+                    break;
+                }
+            }
+            if(!isFine)
+                return true;
+
+        }
+
+        return false;
     }
 
     private void processLandmarkFrom(Node l, int i){

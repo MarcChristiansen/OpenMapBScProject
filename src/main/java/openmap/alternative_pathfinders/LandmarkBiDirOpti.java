@@ -1,12 +1,17 @@
 package openmap.alternative_pathfinders;
 
-import openmap.framework.*;
+import openmap.framework.Graph;
+import openmap.framework.Node;
+import openmap.framework.NodeWrapper;
+import openmap.framework.Path;
 import openmap.gui.NodeDrawingInfo;
 import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
 import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.awt.*;
+import java.lang.reflect.Array;
 import java.util.List;
 import java.util.*;
 import java.util.function.Function;
@@ -19,29 +24,26 @@ import java.util.stream.Stream;
  * @version 1.0
  * @since 29-04-2021
  */
-public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
+public class LandmarkBiDirOpti extends AbstractPathfinder {
 
     private PriorityQueue<NodeWrapper> priorityQueueForward;
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
-    private int landmarkSubsetSize = 1;
     private int defaultLandmarkAmount = 20;
-    private List<Integer> landmarksForward;
-    private List<Integer> landmarksBackward;
+    private int landmarksForward;
+    private int landmarksBackward;
 
     private double shortestDistance;
     private Node meet = null;
 
-    public LandmarkBiDirConsistentImpl(Graph graph){
+    public LandmarkBiDirOpti(Graph graph){
         this(graph, 20);
     }
 
-    public LandmarkBiDirConsistentImpl(Graph graph, int defaultLandmarkAmount){
+    public LandmarkBiDirOpti(Graph graph, int defaultLandmarkAmount){
         super(graph);
         priorityQueueForward = new PriorityQueue<>();
         priorityQueueBackward = new PriorityQueue<>();
-        landmarksForward = new ArrayList<>();
-        landmarksBackward = new ArrayList<>();
         this.defaultLandmarkAmount = defaultLandmarkAmount;
     }
 
@@ -54,8 +56,6 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         }
 
         //Prepare for run
-        landmarksForward.clear();
-        landmarksBackward.clear();
         clearDistanceAndPredecessor();
         priorityQueueForward.clear();
         priorityQueueBackward.clear();
@@ -80,7 +80,9 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         priorityQueueBackward.add(new NodeWrapperImpl(destination, 0));
 
         //Sanity checks
-        for(Integer i : landmarksForward) {
+
+
+        for (int i = 0; i < source.getDistancesToLandmarks().length; i++) {
             if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
                 setExecutionTimeFromStart(start);
                 return null; //No path exists.
@@ -143,21 +145,17 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         int landmark;
         int bestLandmark;
         double h = 0;
-        for(int j = 0; j < landmarkSubsetSize; j++){
-            bestLandmark = 0;
-            h = 0;
-            for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
-                if(!landmarksForward.contains(i)){
-                    landmark = i;
-                    double next = hForward(source, destination, landmark);
-                    if(h < next){
-                        bestLandmark = landmark;
-                        h = next;
-                    }
-                }
+        bestLandmark = 0;
+        h = 0;
+        for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
+            landmark = i;
+            double next = hForward(source, destination, landmark);
+            if(h < next){
+                bestLandmark = landmark;
+                h = next;
             }
-            landmarksForward.add(bestLandmark);
         }
+        landmarksForward = bestLandmark;
     }
 
     private void FindLandmarkSubsetBackward(Node source, Node destination) {
@@ -168,21 +166,17 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         int landmark;
         int bestLandmark;
         double h = 0;
-        for(int j = 0; j < landmarkSubsetSize; j++){
-            bestLandmark = 0;
-            h = 0;
-            for(int i = 0; i < destination.getDistancesFromLandmarks().length; i++){
-                if(!landmarksBackward.contains(i)){
-                    landmark = i;
-                    double next = hBackward(destination, source, landmark);
-                    if(h < next){
-                        bestLandmark = landmark;
-                        h = next;
-                    }
-                }
+        bestLandmark = 0;
+        h = 0;
+        for(int i = 0; i < destination.getDistancesFromLandmarks().length; i++){
+            landmark = i;
+            double next = hBackward(destination, source, landmark);
+            if(h < next){
+                bestLandmark = landmark;
+                h = next;
             }
-            landmarksBackward.add(bestLandmark);
         }
+        landmarksBackward = bestLandmark;
     }
 
     private void handleForwardPass(Node source, Node destination, NodeWrapper currNodeW) {
@@ -240,9 +234,7 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
     }
 
     private double pForward(Node source, Node destination, Node currNode) {
-        double forwardBound = findForwardLowerBound(source, destination, currNode);
-        double backwardBound = findBackwardLowerBound(source, destination, currNode);
-        return 0.5 * (forwardBound - backwardBound);
+        return 0.5 * (hForward(currNode, destination, landmarksForward) - hBackward(currNode, source, landmarksBackward));
     }
 
     private double pBackward(Node source, Node destination, Node currNode) {
@@ -250,7 +242,7 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
                 //0.5 * (h(source, pathDest) - h(destination, pathDest)); //Old manual rewrite...
     }
 
-    private double findForwardLowerBound(Node source, Node destination, Node currNode){
+    /*private double findForwardLowerBound(Node source, Node destination, Node currNode){
         double h = 0;
         for(int i : landmarksForward){
             double curr = hForward(currNode, destination, i);
@@ -270,7 +262,7 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
             }
         }
         return h;
-    }
+    }*/
 
     @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
@@ -287,17 +279,18 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
 
     @Override
     public List<Integer> getLandmarksUsedTo() {
-        return landmarksForward;
+
+        return Collections.singletonList(landmarksForward);
     }
 
     @Override
     public List<Integer> getLandmarksUsedFrom() {
-        return landmarksBackward;
+        return Collections.singletonList(landmarksBackward);
     }
 
     @Override
     public void SetLandmarkSubsetSize(int i) {
-        this.landmarkSubsetSize = i;
+        throw new NotImplementedException("Not implemented to optimize");
     }
 
     private List<Node> retraceSteps(Node source, Node target, Node meet){
@@ -345,8 +338,9 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         //if(curr.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l for " + curr.getDistancesToLandmarks().get(landmark));}
         //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l for " + target.getDistancesToLandmarks().get(landmark));}
 
-
-        return curr.getDistancesToLandmarks()[landmark] - target.getDistancesToLandmarks()[landmark];
+        double temp = curr.getDistancesToLandmarks()[landmark] - target.getDistancesToLandmarks()[landmark];
+        if(temp < 0) temp = 0;
+        return temp;
     }
 
     private double hBackward(Node curr, Node target, int landmark) {
@@ -356,8 +350,14 @@ public class LandmarkBiDirConsistentImpl extends AbstractPathfinder {
         //if(curr.getDistancesFromLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l back " + curr.getDistancesFromLandmarks().get(landmark));}
         //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l back " + target.getDistancesToLandmarks().get(landmark));}
 
-        return  curr.getDistancesFromLandmarks()[landmark] - target.getDistancesFromLandmarks()[landmark];
+        double temp = curr.getDistancesFromLandmarks()[landmark] - target.getDistancesFromLandmarks()[landmark];
+        if(temp < 0) temp = 0;
+        return temp;
                 //curr.getDistancesFromLandmarks().get(landmark) - target.getDistancesToLandmarks().get(landmark);
+    }
+
+    private double distance(Node n1, Node n2){
+        return Math.sqrt(Math.pow(n1.getX()-n2.getX(), 2) + Math.pow(n1.getY()-n2.getY(), 2));
     }
 
     private void clearDistanceAndPredecessor(){
