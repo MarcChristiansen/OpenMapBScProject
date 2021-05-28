@@ -24,18 +24,20 @@ public class TestLandmarks {
         int target = -1;
         int repetitions;
 
-        if(args != null && args.length == 2){
+        if(args != null && args.length == 3){
             path = args[0];
             target = Integer.parseInt(args[1]);
+            repetitions = Integer.parseInt(args[2]);
         }
         else{
             path = ConsoleUtils.readLine(
                     "Enter json path : ");
             target = Integer.parseInt(ConsoleUtils.readLine(
                     "Enter target landmark selector index... (-1) for all : "));
+            repetitions = Integer.parseInt(ConsoleUtils.readLine("Enter number of repetitions: "));
         }
 
-        repetitions = Integer.parseInt(ConsoleUtils.readLine("Enter number of repetitions: "));
+
 
 
         Graph graph = null;
