@@ -25,7 +25,7 @@ public class DijkstraRankBenchmark {
         catch (Exception e){ e.printStackTrace(); }
 
         FarthestLandmarkSelectionImpl landmarkSelection = new FarthestLandmarkSelectionImpl(graph);
-        landmarkSelection.findLandmarks(32);
+        landmarkSelection.findLandmarks(20);
 
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
 
