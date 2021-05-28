@@ -29,13 +29,13 @@ public class PathFinderSelectionUtility {
     public PathFinderSelectionUtility(Graph graph) {
 
         this.graph = graph;
-        pathfinders = new PathFinder[9];
+        pathfinders = new PathFinder[10];
     }
 
     private final Graph graph;
     private final PathFinder[] pathfinders;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir", "Landmard bi dir opti"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir", "Landmark bi dir opti", "Dyn landmark test"};
 
     /**
      * Get pathfinder string names.
@@ -85,13 +85,18 @@ public class PathFinderSelectionUtility {
         }
 
         if(pathFinderStrings[7].equals(finderId)){
-            if(pathfinders[7] == null){ pathfinders[7] = new LandmarkBiDirConsistentImpl(graph); }
+            if(pathfinders[7] == null){ pathfinders[7] = new LandmarkBiDirModified(graph); }
             return pathfinders[7];
         }
 
         if(pathFinderStrings[8].equals(finderId)){
             if(pathfinders[8] == null){ pathfinders[8] = new LandmarkBiDirOpti(graph); }
             return pathfinders[8];
+        }
+
+        if(pathFinderStrings[9].equals(finderId)){
+            if(pathfinders[9] == null){ pathfinders[9] = new LandmarkDynamicSelection(graph); }
+            return pathfinders[9];
         }
 
         return null; //Todo Possibly make exception...
