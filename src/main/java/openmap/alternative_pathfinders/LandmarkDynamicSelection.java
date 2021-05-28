@@ -27,7 +27,8 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
 
     private Node currTarget;
     private int defaultLandmarkAmount = 20;
-    private List<Integer> landmarks;
+    private List<Integer> landmarksTo;
+    private List<Integer> landmarksFrom;
 
     public LandmarkDynamicSelection(Graph graph){
         this(graph, 20);
@@ -36,14 +37,16 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
     public LandmarkDynamicSelection(Graph graph, int defaultLandmarkAmount){
         super(graph);
         priorityQueue = new PriorityQueue<NodeWrapper>();
-        landmarks = new ArrayList<Integer>();
+        landmarksTo = new ArrayList<Integer>();
+        landmarksFrom = new ArrayList<Integer>();
         this.defaultLandmarkAmount = defaultLandmarkAmount;
     }
 
     @Override
     public List<Node> getShortestPath(Node source, Node destination) {
 
-        landmarks.clear();
+        landmarksTo.clear();
+        landmarksFrom.clear();
 
         if(source.getDistancesToLandmarks().length == 0) {
             System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
@@ -65,7 +68,7 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
         //pick best landmark to work from
         FindLandmarkSubset(source);
         //Quick sanity check to ensure path actually exists by checking if they can both reach a chosen landmark.
-        for(Integer i : landmarks) {
+        for(Integer i : landmarksTo) {
             if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
                 setExecutionTimeFromStart(start);
                 return null; //No path exists.
@@ -84,12 +87,13 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
             if(nodesVisited % 10000 == 0){
                 if(dynLandmark(currNodeW.getNode())){
                     List<NodeWrapper> tempList= new ArrayList<>(priorityQueue);
+                    tempList.add(currNodeW);
                     priorityQueue.clear();
                     for (NodeWrapper nw: tempList) {
                         double potential = getLowerbound(nw.getNode());
                         priorityQueue.add(new NodeWrapperImpl(nw.getNode(), nw.getNode().getDistance()+potential));
                     }
-
+                    currNodeW = priorityQueue.poll();
                 }
             }
 
@@ -128,18 +132,31 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
     private boolean dynLandmark(Node n){
         int newL = -1;
         double best = getLowerbound(n);
+        boolean isBestTo = true; //Says if the best new landmark is a to landmark
 
         for(int i = 0; i < n.getDistancesToLandmarks().length; i++){
-            double test = h(n, i);
+            double test = hTo(n, i);
 
             if(test > best){
                 newL = i;
                 best = test;
+                isBestTo = true;
+            }
+        }
+
+        for(int i = 0; i < n.getDistancesFromLandmarks().length; i++){
+            double test = hFrom(n, i);
+
+            if(test > best){
+                newL = i;
+                best = test;
+                isBestTo = false;
             }
         }
 
         if(newL > -1){
-            landmarks.add(newL);
+            if(isBestTo) landmarksTo.add(newL);
+            else landmarksFrom.add(newL);
             return true;
         }
 
@@ -154,9 +171,18 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
 
     private double getLowerbound(Node currNode) {
         double h = 0;
-        for(int i : landmarks){
-            if(h < h(currNode, i)){
-                h = h(currNode, i);
+        double temp = 10;
+        for(int i : landmarksTo){
+            temp = hTo(currNode, i);
+            if(h < temp){
+                h = temp;
+            }
+        }
+
+        for(int i : landmarksFrom){
+            temp =  hFrom(currNode, i);
+            if(h < temp){
+                h = temp;
             }
         }
         return h;
@@ -173,7 +199,7 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
         double temp = 0;
         bestLandmark = 0;
         for(int i = 0; i < source.getDistancesToLandmarks().length; i++){
-            if(!landmarks.contains(i)){
+            if(!landmarksTo.contains(i)){
                 landmark = i;
                 temp = source.getDistancesToLandmarks()[landmark] - currTarget.getDistancesToLandmarks()[landmark];
                 if(best < temp){
@@ -182,11 +208,11 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
                 }
             }
         }
-        landmarks.add(bestLandmark);
+        landmarksTo.add(bestLandmark);
 
         best = -Double.MAX_VALUE;
         for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
-            if(!landmarks.contains(i)){
+            if(!landmarksFrom.contains(i)){
                 landmark = i;
                 temp = currTarget.getDistancesFromLandmarks()[landmark] - source.getDistancesFromLandmarks()[landmark];
                 if(best < temp){
@@ -195,7 +221,7 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
                 }
             }
         }
-        landmarks.add(bestLandmark);
+        landmarksFrom.add(bestLandmark);
     }
 
     @Override
@@ -211,12 +237,12 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
 
     @Override
     public List<Integer> getLandmarksUsedTo() {
-        return landmarks;
+        return landmarksTo;
     }
 
     @Override
     public List<Integer> getLandmarksUsedFrom() {
-        return null;
+        return landmarksFrom;
     }
 
     @Override
@@ -244,10 +270,15 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
         return res;
     }
 
-    private double h(Node n, int landmark){
+    private double hTo(Node n, int landmark){
+        //return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark);
+        return n.getDistancesToLandmarks()[landmark] - currTarget.getDistancesToLandmarks()[landmark];
+    }//-currTarget.getLandmarkDistancesFromLandmark().get(landmark) + n.getLandmarkDistancesFromLandmark().get(landmark);
+
+    private double hFrom(Node n, int landmark){
         //return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark);
 
-        return Math.max(n.getDistancesToLandmarks()[landmark] - currTarget.getDistancesToLandmarks()[landmark], currTarget.getDistancesFromLandmarks()[landmark] - n.getDistancesFromLandmarks()[landmark]);
+        return currTarget.getDistancesFromLandmarks()[landmark] - n.getDistancesFromLandmarks()[landmark];
     }//-currTarget.getLandmarkDistancesFromLandmark().get(landmark) + n.getLandmarkDistancesFromLandmark().get(landmark);
 
     private double distance(Node n1, Node n2){

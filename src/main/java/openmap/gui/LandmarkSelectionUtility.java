@@ -23,7 +23,7 @@ public class LandmarkSelectionUtility {
 
     private final Graph graph;
 
-    private final String[] LandmarkSelectionStrings = { "Farthest", "Randomized"};
+    private final String[] LandmarkSelectionStrings = { "Farthest same", "Randomized", "Farthest"};
 
     LandmarkSelection[] landmarkSelections;
 
@@ -34,7 +34,7 @@ public class LandmarkSelectionUtility {
      */
     public LandmarkSelectionUtility(Graph graph) {
         this.graph = graph;
-        landmarkSelections = new LandmarkSelection[2];
+        landmarkSelections = new LandmarkSelection[3];
     }
 
     /**
@@ -54,13 +54,18 @@ public class LandmarkSelectionUtility {
     public LandmarkSelection getLandmarkSelector (String finderId) {
 
         if(LandmarkSelectionStrings[0].equals(finderId)){
-            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImplSame(graph); }
+            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImpl(graph); }
             return landmarkSelections[0];
         }
 
         if(LandmarkSelectionStrings[1].equals(finderId)){
             if(landmarkSelections[1] == null){ landmarkSelections[1] = new RandomizedLandmarkSelectionImpl(graph); }
             return landmarkSelections[1];
+        }
+
+        if(LandmarkSelectionStrings[2].equals(finderId)){
+            if(landmarkSelections[2] == null){ landmarkSelections[2] = new FarthestLandmarkSelectionImplSame(graph); }
+            return landmarkSelections[2];
         }
 
         return null; //Todo Possibly make exception...

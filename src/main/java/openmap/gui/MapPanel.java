@@ -85,6 +85,9 @@ class MapPanel extends JPanel {
         this.landmarksUsedFrom = new ArrayList<>();
         this.tileMap = new QuadTileMapImpl(graph, (byte)6);
 
+        pathNode1 = graph.getNodeMap().get(4682868576l);
+        pathNode2 = graph.getNodeMap().get(3704257354l);
+
         this.pathFinder = pathFinder;
 
         //Set initial graphics location
