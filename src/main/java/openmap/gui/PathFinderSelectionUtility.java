@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PathFinderSelectionUtility {
 
-    private static int[] relevantTestRefs = {0, 3, 2, 5, 6, 7};
+    private static int[] relevantTestRefs = {0, 3, 2, 5, 6, 8};
 
     /**
      * Create a selection utility with a given graph

@@ -180,12 +180,12 @@ public class TestLandmarks {
                             avgExecutionTime = avgExecutionTime+l;
                         }
                         avgExecutionTime = avgExecutionTime/executionTimesMap.get(ps).size();
-                        if(ps.equals(PathfinderStrings[1])){
+                        if(ps.equals(PathfinderStrings[0])){
                             rowLandmark.set(i0 + 1, (String.format(Locale.GERMANY,"%.2f", avgExecutionTime))+" ms");
                             rowLandmarkEff.set(i0 + 1, (String.format(Locale.GERMANY,"%.2f", accEffLandmark/repetitions))+"\\%");
                             System.out.println("Average efficiency for " + ps +": " + (String.format(Locale.GERMANY,"%.2f", accEffLandmark/repetitions))+"%");
                         }
-                        else if(ps.equals(PathfinderStrings[2])){
+                        else if(ps.equals(PathfinderStrings[1])){
                             rowLandmarkBiDir.set(i0 + 1, (String.format(Locale.GERMANY,"%.2f", avgExecutionTime))+" ms");
                             rowLandmarkBiDirEff.set(i0 + 1, (String.format(Locale.GERMANY,"%.2f", accEffLandmarkBidir/repetitions))+"\\%");
                             System.out.println("Average efficiency for " + ps +": " + (String.format(Locale.GERMANY,"%.2f", accEffLandmarkBidir/repetitions))+"%");

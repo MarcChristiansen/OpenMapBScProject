@@ -4,6 +4,7 @@ import openmap.framework.Graph;
 import openmap.framework.Node;
 import openmap.framework.PathFinder;
 import openmap.gui.PathFinderSelectionUtility;
+import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
 import openmap.parsing.json.DiskUtility;
 import openmap.utility.FileWriter;
 import openmap.utility.LatexUtility;
@@ -22,6 +23,9 @@ public class DijkstraRankBenchmark {
         Graph graph = null;
         try { graph = DiskUtility.loadJsonGraph(args[0]); } //Load graph
         catch (Exception e){ e.printStackTrace(); }
+
+        FarthestLandmarkSelectionImpl landmarkSelection = new FarthestLandmarkSelectionImpl(graph);
+        landmarkSelection.findLandmarks(32);
 
         PathFinderSelectionUtility pfsu = new PathFinderSelectionUtility(graph);
 
