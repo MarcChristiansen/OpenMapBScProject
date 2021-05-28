@@ -3,6 +3,7 @@ package openmap.gui;
 import openmap.framework.Graph;
 import openmap.framework.LandmarkSelection;
 import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
+import openmap.landmark_selection.FarthestLandmarkSelectionImplSame;
 import openmap.landmark_selection.RandomizedLandmarkSelectionImpl;
 
 import java.util.ArrayList;
@@ -53,7 +54,7 @@ public class LandmarkSelectionUtility {
     public LandmarkSelection getLandmarkSelector (String finderId) {
 
         if(LandmarkSelectionStrings[0].equals(finderId)){
-            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImpl(graph); }
+            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImplSame(graph); }
             return landmarkSelections[0];
         }
 
