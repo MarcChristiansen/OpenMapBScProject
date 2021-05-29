@@ -300,8 +300,12 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
         double h = -Double.MAX_VALUE;
         for(int i : landmarksForward){
             double curr = hForward(currNode, destination, i);
+            double curr2 = hBackward(destination, currNode, i);
             if(h < curr){
                 h = curr;
+            }
+            if(h < curr2){
+                h = curr2;
             }
         }
         return h;
@@ -311,8 +315,12 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
         double h = -Double.MAX_VALUE;
         for(int i : landmarksBackward){
             double curr = hBackward(currNode, source, i);
+            double curr2 = hForward(source, currNode, i);
             if(h < curr){
                 h = curr;
+            }
+            if(h < curr2){
+                h = curr2;
             }
         }
         return h;
