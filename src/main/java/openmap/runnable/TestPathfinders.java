@@ -64,11 +64,15 @@ public class TestPathfinders {
             executionTimesMap.put(s, new ArrayList<Long>());
         }
 
+
+
         for(int i = 0; i < repetitions; i++){
             //get two nodes
             shortestPathMap.clear();
             Node source = (Node)values[random.nextInt(values.length)];
             Node destination = (Node)values[random.nextInt(values.length)];
+
+
 
             //get shortest path from every pathfinder
             for(String s : pathFinderStrings){
@@ -88,6 +92,9 @@ public class TestPathfinders {
                 else{
                     System.out.println(source.getId());
                     System.out.println(destination.getId());
+                    System.out.println(shortestPath.size());
+                    System.out.println(spDijkstra.size());
+
                 }
                 //check if path does not exist
                 if(shortestPath == null){

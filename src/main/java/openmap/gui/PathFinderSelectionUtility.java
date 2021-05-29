@@ -35,7 +35,7 @@ public class PathFinderSelectionUtility {
     private final Graph graph;
     private final PathFinder[] pathfinders;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir", "Landmark bi dir opti", "Dyn landmark test", "Dyn bi dir landmark test"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir Mod", "Landmark bi dir opti", "Dyn landmark test", "Dyn bi dir landmark test"};
 
     /**
      * Get pathfinder string names.

@@ -50,7 +50,7 @@ public class TestLandmarks {
         String[] PathfinderStrings = new String[2];
         //PathfinderStrings[0] = "A*";
         PathfinderStrings[0] = "Landmark";
-        PathfinderStrings[1] = "Landmark bi dir";
+        PathfinderStrings[1] = "Landmark bi dir Mod";
 
         if(target > -1){
             LandmarkStrings = new String[2];
@@ -157,7 +157,7 @@ public class TestLandmarks {
                                     if(ps.equals("Landmark")){
                                         accEffLandmark = accEffLandmark + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited())*100;
                                     }
-                                    else if(ps.equals("Landmark bi dir")){
+                                    else if(ps.equals("Landmark bi dir Mod")){
                                         accEffLandmarkBidir = accEffLandmarkBidir + (float)(shortestPath.size())/(float)(pfsu.getPathFinder(ps).getNodesVisited())*100;
                                     }
                                 }

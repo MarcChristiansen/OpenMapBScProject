@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 public class BenchmarkPathfindersSimple {
 
-    public static int[] pathfinderPfsuRefs = {0, 3, 2, 5, 6, 7};
+    public static int[] pathfinderPfsuRefs = {0, 3, 2, 5, 6, 7, 9, 10};
     public static double[] avgNumList;
     public static double[] avgEffList;
     public static List<List<String>> tableRowsRun;

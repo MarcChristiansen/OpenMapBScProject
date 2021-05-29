@@ -3,6 +3,7 @@ package openmap.alternative_pathfinders;
 import openmap.framework.*;
 import openmap.gui.NodeDrawingInfo;
 import openmap.landmark_selection.FarthestLandmarkSelectionImpl;
+import openmap.landmark_selection.FarthestLandmarkSelectionImplSame;
 import openmap.standard.AbstractPathfinder;
 import openmap.standard.NodeWrapperImpl;
 import org.apache.commons.lang3.NotImplementedException;
@@ -26,8 +27,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
     private PriorityQueue<NodeWrapper> priorityQueueBackward;
 
     private int defaultLandmarkAmount = 20;
-    private List<Integer> landmarksTo;
-    private List<Integer> landmarksFrom;
+    private List<Integer> landmarks;
 
     private double shortestDistance;
     private Node meet = null;
@@ -40,8 +40,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         super(graph);
         priorityQueueForward = new PriorityQueue<>();
         priorityQueueBackward = new PriorityQueue<>();
-        landmarksTo = new ArrayList<>();
-        landmarksFrom = new ArrayList<>();
+        landmarks = new ArrayList<>();
         this.defaultLandmarkAmount = defaultLandmarkAmount;
     }
 
@@ -49,14 +48,13 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
     public List<Node> getShortestPath(Node source, Node destination) {
 
         if(source.getDistancesToLandmarks().length == 0) {
-            System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20");
-            FarthestLandmarkSelectionImpl fls = new FarthestLandmarkSelectionImpl(graph);
+            System.out.println("Attempt to get path from landmarks without landmarks, using the default setting of farthest landmarks with k = 20 dyn");
+            FarthestLandmarkSelectionImplSame fls = new FarthestLandmarkSelectionImplSame(graph);
             fls.findLandmarks(this.defaultLandmarkAmount);
         }
 
         //Prepare for run
-        landmarksTo.clear();
-        landmarksFrom.clear();
+        landmarks.clear();
         clearDistanceAndPredecessor();
         priorityQueueForward.clear();
         priorityQueueBackward.clear();
@@ -65,7 +63,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
         long start1 = System.currentTimeMillis();
         //Sanity checks
-        for(Integer i : landmarksTo) {
+        for(Integer i : landmarks) {
             if(source.getDistancesToLandmarks()[i] == Double.MAX_VALUE && destination.getDistancesToLandmarks()[i] < Double.MAX_VALUE){
                 setExecutionTimeFromStart(start1);
                 return null; //No path exists.
@@ -111,33 +109,42 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         //Sanity checks
 
 
+
         meet = null;
         shortestDistance = Double.MAX_VALUE;
         NodeWrapper currNodeWFor, currNodeWBack;
+        int recalculationCounter = 1;
         while (!priorityQueueForward.isEmpty() && !priorityQueueBackward.isEmpty()){ //If one is empty, path does not exist
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
+            recalculationCounter++;
 
-            if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance){
+            if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance + pForward(source, destination, source)){
                 break;
             }
 
-            if(nodesVisited % 10000 == 0){
+            if(nodesVisited % 5000 == 0){
+
                 if(dynLandmark(currNodeWFor.getNode(), currNodeWBack.getNode(), source, destination)){
+                    //System.out.println("recalculation");
                     List<NodeWrapper> tempList= new ArrayList<>(priorityQueueForward);
                     tempList.add(currNodeWFor);
                     priorityQueueForward.clear();
                     for (NodeWrapper nw: tempList) {
                         double potential = pForward(source, destination, nw.getNode());
-                        priorityQueueForward.add(new NodeWrapperImpl(nw.getNode(), nw.getNode().getDistance()+potential));
+                        if(!nw.getNode().getVisited()) {
+                            priorityQueueForward.add(new NodeWrapperImpl(nw.getNode(), nw.getNode().getDistance() + potential));
+                        }
                     }
 
-                    tempList= new ArrayList<>(priorityQueueBackward);
+                    tempList = new ArrayList<>(priorityQueueBackward);
                     tempList.add(currNodeWBack);
                     priorityQueueBackward.clear();
                     for (NodeWrapper nw: tempList) {
                         double potential = pBackward(source, destination, nw.getNode());
-                        priorityQueueBackward.add(new NodeWrapperImpl(nw.getNode(), nw.getNode().getDistance2()+potential));
+                        if(!nw.getNode().getVisited2()){
+                            priorityQueueBackward.add(new NodeWrapperImpl(nw.getNode(), nw.getNode().getDistance2()+potential));
+                        }
                     }
 
                     currNodeWFor = priorityQueueForward.poll();
@@ -145,7 +152,11 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
                 }
             }
 
+            if(pForward(source, destination, source) < 0) System.out.println(pForward(source, destination, source));
 
+            if(currNodeWFor.getDist() +  currNodeWBack.getDist() >= shortestDistance + pForward(source, destination, source)){
+                break;
+            }
 
 
             if(!currNodeWFor.getNode().getVisited()){
@@ -173,7 +184,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
     private boolean dynLandmark(Node nodeF, Node nodeB, Node source, Node destination) {
         int newL = -1;
         double best = Math.max(getLowerBound(nodeF, destination), getLowerBound(source, nodeB));
-        boolean isBestTo = true; //Says if the best new landmark is a to landmark
 
         for(int i = 0; i < source.getDistancesToLandmarks().length; i++){
             double test = Math.max(hTo(nodeF, destination, i), hTo(source, nodeB, i));
@@ -181,7 +191,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
             if(test > best){
                 newL = i;
                 best = test;
-                isBestTo = true;
             }
         }
 
@@ -191,13 +200,11 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
             if(test > best){
                 newL = i;
                 best = test;
-                isBestTo = false;
             }
         }
 
         if(newL > -1){
-            if(isBestTo) landmarksTo.add(newL);
-            else landmarksFrom.add(newL);
+            landmarks.add(newL);
             return true;
         }
 
@@ -239,10 +246,10 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         int landmark;
         int bestLandmark;
         double best = -Double.MAX_VALUE;
-        double temp = 0;
+        double temp = -Double.MAX_VALUE;
         bestLandmark = 0;
         for(int i = 0; i < source.getDistancesToLandmarks().length; i++){
-            if(!landmarksTo.contains(i)){
+            if(!landmarks.contains(i)){
                 landmark = i;
                 temp = hTo(source, destination, i);
                 if(best < temp){
@@ -251,11 +258,12 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
                 }
             }
         }
-        landmarksTo.add(bestLandmark);
+        landmarks.add(bestLandmark);
 
         best = -Double.MAX_VALUE;
+        temp = -Double.MAX_VALUE;
         for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
-            if(!landmarksFrom.contains(i)){
+            if(!landmarks.contains(i)){
                 landmark = i;
                 temp = hFrom(source, destination, i);
                 if(best < temp){
@@ -264,7 +272,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
                 }
             }
         }
-        landmarksFrom.add(bestLandmark);
+        landmarks.add(bestLandmark);
     }
 
     private void handleForwardPass(Node source, Node destination, NodeWrapper currNodeW) {
@@ -315,6 +323,9 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
     private void testPathForShortestPath(Node source, Node destination, Node pathDest) {
         double testDist = pathDest.getDistance2() + pathDest.getDistance(); //+ pForward(source, destination, pathDest) + pBackward(source, destination, pathDest); //Pt + Ps should be zero
         //newDistance + path.getDestination().getDistance2()
+
+        //System.out.println(pForward(source, destination, pathDest));
+        //System.out.println(pBackward(source, destination, pathDest));
         if (testDist < shortestDistance) {
             shortestDistance = testDist;
             meet = pathDest;
@@ -334,22 +345,24 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
     private double getLowerBound(Node currNode, Node destination) {
         double h = -Double.MAX_VALUE;
-        double temp = 0;
-        for(int i : landmarksTo){
+        double temp = -Double.MAX_VALUE;
+        double temp2 = -Double.MAX_VALUE;
+        for(int i : landmarks){
             temp = hTo(currNode, destination, i);
+            temp2 =  hFrom(currNode, destination, i);
             if(h < temp){
                 h = temp;
+            }
+
+            if(h < temp2){
+                h = temp2;
             }
         }
 
-        for(int i : landmarksFrom){
-            temp =  hFrom(currNode, destination, i);
-            if(h < temp){
-                h = temp;
-            }
-        }
         return h;
     }
+
+
 
     @Override
     public Function<Node, NodeDrawingInfo> getVisitedCheckFunction() {
@@ -366,12 +379,12 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
     @Override
     public List<Integer> getLandmarksUsedTo() {
-        return landmarksTo;
+        return landmarks;
     }
 
     @Override
     public List<Integer> getLandmarksUsedFrom() {
-        return landmarksFrom;
+        return landmarks;
     }
 
     @Override

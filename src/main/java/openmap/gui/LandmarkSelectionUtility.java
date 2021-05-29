@@ -54,7 +54,7 @@ public class LandmarkSelectionUtility {
     public LandmarkSelection getLandmarkSelector (String finderId) {
 
         if(LandmarkSelectionStrings[0].equals(finderId)){
-            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImpl(graph); }
+            if(landmarkSelections[0] == null){ landmarkSelections[0] = new FarthestLandmarkSelectionImplSame(graph); }
             return landmarkSelections[0];
         }
 
@@ -64,7 +64,7 @@ public class LandmarkSelectionUtility {
         }
 
         if(LandmarkSelectionStrings[2].equals(finderId)){
-            if(landmarkSelections[2] == null){ landmarkSelections[2] = new FarthestLandmarkSelectionImplSame(graph); }
+            if(landmarkSelections[2] == null){ landmarkSelections[2] = new FarthestLandmarkSelectionImpl(graph); }
             return landmarkSelections[2];
         }
 

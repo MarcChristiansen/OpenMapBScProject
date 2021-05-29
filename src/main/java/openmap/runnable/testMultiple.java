@@ -17,7 +17,7 @@ public class testMultiple {
         String[] pathfinder = {"dkfinal.json", "nlfinal.json", "swefinal.json", "gbfinal.json", "gerfinal.json", "eufinal.json"};
         //String[] pathfinder = {"map3.json", "map2.json"};
         System.out.println("running benchmark Pathfinders");
-        BenchmarkPathfindersSimple.main(pathfinder);
+        //BenchmarkPathfindersSimple.main(pathfinder);
 
         String[] landmarks = {"dkfinal.json", "-1", "250"};
         //String[] landmarks = {"map3.json", "-1", "1"};
