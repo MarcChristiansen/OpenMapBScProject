@@ -123,7 +123,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
 
 
-            if(nodesVisited % 100 == 0){
+            if(recalculationCounter % 10000 == 0){
 
                 if(dynLandmark(currNodeWFor.getNode(), currNodeWBack.getNode(), source, destination)){
                     //System.out.println("recalculation");
@@ -174,7 +174,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
                 handleForwardPass(source, destination, currNodeWFor);
             }
 
-            if(!currNodeWFor.getNode().getVisited2()) {
+            if(!currNodeWBack.getNode().getVisited2()) {
                 nodesVisited += 1;
                 handleBackwardsPass(source, destination, currNodeWBack);
             }
@@ -193,7 +193,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
     private boolean dynLandmark(Node nodeF, Node nodeB, Node source, Node destination) {
         int newL = -1;
-        double best = getLowerBoundFor(nodeF, destination) + betterLandmarkConst;
+        double best = getLowerBound(nodeF, destination) + betterLandmarkConst;
 
         for(int i = 0; i < source.getDistancesToLandmarks().length; i++){
             double test = hTo(nodeF, destination, i);
@@ -204,7 +204,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
             }
         }
 
-        best = Math.max(best, getLowerBoundBack(nodeF, destination) + betterLandmarkConst);
+        best = Math.max(best, getLowerBound(nodeF, destination) + betterLandmarkConst);
 
         for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
             double test = hFrom(nodeB, source, i);
@@ -344,24 +344,25 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
     }
 
     private double pForward(Node source, Node destination, Node currNode) {
-        return pNorm(source, destination, currNode) + 0.5 * getLowerBoundBack(source, destination);
+        return pNorm(source, destination, currNode) + 0.5 * getLowerBound(source, destination);
     }
 
     private double pNorm(Node source, Node destination, Node currNode) {
-        double forwardBound = getLowerBoundFor(currNode, destination);
-        double backwardBound = getLowerBoundBack(source, currNode);
+        double forwardBound = getLowerBound(currNode, destination);
+        double backwardBound = getLowerBound(source, currNode);
         return 0.5 * (forwardBound - backwardBound);
     }
 
 
     private double pBackward(Node source, Node destination, Node currNode) {
-        return -pNorm(source, destination, currNode) + 0.5 * getLowerBoundFor(source, destination);
+        return -pNorm(source, destination, currNode) + 0.5 * getLowerBound(source, destination);
                 //0.5 * (h(source, pathDest) - h(destination, pathDest)); //Old manual rewrite...
     }
 
-    private double getLowerBoundFor(Node currNode, Node destination) {
+    private double getLowerBound(Node currNode, Node destination) {
         double h = -Double.MAX_VALUE;
         double temp = -Double.MAX_VALUE;
+        double temp2 = -Double.MAX_VALUE;
         for(int i : landmarks){
             temp = hTo(currNode, destination, i);
             if(h < temp){
@@ -370,12 +371,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
         }
 
-        return h;
-    }
-
-    private double getLowerBoundBack(Node currNode, Node destination) {
-        double h = -Double.MAX_VALUE;
-        double temp2 = -Double.MAX_VALUE;
         for(int i : landmarks){
             temp2 =  hFrom(currNode, destination, i);
 
@@ -386,6 +381,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
         return h;
     }
+
 
 
 

@@ -130,7 +130,7 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
                 handleForwardPass(source, destination, currNodeWFor);
             }
 
-            if(!currNodeWFor.getNode().getVisited2()) {
+            if(!currNodeWBack.getNode().getVisited2()) {
                 nodesVisited += 1;
                 handleBackwardsPass(source, destination, currNodeWBack);
             }
