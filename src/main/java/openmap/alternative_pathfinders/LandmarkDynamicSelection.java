@@ -87,7 +87,7 @@ public class LandmarkDynamicSelection extends AbstractPathfinder {
             currNodeW = priorityQueue.poll();
             landmarkRescanCounter++;
 
-            if(landmarkRescanCounter % 10000 == 0){
+            if(landmarkRescanCounter % 5000 == 0){
                 if(dynLandmark(currNodeW.getNode())){
                     List<NodeWrapper> tempList= new ArrayList<>(priorityQueue);
                     tempList.add(currNodeW);

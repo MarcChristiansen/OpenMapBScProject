@@ -191,7 +191,7 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
             for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
                 if(!landmarksForward.contains(i)){
                     landmark = i;
-                    double next = hForward(source, destination, landmark);
+                    double next = hTo(source, destination, landmark);
                     if(h < next){
                         bestLandmark = landmark;
                         h = next;
@@ -218,7 +218,7 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
             for(int i = 0; i < destination.getDistancesFromLandmarks().length; i++){
                 if(!landmarksBackward.contains(i)){
                     landmark = i;
-                    double next = hBackward(destination, source, landmark);
+                    double next = hFrom(destination, source, landmark);
                     if(h < next){
                         bestLandmark = landmark;
                         h = next;
@@ -299,8 +299,8 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
     private double findForwardLowerBound(Node source, Node destination, Node currNode){
         double h = -Double.MAX_VALUE;
         for(int i : landmarksForward){
-            double curr = hForward(currNode, destination, i);
-            double curr2 = hBackward(destination, currNode, i);
+            double curr = hTo(currNode, destination, i);
+            double curr2 = hFrom(destination, currNode, i);
             if(h < curr){
                 h = curr;
             }
@@ -314,8 +314,8 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
     private double findBackwardLowerBound(Node source, Node destination, Node currNode){
         double h = -Double.MAX_VALUE;
         for(int i : landmarksBackward){
-            double curr = hBackward(currNode, source, i);
-            double curr2 = hForward(source, currNode, i);
+            double curr = hFrom(currNode, source, i);
+            double curr2 = hTo(source, currNode, i);
             if(h < curr){
                 h = curr;
             }
@@ -395,14 +395,14 @@ public class LandmarkBiDirModified extends AbstractPathfinder {
         return res;
     }
 
-    private double hForward(Node curr, Node target, int landmark) {
+    private double hTo(Node curr, Node target, int landmark) {
         //if(curr.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("Curr l for " + curr.getDistancesToLandmarks().get(landmark));}
         //if(target.getDistancesToLandmarks().get(landmark) == Double.MAX_VALUE){ System.out.println("target l for " + target.getDistancesToLandmarks().get(landmark));}
 
         return curr.getDistancesToLandmarks()[landmark] - target.getDistancesToLandmarks()[landmark];
     }
 
-    private double hBackward(Node curr, Node target, int landmark) {
+    private double hFrom(Node curr, Node target, int landmark) {
         //System.out.println(landmark);
         //System.out.println(curr.getId());
         //System.out.println(curr.getDistancesFromLandmarks());

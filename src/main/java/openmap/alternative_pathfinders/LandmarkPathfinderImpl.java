@@ -199,7 +199,9 @@ public class LandmarkPathfinderImpl extends AbstractPathfinder {
 
     private double h(Node n, int landmark){
         //return n.getDistancesToLandmarks().get(landmark) - currTarget.getDistancesToLandmarks().get(landmark);
-        return Math.max(n.getDistancesToLandmarks()[landmark] - currTarget.getDistancesToLandmarks()[landmark], distance(n, currTarget) );
+        double temp = Math.max(n.getDistancesToLandmarks()[landmark] - currTarget.getDistancesToLandmarks()[landmark], currTarget.getDistancesFromLandmarks()[landmark] - n.getDistancesFromLandmarks()[landmark]);
+        return Math.max(temp, distance(n, currTarget));
+
     }//-currTarget.getLandmarkDistancesFromLandmark().get(landmark) + n.getLandmarkDistancesFromLandmark().get(landmark);
 
     private double distance(Node n1, Node n2){
