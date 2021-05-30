@@ -107,10 +107,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         priorityQueueForward.add(new NodeWrapperImpl(source, 0));
         priorityQueueBackward.add(new NodeWrapperImpl(destination, 0));
 
-        //Sanity checks
-
-
-
         meet = null;
         shortestDistance = Double.MAX_VALUE;
         NodeWrapper currNodeWFor, currNodeWBack;
@@ -119,9 +115,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
             currNodeWFor = priorityQueueForward.poll();
             currNodeWBack = priorityQueueBackward.poll();
             recalculationCounter++;
-
-
-
 
             if(recalculationCounter % 1250 == 0){
 
@@ -163,11 +156,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
 
             //System.out.println(pForward(source, destination, source));
-
-
-
-
-
 
             if(!currNodeWFor.getNode().getVisited()){
                 nodesVisited += 1;
@@ -354,7 +342,6 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         double backwardBound = getLowerBound(source, currNode);
         return 0.5 * (forwardBound - backwardBound);
     }
-
 
     private double pBackward(Node source, Node destination, Node currNode) {
         return -pNorm(source, destination, currNode) + 0.5 * getLowerBound(source, destination);
