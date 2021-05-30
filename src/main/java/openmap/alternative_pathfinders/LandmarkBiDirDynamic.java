@@ -123,7 +123,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
 
 
-            if(recalculationCounter % 10000 == 0){
+            if(recalculationCounter % 1250 == 0){
 
                 if(dynLandmark(currNodeWFor.getNode(), currNodeWBack.getNode(), source, destination)){
                     //System.out.println("recalculation");
@@ -196,6 +196,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         double best = getLowerBound(nodeF, destination) + betterLandmarkConst;
 
         for(int i = 0; i < source.getDistancesToLandmarks().length; i++){
+            if(landmarks.contains(i)) {continue;}
             double test = hTo(nodeF, destination, i);
 
             if(test > best){
@@ -207,6 +208,7 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
         best = Math.max(best, getLowerBound(nodeF, destination) + betterLandmarkConst);
 
         for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
+            if(landmarks.contains(i)) {continue;}
             double test = hFrom(nodeB, source, i);
             if(test > best){
                 newL = i;

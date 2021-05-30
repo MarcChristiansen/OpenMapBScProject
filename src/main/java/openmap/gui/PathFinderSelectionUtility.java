@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class PathFinderSelectionUtility {
 
-    private static int[] relevantTestRefs = {0, 3, 2, 5, 6, 7, 9, 10};
+    private static int[] relevantTestRefs = {0, 3, 2, 5, 6, 7, 8, 9};
 
     /**
      * Create a selection utility with a given graph
@@ -29,13 +29,13 @@ public class PathFinderSelectionUtility {
     public PathFinderSelectionUtility(Graph graph) {
 
         this.graph = graph;
-        pathfinders = new PathFinder[11];
+        pathfinders = new PathFinder[10];
     }
 
     private final Graph graph;
     private final PathFinder[] pathfinders;
 
-    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir Mod", "Landmark bi dir opti", "Dyn landmark test", "Dyn bi dir landmark test"};
+    private final String[] pathFinderStrings = { "Dijkstra", "Dijkstra Wrong", "A*", "Bidirectional Dijkstra", "Very wrong Bi Dijkstra", "Bidirectional A*", "Landmark", "Landmark bi dir Mod", "Landmark dyn", "Landmark bi dir dyn"};
 
     /**
      * Get pathfinder string names.
@@ -90,18 +90,13 @@ public class PathFinderSelectionUtility {
         }
 
         if(pathFinderStrings[8].equals(finderId)){
-            if(pathfinders[8] == null){ pathfinders[8] = new LandmarkBiDirOpti(graph); }
+            if(pathfinders[8] == null){ pathfinders[8] = new LandmarkDynamic(graph); }
             return pathfinders[8];
         }
 
         if(pathFinderStrings[9].equals(finderId)){
-            if(pathfinders[9] == null){ pathfinders[9] = new LandmarkDynamicSelection(graph); }
+            if(pathfinders[9] == null){ pathfinders[9] = new LandmarkBiDirDynamic(graph); }
             return pathfinders[9];
-        }
-
-        if(pathFinderStrings[10].equals(finderId)){
-            if(pathfinders[10] == null){ pathfinders[10] = new LandmarkBiDirDynamic(graph); }
-            return pathfinders[10];
         }
 
         return null; //Todo Possibly make exception...
