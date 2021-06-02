@@ -22,7 +22,7 @@ public class testMultiple {
         String[] landmarks = {"dkfinal.json", "-1", "250"};
         //String[] landmarks = {"map3.json", "-1", "1"};
         System.out.println("running test landmarks");
-        //TestLandmarks.main(landmarks);
+        TestLandmarks.main(landmarks);
 
         String[] dijkstraRank = {"gerfinal.json"};
         System.out.println("dijkstra rank");

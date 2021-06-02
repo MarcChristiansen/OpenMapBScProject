@@ -181,24 +181,14 @@ public class LandmarkBiDirDynamic extends AbstractPathfinder {
 
     private boolean dynLandmark(Node nodeF, Node nodeB, Node source, Node destination) {
         int newL = -1;
-        double best = getLowerBound(nodeF, destination) + betterLandmarkConst;
+        double best = Math.max(getLowerBound(nodeF, destination), getLowerBound(source, nodeB)) + betterLandmarkConst;
 
         for(int i = 0; i < source.getDistancesToLandmarks().length; i++){
             if(landmarks.contains(i)) {continue;}
-            double test = hTo(nodeF, destination, i);
+            double test = Math.max(hTo(nodeF, destination,i), hFrom(nodeF, destination,i));
+            double test2 = Math.max(hTo(source, nodeB,i), hFrom(source, nodeB,i));
 
-            if(test > best){
-                newL = i;
-                best = test;
-            }
-        }
-
-        best = Math.max(best, getLowerBound(nodeF, destination) + betterLandmarkConst);
-
-        for(int i = 0; i < source.getDistancesFromLandmarks().length; i++){
-            if(landmarks.contains(i)) {continue;}
-            double test = hFrom(nodeB, source, i);
-            if(test > best){
+            if(test > best || test2 > best){
                 newL = i;
                 best = test;
             }
