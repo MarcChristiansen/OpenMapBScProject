@@ -28,13 +28,13 @@ public class BenchmarkParsing {
     }
 
     public static List<String> BenchmarkDualVsTriplePass(String path){
-        int testAmount = 3; //Number of tests to run
+        int testAmount = 1; //Number of tests to run
 
         long accTimeDualPass = 0;
         long accTimeTriplePass = 0;
 
 
-        /*for (int i = 0; i < testAmount; i++) {
+        for (int i = 0; i < testAmount; i++) {
             long start = System.currentTimeMillis();
 
             OsmParser parser = new OsmiumPbfParserImpl(path, ParsingUtil.getDefaultAllowedValues());
@@ -47,17 +47,17 @@ public class BenchmarkParsing {
 
             long finish = System.currentTimeMillis();
             accTimeDualPass += finish - start;
-        }*/
+        }
         //If we want a triple pass we do not want to cache ways.
 
         for (int i = 0; i < testAmount; i++) {
             long start = System.currentTimeMillis();
 
             OsmParser parser = new OsmiumPbfParserImpl(path, ParsingUtil.getDefaultAllowedValues());
-            parser.CacheWays(true);
+            parser.CacheWays(false);
 
             GraphBuilderImpl graphBuilder = new GraphBuilderImpl(parser);
-            graphBuilder.SetOptimizationLevel(2);
+            graphBuilder.SetOptimizationLevel(0);
             graphBuilder.createGraph();
 
             long finish = System.currentTimeMillis();
