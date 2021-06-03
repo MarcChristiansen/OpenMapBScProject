@@ -24,4 +24,35 @@ dependencies {
 }
 
 
+task mapgui(type: JavaExec) {
+    group 'final Demo'
+    description 'Demonstrate the map gui'
+
+    main = 'openmap.gui.MapGui'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+}
+
+task mapguiDK(type: JavaExec) {
+    group 'final Demo'
+    description 'Demonstrate the map gui'
+
+    main = 'openmap.gui.MapGui'
+    classpath = sourceSets.main.runtimeClasspath
+    standardInput = System.in
+    args "dkop.json"
+}
+
+task compile(type: JavaExec) {
+    group 'final Demo'
+    description 'demonstrate compilation of pbf or osm file'
+
+    main = 'openmap.runnable.CompileMapFile'
+    classpath = sourceSets.main.runtimeClasspath
+    args ""
+    standardInput = System.in
+}
+
+
+
 
