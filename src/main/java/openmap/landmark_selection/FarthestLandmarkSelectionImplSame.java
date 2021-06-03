@@ -88,15 +88,15 @@ public class FarthestLandmarkSelectionImplSame extends LandmarkSelectionAbstract
                     bestNodeTo = n;
                 }
             }
-            System.out.println(i);
+            System.out.println("Landmark: " + i);
 
             processLandmarkFrom(bestNodeTo, i);
             landmarksFrom.add(bestNodeTo);
             processLandmarkTo(bestNodeTo, i);
             landmarksTo.add(bestNodeTo);
 
-            System.out.println(((Node)(values[random.nextInt(values.length)])).getDistancesFromLandmarks()[i]);
-            System.out.println(((Node)(values[random.nextInt(values.length)])).getDistancesToLandmarks()[i]);
+            //System.out.println(((Node)(values[random.nextInt(values.length)])).getDistancesFromLandmarks()[i]);
+            //System.out.println(((Node)(values[random.nextInt(values.length)])).getDistancesToLandmarks()[i]);
         }
 
         executionTime = System.currentTimeMillis() - start;
