@@ -6,7 +6,7 @@ Et simpelt eksempel på en graf kan indlæses fra eksmepel filerne. I dette tilf
 ```bash
 gradle tasks mapguiDK --console=plain
 ```
-Alternativt kan egne grafer laves ud fra enten (.osm) eller (.osm.pbf) filer hentet fra fx "http://download.geofabrik.de/europe.html". 
+Alternativt kan egne grafer laves ud fra enten (.osm) eller (.osm.pbf) filer hentet fra fx: http://download.geofabrik.de/europe.html. 
 
 De to nedenstående tasks kan hjælpe med dette. Disse tager begge input i consollen og spørg om de ting der er relevante.
 
