@@ -9,9 +9,7 @@ import openmap.standard.DijkstraImpl;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
@@ -108,9 +106,9 @@ class MapPanel extends JPanel {
                 if(e.getButton() == MouseEvent.BUTTON1) {
                     origPoint = new Point(e.getPoint());
                 } else
-                if(e.getButton() == 5 || e.getButton() == 4){ //5 is first side button, no constant exists
+                if(e.getButton() == 5 || e.getButton() == 2 || e.getButton() == 4 || e.getButton() == MouseEvent.BUTTON3){ //5 is first side button, no constant exists
 
-                    if(e.getButton() == 5) {
+                    if(e.getButton() == 5 || e.getButton() == 2) {
                         pathNode1 = getClosestNode(e.getX()/zoomFactor + panX, panY - e.getY()/zoomFactor);
                     }else{
                         pathNode2 = getClosestNode(e.getX()/zoomFactor+panX, panY - e.getY()/zoomFactor);
@@ -157,6 +155,25 @@ class MapPanel extends JPanel {
             }
         };
 
+        /*this.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                System.out.println("HEJ");
+                super.keyPressed(e);
+                if(e.getKeyChar() == 'k' || e.getKeyChar() == 'l'){ //5 is first side button, no constant exists
+                    Point p = MouseInfo.getPointerInfo().getLocation();
+                    if(e.getKeyChar() == 'k') {
+                        pathNode1 = getClosestNode(p.getX()/zoomFactor + panX, panY - p.getY()/zoomFactor);
+                    }else{
+                        pathNode2 = getClosestNode(p.getX()/zoomFactor+panX, panY - p.getY()/zoomFactor);
+                    }
+
+                    runPathFinder();
+
+                }
+
+            }
+        });*/
         this.addMouseListener(ma);
         this.addMouseMotionListener(ma);
         addMouseWheelListener(ma);
