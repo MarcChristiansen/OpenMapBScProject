@@ -19,8 +19,10 @@ gradle tasks compile --console=plain
 gradle tasks mapgui --console=plain
 ```
 # Knapper
-M1 (Venstre museklik): Panorering på kortet
+M1 (Venstre museknap): Panorering på kortet
 
 ScrollWheel: Styrer zoom
 
-Sideknapperne: Styrer punkterne for pathfinderen (M4 og M5)
+Sideknapperne: Styrer punkterne for pathfinderen (M5 og M4)
+
+Alternativt kan M2 (højre museknap) og M3 (Scrollwheel klik) også bruges i stedet M5 og M4.
