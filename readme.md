@@ -18,3 +18,7 @@ Mapgui tasken kan åbne en JSON fil. Mapgui kræver en JSON fil, men (.json) er 
 gradle tasks compile --console=plain
 gradle tasks mapgui --console=plain
 ```
+# Knapper
+M1 (Venstre museklik): Panorering på kortet
+ScrollWheel: Styrer zoom
+Sideknapperne: Styrer punkterne for pathfinderen (M4 og M5)
